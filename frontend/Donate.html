@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donate</title>
+</head>
+<body>
+    <h1>Donate</h1>
+    <p>Thank you for considering a donation!</p>
+    
+    <form action="/donate" method="POST">
+        <label for="amount">Donation Amount:</label>
+        <input type="number" id="amount" name="amount" required>
+        
+        <label for="charity">Select Charity:</label>
+        <select id="charity" name="charity" required>
+            <option value="charity1">Charity 1</option>
+            <option value="charity2">Charity 2</option>
+            <option value="charity3">Charity 3</option>
+            <option value="charity4">Charity 4</option>
+        </select>
+        
+        <button type="submit">Donate</button>
+    </form>
+
+    <p>If you have any questions, please contact us.</p>
+</body>
+</html>
