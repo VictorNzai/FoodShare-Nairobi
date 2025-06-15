@@ -26,29 +26,23 @@ db.connect(err => {
   console.log('✅ Connected to foodshare_db');
 });
 
-// ✅ Donor Signup Endpoint
+// ✅ Donor Signup Endpoint (using 'donor' table)
 app.post('/signup/donor', async (req, res) => {
-  const { fullname, email, phone, password } = req.body;
+  const { fullname, email, phone, password, confirmPassword } = req.body;
+  if (password !== confirmPassword) {
+    return res.status(400).json({ success: false, message: 'Passwords do not match' });
+  }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert into users table
-    const userQuery = 'INSERT INTO users (email, password, role) VALUES (?, ?, ?)';
-    db.query(userQuery, [email, hashedPassword, 'donor'], (err, result) => {
+    // Use the correct column names from your donor table
+    const donorQuery = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
+    db.query(donorQuery, [fullname, email, phone, hashedPassword], (err, result) => {
       if (err) {
-        console.error('❌ Error inserting user:', err);
-        return res.status(500).json({ success: false, message: 'Email already exists or DB error' });
+        console.error('❌ Error inserting donor:', err);
+        return res.status(500).json({ success: false, message: err.sqlMessage || 'Email already exists or DB error' });
       }
-      const userId = result.insertId;
-      // Insert into donors table
-      const donorQuery = 'INSERT INTO donors (user_id, full_name, phone) VALUES (?, ?, ?)';
-      db.query(donorQuery, [userId, fullname, phone], (err2) => {
-        if (err2) {
-          console.error('❌ Error inserting donor:', err2);
-          return res.status(500).json({ success: false, message: 'Error creating donor profile' });
-        }
-        return res.status(200).json({ success: true, message: 'Donor account created successfully' });
-      });
+      return res.status(200).json({ success: true, message: 'Donor account created successfully' });
     });
   } catch (err) {
     console.error('❌ Error:', err);
@@ -58,7 +52,10 @@ app.post('/signup/donor', async (req, res) => {
 
 // ✅ Charity Signup Endpoint
 app.post('/signup/charity', async (req, res) => {
-  const { orgname, email, phone, reg, password } = req.body;
+  const { orgname, email, phone, reg, password, confirmPassword } = req.body;
+  if (password !== confirmPassword) {
+    return res.status(400).json({ success: false, message: 'Passwords do not match' });
+  }
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -125,8 +122,8 @@ app.post('/auth/login', (req, res) => {
 });
 
 // ✅ Start Server
-app.listen(3307, () => {
-  console.log('🚀 Server running on http://localhost:3307');
+app.listen(3000, () => {
+  console.log('🚀 Server running on http://localhost:3000');
 });
 
 app.get('/', (req, res) => {

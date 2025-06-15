@@ -226,15 +226,15 @@
       const email = document.getElementById("email").value;
       const phone = document.getElementById("phone").value;
       const password = document.getElementById("password").value;
-      const confirm = document.getElementById("confirm").value;
+      const confirmPassword = document.getElementById("confirm").value;
 
-      if (password !== confirm) return alert("⚠️ Passwords do not match");
+      if (password !== confirmPassword) return alert("⚠️ Passwords do not match");
 
       try {
         const response = await fetch("http://localhost:3000/signup/donor", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fullname, email, phone, password }),
+          body: JSON.stringify({ fullname, email, phone, password, confirmPassword }),
         });
 
         const result = await response.json();
@@ -259,15 +259,15 @@
       const phone = document.getElementById("phone2").value;
       const reg = document.getElementById("reg").value;
       const password = document.getElementById("password2").value;
-      const confirm = document.getElementById("confirm2").value;
+      const confirmPassword = document.getElementById("confirm2").value;
 
-      if (password !== confirm) return alert("⚠️ Passwords do not match");
+      if (password !== confirmPassword) return alert("⚠️ Passwords do not match");
 
       try {
         const response = await fetch("http://localhost:3000/signup/charity", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orgname, email, phone, reg, password }),
+          body: JSON.stringify({ orgname, email, phone, reg, password, confirmPassword }),
         });
 
         const result = await response.json();
