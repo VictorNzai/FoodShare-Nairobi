@@ -35,7 +35,7 @@ app.post('/signup/donor', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Use the correct column names from your donor table
+    // If your donor table uses 'email', keep as is. If it's 'mail', change below.
     const donorQuery = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
     db.query(donorQuery, [fullname, email, phone, hashedPassword], (err, result) => {
       if (err) {
@@ -50,7 +50,7 @@ app.post('/signup/donor', async (req, res) => {
   }
 });
 
-// ✅ Charity Signup Endpoint
+// ✅ Charity Signup Endpoint (using 'charity' table)
 app.post('/signup/charity', async (req, res) => {
   const { orgname, email, phone, reg, password, confirmPassword } = req.body;
   if (password !== confirmPassword) {
@@ -59,23 +59,14 @@ app.post('/signup/charity', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Insert into users table
-    const userQuery = 'INSERT INTO users (email, password, role) VALUES (?, ?, ?)';
-    db.query(userQuery, [email, hashedPassword, 'charity'], (err, result) => {
+    // Use 'mail' for the email column in the charity table
+    const charityQuery = 'INSERT INTO charity (orgname, mail, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
+    db.query(charityQuery, [orgname, email, phone, reg, hashedPassword], (err, result) => {
       if (err) {
-        console.error('❌ Error inserting user:', err);
-        return res.status(500).json({ success: false, message: 'Email already exists or DB error' });
+        console.error('❌ Error inserting charity:', err);
+        return res.status(500).json({ success: false, message: err.sqlMessage || 'Email already exists or DB error' });
       }
-      const userId = result.insertId;
-      // Insert into charities table
-      const charityQuery = 'INSERT INTO charities (user_id, org_name, phone, registration_number) VALUES (?, ?, ?, ?)';
-      db.query(charityQuery, [userId, orgname, phone, reg], (err2) => {
-        if (err2) {
-          console.error('❌ Error inserting charity:', err2);
-          return res.status(500).json({ success: false, message: 'Error creating charity profile' });
-        }
-        return res.status(200).json({ success: true, message: 'Charity account created successfully' });
-      });
+      return res.status(200).json({ success: true, message: 'Charity account created successfully' });
     });
   } catch (err) {
     console.error('❌ Error:', err);
@@ -118,6 +109,35 @@ app.post('/auth/login', (req, res) => {
     } else {
       return res.status(400).json({ message: 'Unknown role' });
     }
+  });
+});
+
+// ✅ Donor Login Endpoint
+app.post('/auth/login/donor', (req, res) => {
+  const { email, password } = req.body;
+  const query = 'SELECT * FROM donor WHERE email = ?'; // Use 'mail' if that's your column name
+  db.query(query, [email], async (err, results) => {
+    if (err) return res.status(500).json({ success: false, message: 'Server error' });
+    if (results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    const donor = results[0];
+    const match = await bcrypt.compare(password, donor.password);
+    if (!match) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    return res.json({ success: true, message: 'Login successful', donor: { id: donor.id, fullname: donor.fullname, email: donor.email, phone: donor.phone } });
+  });
+});
+
+// ✅ Charity Login Endpoint
+app.post('/auth/login/charity', (req, res) => {
+  const { email, password } = req.body;
+  // Use 'mail' if that's your column name in the charity table
+  const query = 'SELECT * FROM charity WHERE email = ?';
+  db.query(query, [email], async (err, results) => {
+    if (err) return res.status(500).json({ success: false, message: 'Server error' });
+    if (results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    const charity = results[0];
+    const match = await bcrypt.compare(password, charity.password);
+    if (!match) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    return res.json({ success: true, message: 'Login successful', charity: { id: charity.id, orgname: charity.orgname, email: charity.email, phone: charity.phone, reg: charity.reg } });
   });
 });
 
