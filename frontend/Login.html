@@ -196,17 +196,38 @@
       const role = document.getElementById('role').value;
       const accessKey = document.getElementById('accessKey').value;
 
-      const response = await fetch('http://localhost:3000/auth/login', {
+      let endpoint = '';
+      let body = {};
+
+      if (role === 'donor') {
+        endpoint = 'http://localhost:3000/auth/login/donor';
+        body = { email, password };
+      } else if (role === 'charity') {
+        endpoint = 'http://localhost:3000/auth/login/charity';
+        body = { email, password };
+      } else if (role === 'admin') {
+        endpoint = 'http://localhost:3000/auth/login';
+        body = { email, password, role, accessKey };
+      }
+
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, password, role, accessKey })
+        body: JSON.stringify(body)
       });
 
       const data = await response.json();
       if (data.dashboard) {
         window.location.href = data.dashboard;
+      } else if (data.success) {
+        // Redirect based on role
+        if (role === 'donor') {
+          window.location.href = '/donor/dashboard.html';
+        } else if (role === 'charity') {
+          window.location.href = '/charity/dashboard.html';
+        }
       } else {
-        alert(data.message);
+        alert(data.message || data.error || 'Login failed');
       }
     });
   </script>

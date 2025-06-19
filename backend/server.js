@@ -7,12 +7,12 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const app = express();
 
-// ✅ Middlewares
+//  Middlewares
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
-// ✅ MySQL DB Connection
+//  MySQL DB Connection
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
@@ -23,10 +23,10 @@ const db = mysql.createConnection({
 
 db.connect(err => {
   if (err) throw err;
-  console.log('✅ Connected to foodshare_db');
+  console.log(' Connected to foodshare_db');
 });
 
-// ✅ Donor Signup Endpoint (using 'donor' table)
+//  Donor Signup Endpoint (using 'donor' table)
 app.post('/signup/donor', async (req, res) => {
   const { fullname, email, phone, password, confirmPassword } = req.body;
   if (password !== confirmPassword) {
@@ -39,18 +39,18 @@ app.post('/signup/donor', async (req, res) => {
     const donorQuery = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
     db.query(donorQuery, [fullname, email, phone, hashedPassword], (err, result) => {
       if (err) {
-        console.error('❌ Error inserting donor:', err);
+        console.error(' Error inserting donor:', err);
         return res.status(500).json({ success: false, message: err.sqlMessage || 'Email already exists or DB error' });
       }
       return res.status(200).json({ success: true, message: 'Donor account created successfully' });
     });
   } catch (err) {
-    console.error('❌ Error:', err);
+    console.error(' Error:', err);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-// ✅ Charity Signup Endpoint (using 'charity' table)
+//  Charity Signup Endpoint (using 'charity' table)
 app.post('/signup/charity', async (req, res) => {
   const { orgname, email, phone, reg, password, confirmPassword } = req.body;
   if (password !== confirmPassword) {
@@ -59,28 +59,27 @@ app.post('/signup/charity', async (req, res) => {
   try {
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Use 'mail' for the email column in the charity table
-    const charityQuery = 'INSERT INTO charity (orgname, mail, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
+    const charityQuery = 'INSERT INTO charity (orgname, email, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
     db.query(charityQuery, [orgname, email, phone, reg, hashedPassword], (err, result) => {
       if (err) {
-        console.error('❌ Error inserting charity:', err);
+        console.error(' Error inserting charity:', err);
         return res.status(500).json({ success: false, message: err.sqlMessage || 'Email already exists or DB error' });
       }
       return res.status(200).json({ success: true, message: 'Charity account created successfully' });
     });
   } catch (err) {
-    console.error('❌ Error:', err);
+    console.error(' Error:', err);
     return res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
-// ✅ Login Endpoint
+//  Login Endpoint
 app.post('/auth/login', (req, res) => {
   const { email, password, role, accessKey } = req.body;
   let query = 'SELECT * FROM users WHERE email = ? AND role = ?';
   db.query(query, [email, role], async (err, results) => {
     if (err) {
-      console.error('❌ Login error:', err);
+      console.error(' Login error:', err);
       return res.status(500).json({ message: 'Server error' });
     }
     if (results.length === 0) {
@@ -112,7 +111,7 @@ app.post('/auth/login', (req, res) => {
   });
 });
 
-// ✅ Donor Login Endpoint
+//  Donor Login Endpoint
 app.post('/auth/login/donor', (req, res) => {
   const { email, password } = req.body;
   const query = 'SELECT * FROM donor WHERE email = ?'; // Use 'mail' if that's your column name
@@ -126,10 +125,9 @@ app.post('/auth/login/donor', (req, res) => {
   });
 });
 
-// ✅ Charity Login Endpoint
+//  Charity Login Endpoint
 app.post('/auth/login/charity', (req, res) => {
   const { email, password } = req.body;
-  // Use 'mail' if that's your column name in the charity table
   const query = 'SELECT * FROM charity WHERE email = ?';
   db.query(query, [email], async (err, results) => {
     if (err) return res.status(500).json({ success: false, message: 'Server error' });
@@ -141,13 +139,13 @@ app.post('/auth/login/charity', (req, res) => {
   });
 });
 
-// ✅ Start Server
+//  Start Server
 app.listen(3000, () => {
-  console.log('🚀 Server running on http://localhost:3000');
+  console.log(' Server running on http://localhost:3000');
 });
 
 app.get('/', (req, res) => {
-  res.send('✅ Backend is running — Welcome to FoodShare API');
+  res.send(' Backend is running — Welcome to FoodShare API');
 });
 
 app.use((err, req, res, next) => {
