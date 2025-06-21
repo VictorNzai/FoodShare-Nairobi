@@ -1,289 +1,363 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sign Up - FoodShare</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sign Up - FoodShare</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+      }
 
-    body {
-      background-color: #f0f0f0;
-    }
+      body {
+        background-color: #f0f0f0;
+      }
 
-    header {
-      background: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px;
-      border-bottom: 1px solid #ddd;
-    }
+      header {
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        border-bottom: 1px solid #ddd;
+      }
 
-    .logo {
-      font-weight: bold;
-      font-size: 18px;
-    }
+      .logo {
+        font-weight: bold;
+        font-size: 18px;
+      }
 
-    nav a {
-      margin-left: 30px;
-      text-decoration: none;
-      color: #333;
-      font-size: 14px;
-    }
+      nav a {
+        margin-left: 30px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+      }
 
-    .log-in-btn {
-      background-color: #eaf8e3;
-      color: #333;
-      padding: 8px 18px;
-      border: none;
-      border-radius: 20px;
-      font-weight: bold;
-    }
+      .log-in-btn {
+        background-color: #eaf8e3;
+        color: #333;
+        padding: 8px 18px;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+      }
 
-    .container {
-      max-width: 500px;
-      margin: 40px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      text-align: center;
-    }
+      .container {
+        max-width: 500px;
+        margin: 40px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
 
-    h2 {
-      margin-bottom: 20px;
-      color: #333;
-    }
+      h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
 
-    .toggle-role {
-      display: flex;
-      justify-content: space-between;
-      background-color: #eaf8e3;
-      border-radius: 25px;
-      overflow: hidden;
-      margin-bottom: 30px;
-    }
+      .toggle-role {
+        display: flex;
+        justify-content: space-between;
+        background-color: #eaf8e3;
+        border-radius: 25px;
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
 
-    .toggle-role button {
-      flex: 1;
-      padding: 12px 0;
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-weight: bold;
-      color: #333;
-    }
+      .toggle-role button {
+        flex: 1;
+        padding: 12px 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-weight: bold;
+        color: #333;
+      }
 
-    .toggle-role .active {
-      background-color: white;
-      border-radius: 25px;
-    }
+      .toggle-role .active {
+        background-color: white;
+        border-radius: 25px;
+      }
 
-    label {
-      display: block;
-      text-align: left;
-      margin: 10px 0 5px;
-      font-size: 14px;
-      color: #333;
-    }
+      label {
+        display: block;
+        text-align: left;
+        margin: 10px 0 5px;
+        font-size: 14px;
+        color: #333;
+      }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      background-color: #eaf8e3;
-      font-size: 14px;
-    }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        background-color: #eaf8e3;
+        font-size: 14px;
+      }
 
-    .signup-btn {
-      width: 100%;
-      padding: 12px;
-      background-color: #54D12B;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      font-weight: bold;
-      cursor: pointer;
-      margin-top: 10px;
-    }
+      .signup-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #54d12b;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-top: 10px;
+      }
 
-    .login-link {
-      margin-top: 15px;
-      font-size: 13px;
-    }
+      .login-link {
+        margin-top: 15px;
+        font-size: 13px;
+      }
 
-    .login-link a {
-      color: #54D12B;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
+      .login-link a {
+        color: #54d12b;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">🍴 FoodShare</div>
+      <nav>
+        <a href="#">About</a>
+        <a href="#">How it Works</a>
+        <a href="#">Contact</a>
+        <a href="Login.html" class="log-in-btn">Log In</a>
+      </nav>
+    </header>
 
-  <header>
-    <div class="logo">🍴 FoodShare</div>
-    <nav>
-      <a href="#">About</a>
-      <a href="#">How it Works</a>
-      <a href="#">Contact</a>
-      <button class="log-in-btn">Log In</button>
-    </nav>
-  </header>
+    <div class="container">
+      <h2>Create Your Account</h2>
 
-  <div class="container">
-    <h2>Create Your Account</h2>
+      <div class="toggle-role">
+        <button id="donorBtn" class="active">Donor</button>
+        <button id="charityBtn">Charity</button>
+      </div>
 
-    <div class="toggle-role">
-      <button id="donorBtn" class="active">Donor</button>
-      <button id="charityBtn">Charity</button>
+      <!-- Donor Signup Form -->
+      <form id="donorForm">
+        <label for="fullname">Full Name</label>
+        <input
+          type="text"
+          id="fullname"
+          placeholder="Enter your full name"
+          required
+        />
+
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="Enter your email"
+          required
+        />
+
+        <label for="phone">Phone Number</label>
+        <input
+          type="tel"
+          id="phone"
+          placeholder="Enter your phone number"
+          required
+        />
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Create a password"
+          required
+        />
+
+        <label for="confirm">Confirm Password</label>
+        <input
+          type="password"
+          id="confirm"
+          placeholder="Confirm your password"
+          required
+        />
+
+        <button type="submit" class="signup-btn">Sign Up as Donor</button>
+
+        <div class="login-link">
+          Already have an account? <a href="Login.html">Log in</a>
+        </div>
+      </form>
+
+      <!-- Charity Signup Form -->
+      <form id="charityForm" style="display: none">
+        <label for="orgname">Organization Name</label>
+        <input
+          type="text"
+          id="orgname"
+          placeholder="Enter organization name"
+          required
+        />
+
+        <label for="email2">Email Address</label>
+        <input
+          type="email"
+          id="email2"
+          placeholder="Enter your email"
+          required
+        />
+
+        <label for="phone2">Phone Number</label>
+        <input
+          type="tel"
+          id="phone2"
+          placeholder="Enter your phone number"
+          required
+        />
+
+        <label for="reg">Registration Number</label>
+        <input
+          type="text"
+          id="reg"
+          placeholder="Enter registration number"
+          required
+        />
+
+        <label for="password2">Password</label>
+        <input
+          type="password"
+          id="password2"
+          placeholder="Create a password"
+          required
+        />
+
+        <label for="confirm2">Confirm Password</label>
+        <input
+          type="password"
+          id="confirm2"
+          placeholder="Confirm your password"
+          required
+        />
+
+        <button type="submit" class="signup-btn">Sign Up as Charity</button>
+
+        <div class="login-link">
+          Already have an account? <a href="Login.html">Log in</a>
+        </div>
+      </form>
     </div>
 
-    <!-- Donor Signup Form -->
-    <form id="donorForm">
-      <label for="fullname">Full Name</label>
-      <input type="text" id="fullname" placeholder="Enter your full name" required />
+    <script>
+      const donorBtn = document.getElementById("donorBtn");
+      const charityBtn = document.getElementById("charityBtn");
+      const donorForm = document.getElementById("donorForm");
+      const charityForm = document.getElementById("charityForm");
 
-      <label for="email">Email Address</label>
-      <input type="email" id="email" placeholder="Enter your email" required />
+      donorBtn.addEventListener("click", () => {
+        donorBtn.classList.add("active");
+        charityBtn.classList.remove("active");
+        donorForm.style.display = "block";
+        charityForm.style.display = "none";
+      });
 
-      <label for="phone">Phone Number</label>
-      <input type="tel" id="phone" placeholder="Enter your phone number" required />
+      charityBtn.addEventListener("click", () => {
+        charityBtn.classList.add("active");
+        donorBtn.classList.remove("active");
+        donorForm.style.display = "none";
+        charityForm.style.display = "block";
+      });
 
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Create a password" required />
+      // Donor signup
+      document
+        .getElementById("donorForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const fullname = document.getElementById("fullname").value;
+          const email = document.getElementById("email").value;
+          const phone = document.getElementById("phone").value;
+          const password = document.getElementById("password").value;
+          const confirmPassword = document.getElementById("confirm").value;
 
-      <label for="confirm">Confirm Password</label>
-      <input type="password" id="confirm" placeholder="Confirm your password" required />
+          if (password !== confirmPassword)
+            return alert("⚠️ Passwords do not match");
 
-      <button type="submit" class="signup-btn">Sign Up as Donor</button>
+          try {
+            const response = await fetch("http://localhost:3000/signup/donor", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                fullname,
+                email,
+                phone,
+                password,
+                confirmPassword,
+              }),
+            });
 
-      <div class="login-link">
-        Already have an account? <a href="#">Log in</a>
-      </div>
-    </form>
+            const result = await response.json();
 
-    <!-- Charity Signup Form -->
-    <form id="charityForm" style="display: none;">
-      <label for="orgname">Organization Name</label>
-      <input type="text" id="orgname" placeholder="Enter organization name" required />
+            if (!response.ok) {
+              console.error("❌ Server error:", result.message);
+              return alert("❌ Signup failed: " + result.message);
+            }
 
-      <label for="email2">Email Address</label>
-      <input type="email" id="email2" placeholder="Enter your email" required />
-
-      <label for="phone2">Phone Number</label>
-      <input type="tel" id="phone2" placeholder="Enter your phone number" required />
-
-      <label for="reg">Registration Number</label>
-      <input type="text" id="reg" placeholder="Enter registration number" required />
-
-      <label for="password2">Password</label>
-      <input type="password" id="password2" placeholder="Create a password" required />
-
-      <label for="confirm2">Confirm Password</label>
-      <input type="password" id="confirm2" placeholder="Confirm your password" required />
-
-      <button type="submit" class="signup-btn">Sign Up as Charity</button>
-
-      <div class="login-link">
-        Already have an account? <a href="#">Log in</a>
-      </div>
-    </form>
-
-  </div>
-
-  <script>
-    const donorBtn = document.getElementById("donorBtn");
-    const charityBtn = document.getElementById("charityBtn");
-    const donorForm = document.getElementById("donorForm");
-    const charityForm = document.getElementById("charityForm");
-
-    donorBtn.addEventListener("click", () => {
-      donorBtn.classList.add("active");
-      charityBtn.classList.remove("active");
-      donorForm.style.display = "block";
-      charityForm.style.display = "none";
-    });
-
-    charityBtn.addEventListener("click", () => {
-      charityBtn.classList.add("active");
-      donorBtn.classList.remove("active");
-      donorForm.style.display = "none";
-      charityForm.style.display = "block";
-    });
-
-    // Donor signup
-    document.getElementById("donorForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const fullname = document.getElementById("fullname").value;
-      const email = document.getElementById("email").value;
-      const phone = document.getElementById("phone").value;
-      const password = document.getElementById("password").value;
-      const confirmPassword = document.getElementById("confirm").value;
-
-      if (password !== confirmPassword) return alert("⚠️ Passwords do not match");
-
-      try {
-        const response = await fetch("http://localhost:3000/signup/donor", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ fullname, email, phone, password, confirmPassword }),
+            alert("✅ " + result.message);
+          } catch (err) {
+            console.error("❌ Network error:", err);
+            alert("❌ Could not connect to server.");
+          }
         });
 
-        const result = await response.json();
+      // Charity signup
+      document
+        .getElementById("charityForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const orgname = document.getElementById("orgname").value;
+          const email = document.getElementById("email2").value;
+          const phone = document.getElementById("phone2").value;
+          const reg = document.getElementById("reg").value;
+          const password = document.getElementById("password2").value;
+          const confirmPassword = document.getElementById("confirm2").value;
 
-        if (!response.ok) {
-          console.error("❌ Server error:", result.message);
-          return alert("❌ Signup failed: " + result.message);
-        }
+          if (password !== confirmPassword)
+            return alert("⚠️ Passwords do not match");
 
-        alert("✅ " + result.message);
-      } catch (err) {
-        console.error("❌ Network error:", err);
-        alert("❌ Could not connect to server.");
-      }
-    });
+          try {
+            const response = await fetch(
+              "http://localhost:3000/signup/charity",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  orgname,
+                  email,
+                  phone,
+                  reg,
+                  password,
+                  confirmPassword,
+                }),
+              }
+            );
 
-    // Charity signup
-    document.getElementById("charityForm").addEventListener("submit", async function (e) {
-      e.preventDefault();
-      const orgname = document.getElementById("orgname").value;
-      const email = document.getElementById("email2").value;
-      const phone = document.getElementById("phone2").value;
-      const reg = document.getElementById("reg").value;
-      const password = document.getElementById("password2").value;
-      const confirmPassword = document.getElementById("confirm2").value;
+            const result = await response.json();
 
-      if (password !== confirmPassword) return alert("⚠️ Passwords do not match");
+            if (!response.ok) {
+              console.error("❌ Server error:", result.message);
+              return alert("❌ Signup failed: " + result.message);
+            }
 
-      try {
-        const response = await fetch("http://localhost:3000/signup/charity", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ orgname, email, phone, reg, password, confirmPassword }),
+            alert("✅ " + result.message);
+          } catch (err) {
+            console.error("❌ Network error:", err);
+            alert("❌ Could not connect to server.");
+          }
         });
-
-        const result = await response.json();
-
-        if (!response.ok) {
-          console.error("❌ Server error:", result.message);
-          return alert("❌ Signup failed: " + result.message);
-        }
-
-        alert("✅ " + result.message);
-      } catch (err) {
-        console.error("❌ Network error:", err);
-        alert("❌ Could not connect to server.");
-      }
-    });
-  </script>
-
-</body>
+    </script>
+  </body>
 </html>

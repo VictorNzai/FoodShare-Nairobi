@@ -5,6 +5,8 @@ const cors = require('cors');
 const mysql = require('mysql2');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
+const path = require('path');
+const authRoutes = require('../backend/Routes/auth'); // Assuming you have auth routes in this path
 const app = express();
 
 //  Middlewares
@@ -12,13 +14,16 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.use('/auth', authRoutes);
+app.use(express.static(path.join(__dirname, '../frontend')));
+
 //  MySQL DB Connection
 const db = mysql.createConnection({
     host: 'localhost',
     user: 'root',
     password: '', // <-- put your root password here if you have one
     database: 'foodshare_db',
-    port: 3307 // <-- add this line for XAMPP if using port 3307
+    port: 3306 // <-- add this line for XAMPP if using port 3307
 });
 
 db.connect(err => {

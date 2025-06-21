@@ -1,236 +1,252 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login - FoodShare</title>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      font-family: Arial, sans-serif;
-      box-sizing: border-box;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Login - FoodShare</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: Arial, sans-serif;
+        box-sizing: border-box;
+      }
 
-    body {
-      background-color: #f0f0f0;
-    }
+      body {
+        background-color: #f0f0f0;
+      }
 
-    header {
-      background: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px;
-      border-bottom: 1px solid #ddd;
-    }
+      header {
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        border-bottom: 1px solid #ddd;
+      }
 
-    .logo {
-      font-weight: bold;
-      font-size: 18px;
-    }
+      .logo {
+        font-weight: bold;
+        font-size: 18px;
+      }
 
-    nav a {
-      margin-left: 30px;
-      text-decoration: none;
-      color: #333;
-      font-size: 14px;
-    }
+      nav a {
+        margin-left: 30px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+      }
 
-    .sign-up-btn {
-      background-color: #54D12B;
-      color: white;
-      padding: 8px 18px;
-      border: none;
-      border-radius: 20px;
-      font-weight: bold;
-    }
+      .sign-up-btn {
+        background-color: #54d12b;
+        color: white;
+        padding: 8px 18px;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+      }
 
-    .container {
-      max-width: 400px;
-      margin: 60px auto;
-      background: white;
-      padding: 40px;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-      text-align: center;
-    }
+      .container {
+        max-width: 400px;
+        margin: 60px auto;
+        background: white;
+        padding: 40px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        text-align: center;
+      }
 
-    h2 {
-      margin-bottom: 30px;
-      color: #333;
-    }
+      h2 {
+        margin-bottom: 30px;
+        color: #333;
+      }
 
-    .toggle-role {
-      display: flex;
-      justify-content: space-between;
-      background-color: #eaf8e3;
-      border-radius: 25px;
-      overflow: hidden;
-      margin-bottom: 30px;
-    }
+      .toggle-role {
+        display: flex;
+        justify-content: space-between;
+        background-color: #eaf8e3;
+        border-radius: 25px;
+        overflow: hidden;
+        margin-bottom: 30px;
+      }
 
-    .toggle-role button {
-      flex: 1;
-      padding: 12px 0;
-      border: none;
-      background: none;
-      cursor: pointer;
-      font-weight: bold;
-      color: #333;
-    }
+      .toggle-role button {
+        flex: 1;
+        padding: 12px 0;
+        border: none;
+        background: none;
+        cursor: pointer;
+        font-weight: bold;
+        color: #333;
+      }
 
-    .toggle-role .active {
-      background-color: white;
-      border-radius: 25px;
-    }
+      .toggle-role .active {
+        background-color: white;
+        border-radius: 25px;
+      }
 
-    label {
-      display: block;
-      text-align: left;
-      margin: 10px 0 5px;
-      font-size: 14px;
-      color: #333;
-    }
+      label {
+        display: block;
+        text-align: left;
+        margin: 10px 0 5px;
+        font-size: 14px;
+        color: #333;
+      }
 
-    input {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 14px;
-    }
+      input {
+        width: 100%;
+        padding: 12px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        font-size: 14px;
+      }
 
-    .forgot {
-      text-align: right;
-      font-size: 12px;
-      color: #555;
-      margin-bottom: 20px;
-    }
+      .forgot {
+        text-align: right;
+        font-size: 12px;
+        color: #555;
+        margin-bottom: 20px;
+      }
 
-    .login-btn {
-      width: 100%;
-      padding: 12px;
-      background-color: #54D12B;
-      color: white;
-      border: none;
-      border-radius: 20px;
-      font-weight: bold;
-      cursor: pointer;
-    }
+      .login-btn {
+        width: 100%;
+        padding: 12px;
+        background-color: #54d12b;
+        color: white;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+      }
 
-    .signup-link {
-      margin-top: 15px;
-      font-size: 13px;
-    }
+      .signup-link {
+        margin-top: 15px;
+        font-size: 13px;
+      }
 
-    .signup-link a {
-      color: #54D12B;
-      text-decoration: none;
-    }
-  </style>
-</head>
-<body>
+      .signup-link a {
+        color: #54d12b;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">🍴 FoodShare</div>
+      <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">How it Works</a>
+        <a href="#">Contact</a>
+        <a href="Signup.html" class="sign-up-btn">Sign Up</a>
+      </nav>
+    </header>
 
-  <header>
-    <div class="logo">🍴 FoodShare</div>
-    <nav>
-      <a href="#">Home</a>
-      <a href="#">About</a>
-      <a href="#">How it Works</a>
-      <a href="#">Contact</a>
-      <button class="sign-up-btn">Sign Up</button>
-    </nav>
-  </header>
+    <div class="container">
+      <h2>Welcome Back</h2>
 
-  <div class="container">
-    <h2>Welcome Back</h2>
+      <div class="toggle-role">
+        <button class="active" onclick="setRole('donor', this)">Donor</button>
+        <button onclick="setRole('charity', this)">Charity</button>
+        <button onclick="setRole('admin', this)">Admin</button>
+      </div>
 
-    <div class="toggle-role">
-      <button class="active" onclick="setRole('donor', this)">Donor</button>
-      <button onclick="setRole('charity', this)">Charity</button>
-      <button onclick="setRole('admin', this)">Admin</button>
+      <form id="loginForm">
+        <input type="hidden" id="role" name="role" value="donor" />
+
+        <label for="email">Email Address</label>
+        <input
+          type="email"
+          id="email"
+          placeholder="your.email@example.com"
+          required
+        />
+
+        <label for="password">Password</label>
+        <input
+          type="password"
+          id="password"
+          placeholder="Enter your password"
+          required
+        />
+
+        <div id="accessKeyContainer" style="display: none">
+          <label for="accessKey">Admin Access Key</label>
+          <input type="text" id="accessKey" placeholder="Enter admin key" />
+        </div>
+
+        <div class="forgot">
+          <a href="ForgotPassword.html">Forgot Password?</a>
+        </div>
+
+        <button type="submit" class="login-btn">Log In</button>
+
+        <div class="signup-link">
+          Don't have an account? <a href="Signup.html">Sign Up</a>
+        </div>
+      </form>
     </div>
 
-    <form id="loginForm">
-      <input type="hidden" id="role" name="role" value="donor" />
+    <script>
+      function setRole(role, btn) {
+        document.getElementById("role").value = role;
 
-      <label for="email">Email Address</label>
-      <input type="email" id="email" placeholder="your.email@example.com" required />
+        document
+          .querySelectorAll(".toggle-role button")
+          .forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
 
-      <label for="password">Password</label>
-      <input type="password" id="password" placeholder="Enter your password" required />
-
-      <div id="accessKeyContainer" style="display: none;">
-        <label for="accessKey">Admin Access Key</label>
-        <input type="text" id="accessKey" placeholder="Enter admin key" />
-      </div>
-
-      <div class="forgot"><a href="#">Forgot Password?</a></div>
-
-      <button type="submit" class="login-btn">Log In</button>
-
-      <div class="signup-link">
-        Don't have an account? <a href="#">Sign Up</a>
-      </div>
-    </form>
-  </div>
-
-  <script>
-    function setRole(role, btn) {
-      document.getElementById('role').value = role;
-
-      document.querySelectorAll('.toggle-role button').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
-
-      const accessKeyContainer = document.getElementById('accessKeyContainer');
-      accessKeyContainer.style.display = role === 'admin' ? 'block' : 'none';
-    }
-
-    document.getElementById('loginForm').addEventListener('submit', async function (e) {
-      e.preventDefault();
-
-      const email = document.getElementById('email').value;
-      const password = document.getElementById('password').value;
-      const role = document.getElementById('role').value;
-      const accessKey = document.getElementById('accessKey').value;
-
-      let endpoint = '';
-      let body = {};
-
-      if (role === 'donor') {
-        endpoint = 'http://localhost:3000/auth/login/donor';
-        body = { email, password };
-      } else if (role === 'charity') {
-        endpoint = 'http://localhost:3000/auth/login/charity';
-        body = { email, password };
-      } else if (role === 'admin') {
-        endpoint = 'http://localhost:3000/auth/login';
-        body = { email, password, role, accessKey };
+        const accessKeyContainer =
+          document.getElementById("accessKeyContainer");
+        accessKeyContainer.style.display = role === "admin" ? "block" : "none";
       }
 
-      const response = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
-      });
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-      const data = await response.json();
-      if (data.dashboard) {
-        window.location.href = data.dashboard;
-      } else if (data.success) {
-        // Redirect based on role
-        if (role === 'donor') {
-          window.location.href = '/donor/dashboard.html';
-        } else if (role === 'charity') {
-          window.location.href = '/charity/dashboard.html';
-        }
-      } else {
-        alert(data.message || data.error || 'Login failed');
-      }
-    });
-  </script>
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const role = document.getElementById("role").value;
+          const accessKey = document.getElementById("accessKey").value;
 
-</body>
+          let endpoint = "";
+          let body = {};
+
+          if (role === "donor") {
+            endpoint = "http://localhost:3000/auth/login/donor";
+            body = { email, password };
+          } else if (role === "charity") {
+            endpoint = "http://localhost:3000/auth/login/charity";
+            body = { email, password };
+          } else if (role === "admin") {
+            endpoint = "http://localhost:3000/auth/login";
+            body = { email, password, role, accessKey };
+          }
+
+          const response = await fetch(endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(body),
+          });
+
+          const data = await response.json();
+          if (data.dashboard) {
+            window.location.href = data.dashboard;
+          } else if (data.success) {
+            // Redirect based on role
+            if (role === "donor") {
+              window.location.href = "./Food Donor Pages/FoodDonor.html";
+            } else if (role === "charity") {
+              window.location.href =
+                "./Charitable Institution Pages/CharityDashboard.html";
+            }
+          } else {
+            alert(data.message || data.error || "Login failed");
+          }
+        });
+    </script>
+  </body>
 </html>
