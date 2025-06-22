@@ -5,6 +5,9 @@ const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
+// Base URL for password reset links
+const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+
 //  Direct DB connection
 const db = mysql.createConnection({
     host: '25.18.191.107',
@@ -40,7 +43,7 @@ router.post('/forgot-password', (req, res) => {
       }
     });
 
-    const resetLink = `http://localhost:3000/reset-password.html?token=${token}&role=${role}`;
+    const resetLink = `${baseUrl}/reset-password.html?token=${token}&role=${role}`;
     const mailOptions = {
       from: 'vicbiznetworks@gmail.com',
       to: email,
