@@ -7,11 +7,11 @@ const nodemailer = require('nodemailer');
 
 //  Direct DB connection
 const db = mysql.createConnection({
-  host: 'localhost',
-  user: 'root',
-  password: '', // Your MySQL password (if any)
-  database: 'foodshare_db',
-  port: 3306
+    host: '25.18.191.107',
+    user: 'Dexter',
+    password: 'F00dshare123',
+    database: 'foodshare_db',
+    port: 3306
 });
 
 db.connect((err) => {

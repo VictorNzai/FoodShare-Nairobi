@@ -19,11 +19,11 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 
 //  MySQL DB Connection
 const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '', // <-- put your root password here if you have one
-    database: 'foodshare_db',
-    port: 3306 // <-- add this line for XAMPP if using port 3307
+    host: '25.18.191.107',      // your friend's server IP
+    user: 'Dexter',             // your friend's MySQL username
+    password: 'F00dshare123',   // your friend's MySQL password
+    database: 'foodshare_db',   // your friend's database name
+    port: 3306                  // default MySQL port
 });
 
 db.connect(err => {
