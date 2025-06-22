@@ -18,6 +18,9 @@
       align-items: center;
       padding: 20px 40px;
       border-bottom: 1px solid #ddd;
+      position: relative;
+      z-index: 2;
+      height: 70px; /* Set a fixed height for reference */
     }
     .logo {
       font-weight: bold;
@@ -29,19 +32,25 @@
       color: #333;
       font-size: 14px;
     }
-    nav a:hover {
-      text-decoration: underline;
+    .sign-up-btn {
+      background-color: #54d12b;
+      color: white;
+      padding: 8px 18px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
     }
     .sidebar {
       position: fixed;
-      top: 0;
+      top: 70px; /* Start below the header */
       left: 0;
       width: 240px;
-      height: 100vh;
+      height: calc(100vh - 70px); /* Adjust height */
       background: #ffffff;
       border-right: 1px solid #ddd;
       padding-top: 30px;
       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.03);
+      z-index: 1;
     }
     .sidebar h2 {
       margin-left: 30px;
@@ -79,6 +88,7 @@
     .main-content {
       margin-left: 240px;
       padding: 40px;
+      margin-top: 70px; /* Add margin to avoid hiding under header */
     }
     .main-content h1 {
       font-size: 28px;
@@ -183,7 +193,7 @@
       <a href="../BrowseCharities.html">Browse Charities</a>
       <a href="../Donate.html">Donate</a>
       <a href="../Login.html">Log In</a>
-      <a href="../Signup.html">Sign Up</a>
+      <a href="../Signup.html" class="sign-up-btn">Sign Up</a>
     </nav>
   </header>
   <div class="sidebar">
