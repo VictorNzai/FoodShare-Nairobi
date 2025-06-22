@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Helping Hands - Dashboard</title>
+  <title>Charity Dashboard - FoodShare</title>
   <style>
     body {
       margin: 0;
@@ -196,7 +196,7 @@
     </nav>
   </header>
   <div class="sidebar">
-    <h2>Helping Hands</h2>
+    <h2 id="charity-name">Charity Org</h2>
     <nav>
       <a href="#" class="active">Dashboard</a>
       <a href="#">Requests</a>
@@ -277,9 +277,13 @@
       </table>
     </div>
   </div>
+
   <script>
+    const name = localStorage.getItem("charityName") || "Charity Org";
+    document.getElementById("charity-name").textContent = name;
+
     function signOut() {
-      // Optionally clear session or token here
+      localStorage.removeItem("charityName");
       window.location.href = "../Login.html";
     }
   </script>

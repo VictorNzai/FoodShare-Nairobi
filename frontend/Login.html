@@ -192,60 +192,62 @@
       function setRole(role, btn) {
         document.getElementById("role").value = role;
 
-        document
-          .querySelectorAll(".toggle-role button")
-          .forEach((b) => b.classList.remove("active"));
+        document.querySelectorAll(".toggle-role button").forEach((b) =>
+          b.classList.remove("active")
+        );
         btn.classList.add("active");
 
-        const accessKeyContainer =
-          document.getElementById("accessKeyContainer");
+        const accessKeyContainer = document.getElementById("accessKeyContainer");
         accessKeyContainer.style.display = role === "admin" ? "block" : "none";
       }
 
-      document
-        .getElementById("loginForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
+      document.getElementById("loginForm").addEventListener("submit", async function (e) {
+        e.preventDefault();
 
-          const email = document.getElementById("email").value;
-          const password = document.getElementById("password").value;
-          const role = document.getElementById("role").value;
-          const accessKey = document.getElementById("accessKey").value;
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+        const role = document.getElementById("role").value;
+        const accessKey = document.getElementById("accessKey").value;
 
-          let endpoint = "";
-          let body = { email, password };
+        let endpoint = "";
+        let body = { email, password };
 
-          if (role === "donor") {
-            endpoint = "http://localhost:3000/auth/login/donor";
-            body = { email, password };
-          } else if (role === "charity") {
-            endpoint = "http://localhost:3000/auth/login/charity";
-            body = { email, password };
-          } else if (role === "admin") {
-            endpoint = "http://localhost:3000/auth/login";
-            body = { email, password, role, accessKey };
-          }
+        if (role === "donor") {
+          endpoint = "http://localhost:3000/auth/login/donor";
+        } else if (role === "charity") {
+          endpoint = "http://localhost:3000/auth/login/charity";
+        } else if (role === "admin") {
+          endpoint = "http://localhost:3000/auth/login";
+          body = { email, password, role, accessKey };
+        }
 
+        try {
           const response = await fetch(endpoint, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(body),
           });
 
-      const data = await response.json();
-      if (data.success) {
-        if (role === 'charity') {
-          window.location.href = 'Charity Pages/CharityDashboard.html';
-        } else if (role === 'donor') {
-          window.location.href = 'Food Donor Pages/FoodDonor.html';
-        } else {
-          window.location.href = 'AdminDashboard.html'; // or your admin page
-        }
-      } else {
-        alert(data.message || 'Login failed');
-      }
-    });
-  </script>
+          const data = await response.json();
 
-</body>
+          if (data.success) {
+            if (role === "donor") {
+              localStorage.setItem("donorName", data.donor.fullname);
+              window.location.href = "Food Donor Pages/FoodDonor.html";
+            } else if (role === "charity") {
+              localStorage.setItem("charityName", data.charity.orgname);
+              window.location.href = "Charity Pages/CharityDashboard.html";
+            } else {
+              window.location.href = "AdminDashboard.html";
+            }
+          } else {
+            alert(data.message || "Login failed");
+          }
+        } catch (error) {
+          console.error("Login error:", error);
+          alert("An error occurred during login.");
+        }
+      });
+    </script>
+  </body>
 </html>
