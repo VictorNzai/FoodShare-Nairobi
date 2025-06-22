@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donor Dashboard - FoodShare</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      font-family: Arial, sans-serif;
+      box-sizing: border-box;
+    }
+
+    body {
+      background-color: #f0f0f0;
+    }
+
+    header {
+      background: white;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 20px 40px;
+      border-bottom: 1px solid #ddd;
+    }
+
+    .logo {
+      font-weight: bold;
+      font-size: 18px;
+    }
+
+    nav a {
+      margin-left: 30px;
+      text-decoration: none;
+      color: #333;
+      font-size: 14px;
+    }
+
+    .logout-btn {
+      background-color: #e74c3c;
+      color: white;
+      padding: 8px 18px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 40px auto;
+      background: white;
+      padding: 40px;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    h2 {
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    .section {
+      margin-top: 30px;
+    }
+
+    .section h3 {
+      margin-bottom: 15px;
+      color: #444;
+    }
+
+    .button {
+      background-color: #54d12b;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-right: 10px;
+    }
+
+    .request-card {
+      background: #f9f9f9;
+      border: 1px solid #ddd;
+      padding: 20px;
+      border-radius: 10px;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🍴 FoodShare</div>
+    <nav>
+      <a href="#">Dashboard</a>
+      <a href="#">My Donations</a>
+      <a href="#">Settings</a>
+      <button class="logout-btn" onclick="logout()">Log Out</button>
+    </nav>
+  </header>
+
+  <div class="container">
+    <h2>Hello, Donor!</h2>
+
+    <div class="section">
+      <h3>Actions</h3>
+      <button class="button" onclick="window.location.href='donate.html'">Donate Food</button>
+      <button class="button" onclick="window.location.href='requests.html'">View Food Requests</button>
+    </div>
+
+    <div class="section">
+      <h3>Recent Requests</h3>
+      <div class="request-card">
+        <strong>Institution:</strong> Hope Center<br />
+        <strong>Requested:</strong> Rice, Beans<br />
+        <strong>Needed By:</strong> 25th June
+        <br><br>
+        <button class="button">Fulfill Request</button>
+      </div>
+      <!-- More request cards can be appended dynamically -->
+    </div>
+  </div>
+
+  <script>
+    function logout() {
+      // Clear tokens if stored and redirect to login
+      localStorage.clear();
+      window.location.href = '../Login.html';
+    }
+  </script>
+</body>
+</html>
