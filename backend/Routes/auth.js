@@ -45,7 +45,10 @@ router.post('/forgot-password', (req, res) => {
       from: 'vicbiznetworks@gmail.com',
       to: email,
       subject: 'Password Reset - FoodShare',
-      html: `<p>You requested a password reset. <a href="${resetLink}">Click here to reset</a>. Link expires in 1 hour.</p>`
+      html: `<p>You requested a password reset. 
+              <a href="${resetLink}">Click here to reset</a>. Link expires in 1 hour.<br>
+              If the link doesn’t work, copy and paste this token into the reset form:<br>
+              <code>${token}</code></p>`
     };
 
     transporter.sendMail(mailOptions, (emailErr, info) => {
