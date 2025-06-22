@@ -193,21 +193,18 @@
 
       const email = document.getElementById('email').value;
       const password = document.getElementById('password').value;
-      const role = document.getElementById('role').value;
-      const accessKey = document.getElementById('accessKey').value;
+      const role = document.getElementById('role') ? document.getElementById('role').value : null;
 
       let endpoint = '';
-      let body = {};
+      let body = { email, password };
 
       if (role === 'donor') {
         endpoint = 'http://localhost:3000/auth/login/donor';
-        body = { email, password };
       } else if (role === 'charity') {
         endpoint = 'http://localhost:3000/auth/login/charity';
-        body = { email, password };
-      } else if (role === 'admin') {
+      } else {
         endpoint = 'http://localhost:3000/auth/login';
-        body = { email, password, role, accessKey };
+        body.role = role;
       }
 
       const response = await fetch(endpoint, {
@@ -217,17 +214,16 @@
       });
 
       const data = await response.json();
-      if (data.dashboard) {
-        window.location.href = data.dashboard;
-      } else if (data.success) {
-        // Redirect based on role
-        if (role === 'donor') {
-          window.location.href = '/donor/dashboard.html';
-        } else if (role === 'charity') {
-          window.location.href = '/charity/dashboard.html';
+      if (data.success) {
+        if (role === 'charity') {
+          window.location.href = 'Charity Pages/CharityDashboard.html';
+        } else if (role === 'donor') {
+          window.location.href = 'Food Donor Pages/FoodDonor.html';
+        } else {
+          window.location.href = 'AdminDashboard.html'; // or your admin page
         }
       } else {
-        alert(data.message || data.error || 'Login failed');
+        alert(data.message || 'Login failed');
       }
     });
   </script>

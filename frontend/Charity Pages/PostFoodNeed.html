@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Post a New Food Need - FoodShare</title>
+  <style>
+    body {
+      background: #f4f6f8;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    .container {
+      max-width: 500px;
+      margin: 60px auto;
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+      padding: 40px 30px;
+    }
+    h2 {
+      color: #54D12B;
+      margin-bottom: 30px;
+      text-align: center;
+    }
+    label {
+      display: block;
+      margin-bottom: 8px;
+      color: #333;
+      font-weight: bold;
+    }
+    input, textarea {
+      width: 100%;
+      padding: 10px;
+      margin-bottom: 22px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      font-size: 15px;
+      box-sizing: border-box;
+    }
+    textarea {
+      min-height: 70px;
+      resize: vertical;
+    }
+    .submit-btn {
+      background: #54D12B;
+      color: #fff;
+      border: none;
+      border-radius: 20px;
+      padding: 12px 0;
+      width: 100%;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .submit-btn:hover {
+      background: #43a81a;
+    }
+    .back-link {
+      display: block;
+      text-align: center;
+      margin-top: 18px;
+      color: #54D12B;
+      text-decoration: none;
+      font-size: 15px;
+    }
+    .back-link:hover {
+      text-decoration: underline;
+    }
+    header {
+      background: #fff;
+      padding: 10px 0;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+      position: relative;
+      z-index: 1000;
+    }
+    .logo {
+      font-size: 24px;
+      font-weight: bold;
+      color: #54D12B;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+    nav {
+      text-align: center;
+    }
+    nav a {
+      margin: 0 15px;
+      color: #333;
+      text-decoration: none;
+      font-weight: 500;
+    }
+    nav a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">🍴 FoodShare</div>
+    <nav>
+      <a href="../BrowseCharities.html">Browse Charities</a>
+      <a href="../Donate.html">Donate</a>
+      <a href="../Login.html">Log In</a>
+      <a href="../Signup.html">Sign Up</a>
+    </nav>
+  </header>
+  <div class="container">
+    <h2>Post a New Food Need</h2>
+    <form id="foodNeedForm">
+      <label for="foodItem">Food Item</label>
+      <input type="text" id="foodItem" name="foodItem" required />
+
+      <label for="quantity">Quantity</label>
+      <input type="text" id="quantity" name="quantity" required />
+
+      <label for="pickupLocation">Pickup Location</label>
+      <input type="text" id="pickupLocation" name="pickupLocation" required />
+
+      <label for="notes">Additional Notes</label>
+      <textarea id="notes" name="notes" placeholder="Any extra information..."></textarea>
+
+      <button type="submit" class="submit-btn">Submit Need</button>
+    </form>
+    <a href="CharityDashboard.html" class="back-link">← Back to Dashboard</a>
+  </div>
+  <script>
+    document.getElementById('foodNeedForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      // You can add your fetch/POST logic here
+      alert('Food need submitted!');
+      window.location.href = "CharityDashboard.html";
+    });
+  </script>
+</body>
+</html>
