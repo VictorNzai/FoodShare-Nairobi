@@ -307,6 +307,8 @@
             }
 
             alert("✅ " + result.message);
+            // Redirect to FoodDonor.html after successful signup
+            window.location.href = "Food Donor Pages/FoodDonor.html";
           } catch (err) {
             console.error("❌ Network error:", err);
             alert("❌ Could not connect to server.");
