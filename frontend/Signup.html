@@ -355,6 +355,17 @@
             }
 
             alert("✅ " + result.message);
+            // Store charity info in localStorage for profile/dashboard linkage
+            const charityJwt = {
+              name: orgname,
+              email: email,
+              phone: phone,
+              reg: reg,
+              verified: false
+            };
+            localStorage.setItem('jwt', JSON.stringify(charityJwt));
+            // Redirect to CharityDashboard.html after successful signup
+            window.location.href = "Charity Pages/CharityDashboard.html";
           } catch (err) {
             console.error("❌ Network error:", err);
             alert("❌ Could not connect to server.");

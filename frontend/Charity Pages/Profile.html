@@ -348,7 +348,12 @@
             jwt.contact = form.contact.value;
             jwt.desc = form.desc.value;
             setJWT(jwt);
-            location.reload();
+            // Hide verify button and form after submission
+            const actions = document.querySelector('.profile-actions');
+            if (actions) actions.style.display = 'none';
+            form.style.display = 'none';
+            // Optionally, update status text
+            document.getElementById('verifyStatus').innerHTML = '<span class="not-verified">Verification Pending</span>';
           } else {
             alert('Failed to submit verification. Please try again.');
           }

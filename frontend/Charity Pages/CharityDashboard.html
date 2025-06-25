@@ -294,7 +294,11 @@
       window.location.href = "../Login.html";
     }
     // Set greeting from localStorage if available
-    const charityName = localStorage.getItem('charityName') || 'Charity Org';
+    let charityName = 'Charity Org';
+    try {
+      const jwt = JSON.parse(localStorage.getItem('jwt'));
+      if (jwt && jwt.name) charityName = jwt.name;
+    } catch {}
     document.getElementById('charity-greeting').textContent = `Welcome back, ${charityName}`;
 
     // Dynamically load food needs from localStorage

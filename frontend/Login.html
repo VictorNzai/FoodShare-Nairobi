@@ -235,7 +235,15 @@
               localStorage.setItem("donorName", data.donor.fullname);
               window.location.href = "Food Donor Pages/FoodDonor.html";
             } else if (role === "charity") {
-              localStorage.setItem("charityName", data.charity.orgname);
+              // Store full charity info for profile/dashboard linkage
+              const charityJwt = {
+                name: data.charity.orgname,
+                email: data.charity.email,
+                phone: data.charity.phone,
+                reg: data.charity.reg,
+                verified: false // You can update this if you return verification status from backend
+              };
+              localStorage.setItem('jwt', JSON.stringify(charityJwt));
               window.location.href = "Charity Pages/CharityDashboard.html";
             } else {
               window.location.href = "AdminDashboard.html";
