@@ -18,6 +18,7 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/auth', authRoutes);
 app.use(express.static(path.join(__dirname, '../frontend')));
+app.use('/uploads/charity-verifications', express.static(path.join(__dirname, 'uploads/charity-verifications')));
 
 // --- Charity Verification Uploads ---
 const uploadDir = path.join(__dirname, './uploads/charity-verifications');
