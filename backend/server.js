@@ -7,6 +7,8 @@ const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const path = require('path');
 const authRoutes = require('../backend/Routes/auth'); // Assuming you have auth routes in this path
+const multer = require('multer');
+const fs = require('fs');
 const app = express();
 
 //  Middlewares
@@ -16,6 +18,22 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use('/auth', authRoutes);
 app.use(express.static(path.join(__dirname, '../frontend')));
+
+// --- Charity Verification Uploads ---
+const uploadDir = path.join(__dirname, './uploads/charity-verifications');
+if (!fs.existsSync(uploadDir)) {
+  fs.mkdirSync(uploadDir, { recursive: true });
+}
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, uploadDir);
+  },
+  filename: function (req, file, cb) {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    cb(null, uniqueSuffix + '-' + file.originalname.replace(/\s+/g, '_'));
+  }
+});
+const upload = multer({ storage: storage });
 
 //  MySQL DB Connection
 const db = mysql.createConnection({
@@ -141,6 +159,30 @@ app.post('/auth/login/charity', (req, res) => {
     const match = await bcrypt.compare(password, charity.password);
     if (!match) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     return res.json({ success: true, message: 'Login successful', charity: { id: charity.id, orgname: charity.orgname, email: charity.email, phone: charity.phone, reg: charity.reg } });
+  });
+});
+
+// POST /api/verify-charity
+app.post('/api/verify-charity', upload.fields([
+  { name: 'idUpload', maxCount: 1 },
+  { name: 'certUpload', maxCount: 1 }
+]), (req, res) => {
+  const { charityName, address, contact, desc } = req.body;
+  const idFile = req.files['idUpload'] ? req.files['idUpload'][0].filename : null;
+  const certFile = req.files['certUpload'] ? req.files['certUpload'][0].filename : null;
+
+  if (!charityName || !address || !contact || !desc || !idFile || !certFile) {
+    return res.status(400).json({ success: false, message: 'Missing required fields or files.' });
+  }
+
+  // Insert into a table, e.g., charity_verifications
+  const sql = `INSERT INTO charity_verifications (charity_name, address, contact, description, id_file, cert_file, status, submitted_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())`;
+  db.query(sql, [charityName, address, contact, desc, idFile, certFile], (err, result) => {
+    if (err) {
+      console.error('DB error:', err);
+      return res.status(500).json({ success: false, message: 'Database error.' });
+    }
+    return res.json({ success: true, message: 'Verification submitted.' });
   });
 });
 
