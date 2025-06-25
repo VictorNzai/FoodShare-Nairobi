@@ -138,7 +138,25 @@
   <script>
     document.getElementById('foodNeedForm').addEventListener('submit', function(e) {
       e.preventDefault();
-      // You can add your fetch/POST logic here
+      // Collect form data
+      const foodItem = document.getElementById('foodItem').value;
+      const quantity = document.getElementById('quantity').value;
+      const pickupLocation = document.getElementById('pickupLocation').value;
+      const notes = document.getElementById('notes').value;
+      // Create food need object
+      const today = new Date();
+      const dateStr = today.toISOString().slice(0, 10);
+      const foodNeed = {
+        date: dateStr,
+        type: 'Request',
+        details: foodItem + (notes ? ' (' + notes + ')' : ''),
+        status: 'Pending',
+        amount: quantity
+      };
+      // Save to localStorage
+      let foodNeeds = JSON.parse(localStorage.getItem('foodNeeds') || '[]');
+      foodNeeds.unshift(foodNeed); // Add to start
+      localStorage.setItem('foodNeeds', JSON.stringify(foodNeeds));
       alert('Food need submitted!');
       window.location.href = "CharityDashboard.html";
     });

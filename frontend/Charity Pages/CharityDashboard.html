@@ -270,7 +270,7 @@
         <div class="table-section">
           <h3>Recent Activity</h3>
           <div class="table-wrap">
-            <table>
+            <table id="recent-activity-table">
               <thead>
                 <tr>
                   <th>Date</th>
@@ -280,35 +280,8 @@
                   <th>Amount</th>
                 </tr>
               </thead>
-              <tbody>
-                <tr>
-                  <td>2024-06-20</td>
-                  <td>Request</td>
-                  <td>Food Request #201</td>
-                  <td><span class="status">Pending</span></td>
-                  <td>100 kg</td>
-                </tr>
-                <tr>
-                  <td>2024-06-18</td>
-                  <td>Donation</td>
-                  <td>Donation from DonorX</td>
-                  <td><span class="status">Received</span></td>
-                  <td>50 kg</td>
-                </tr>
-                <tr>
-                  <td>2024-06-15</td>
-                  <td>Request</td>
-                  <td>Food Request #200</td>
-                  <td><span class="status">Completed</span></td>
-                  <td>80 kg</td>
-                </tr>
-                <tr>
-                  <td>2024-06-12</td>
-                  <td>Donation</td>
-                  <td>Donation from DonorY</td>
-                  <td><span class="status">Received</span></td>
-                  <td>120 kg</td>
-                </tr>
+              <tbody id="recent-activity-body">
+                <!-- Dynamic rows will be inserted here -->
               </tbody>
             </table>
           </div>
@@ -323,6 +296,58 @@
     // Set greeting from localStorage if available
     const charityName = localStorage.getItem('charityName') || 'Charity Org';
     document.getElementById('charity-greeting').textContent = `Welcome back, ${charityName}`;
+
+    // Dynamically load food needs from localStorage
+    function renderRecentActivity() {
+      const tbody = document.getElementById('recent-activity-body');
+      tbody.innerHTML = '';
+      // Get food needs from localStorage
+      let foodNeeds = JSON.parse(localStorage.getItem('foodNeeds') || '[]');
+      // Add food needs rows
+      foodNeeds.forEach(need => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${need.date}</td>
+          <td>${need.type}</td>
+          <td>${need.details}</td>
+          <td><span class="status">${need.status}</span></td>
+          <td>${need.amount}</td>
+        `;
+        tbody.appendChild(tr);
+      });
+      // Add static rows (existing hardcoded rows)
+      tbody.innerHTML += `
+        <tr>
+          <td>2024-06-20</td>
+          <td>Request</td>
+          <td>Food Request #201</td>
+          <td><span class="status">Pending</span></td>
+          <td>100 kg</td>
+        </tr>
+        <tr>
+          <td>2024-06-18</td>
+          <td>Donation</td>
+          <td>Donation from DonorX</td>
+          <td><span class="status">Received</span></td>
+          <td>50 kg</td>
+        </tr>
+        <tr>
+          <td>2024-06-15</td>
+          <td>Request</td>
+          <td>Food Request #200</td>
+          <td><span class="status">Completed</span></td>
+          <td>80 kg</td>
+        </tr>
+        <tr>
+          <td>2024-06-12</td>
+          <td>Donation</td>
+          <td>Donation from DonorY</td>
+          <td><span class="status">Received</span></td>
+          <td>120 kg</td>
+        </tr>
+      `;
+    }
+    renderRecentActivity();
   </script>
 </body>
 </html>
