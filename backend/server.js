@@ -36,17 +36,21 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 //  MySQL DB Connection
-const db = mysql.createConnection({
-    host: '25.18.191.107',      // your friend's server IP
-    user: 'Dexter',             // your friend's MySQL username
-    password: 'F00dshare123',   // your friend's MySQL password
-    database: 'foodshare_db',   // your friend's database name
-    port: 3306                  // default MySQL port
+const pool = mysql.createPool({
+    host: '25.18.191.107',
+    user: 'Dexter',
+    password: 'F00dshare123',
+    database: 'foodshare_db',
+    port: 3306,
+    waitForConnections: true,
+    connectionLimit: 10,
+    queueLimit: 0
 });
 
-db.connect(err => {
+pool.getConnection((err, connection) => {
   if (err) throw err;
   console.log(' Connected to foodshare_db');
+  connection.release();
 });
 
 //  Donor Signup Endpoint (using 'donor' table)
@@ -60,7 +64,7 @@ app.post('/signup/donor', async (req, res) => {
 
     // If your donor table uses 'email', keep as is. If it's 'mail', change below.
     const donorQuery = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
-    db.query(donorQuery, [fullname, email, phone, hashedPassword], (err, result) => {
+    pool.query(donorQuery, [fullname, email, phone, hashedPassword], (err, result) => {
       if (err) {
         console.error(' Error inserting donor:', err);
         return res.status(500).json({ success: false, message: err.sqlMessage || 'Email already exists or DB error' });
@@ -83,7 +87,7 @@ app.post('/signup/charity', async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const charityQuery = 'INSERT INTO charity (orgname, email, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
-    db.query(charityQuery, [orgname, email, phone, reg, hashedPassword], (err, result) => {
+    pool.query(charityQuery, [orgname, email, phone, reg, hashedPassword], (err, result) => {
       if (err) {
         console.error(' Error inserting charity:', err);
         return res.status(500).json({ success: false, message: err.sqlMessage || 'Email already exists or DB error' });
@@ -100,7 +104,7 @@ app.post('/signup/charity', async (req, res) => {
 app.post('/auth/login', (req, res) => {
   const { email, password, role, accessKey } = req.body;
   let query = 'SELECT * FROM users WHERE email = ? AND role = ?';
-  db.query(query, [email, role], async (err, results) => {
+  pool.query(query, [email, role], async (err, results) => {
     if (err) {
       console.error(' Login error:', err);
       return res.status(500).json({ message: 'Server error' });
@@ -115,7 +119,7 @@ app.post('/auth/login', (req, res) => {
     }
     // If admin, check accessKey
     if (role === 'admin') {
-      db.query('SELECT * FROM admins WHERE user_id = ?', [user.id], (err2, adminRows) => {
+      pool.query('SELECT * FROM admins WHERE user_id = ?', [user.id], (err2, adminRows) => {
         if (err2 || adminRows.length === 0) {
           return res.status(401).json({ message: 'Admin not found' });
         }
@@ -138,7 +142,7 @@ app.post('/auth/login', (req, res) => {
 app.post('/auth/login/donor', (req, res) => {
   const { email, password } = req.body;
   const query = 'SELECT * FROM donor WHERE email = ?'; // Use 'mail' if that's your column name
-  db.query(query, [email], async (err, results) => {
+  pool.query(query, [email], async (err, results) => {
     if (err) return res.status(500).json({ success: false, message: 'Server error' });
     if (results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const donor = results[0];
@@ -152,7 +156,7 @@ app.post('/auth/login/donor', (req, res) => {
 app.post('/auth/login/charity', (req, res) => {
   const { email, password } = req.body;
   const query = 'SELECT * FROM charity WHERE email = ?';
-  db.query(query, [email], async (err, results) => {
+  pool.query(query, [email], async (err, results) => {
     if (err) return res.status(500).json({ success: false, message: 'Server error' });
     if (results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const charity = results[0];
@@ -177,7 +181,7 @@ app.post('/api/verify-charity', upload.fields([
 
   // Insert into a table, e.g., charity_verifications
   const sql = `INSERT INTO charity_verifications (charity_name, address, contact, description, id_file, cert_file, status, submitted_at) VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())`;
-  db.query(sql, [charityName, address, contact, desc, idFile, certFile], (err, result) => {
+  pool.query(sql, [charityName, address, contact, desc, idFile, certFile], (err, result) => {
     if (err) {
       console.error('DB error:', err);
       return res.status(500).json({ success: false, message: 'Database error.' });

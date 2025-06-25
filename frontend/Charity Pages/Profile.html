@@ -336,7 +336,7 @@
         const formData = new FormData(form);
         formData.append('charityName', jwt.name);
         try {
-          const response = await fetch('/api/verify-charity', {
+          const response = await fetch('http://localhost:3000/api/verify-charity', {
             method: 'POST',
             body: formData
           });
