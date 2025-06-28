@@ -191,6 +191,41 @@ app.post('/api/verify-charity', upload.fields([
   });
 });
 
+// POST /api/foodneeds - Add a new food need
+app.post('/api/foodneeds', (req, res) => {
+  const { orgName, date, foodItem, quantity, pickupLocation, notes, status } = req.body;
+  if (!orgName || !date || !foodItem || !quantity || !pickupLocation) {
+    return res.status(400).json({ success: false, message: 'Missing required fields.' });
+  }
+  const sql = `
+    INSERT INTO food_needs (org_name, date, food_item, quantity, pickup_location, notes, status)
+    VALUES (?, ?, ?, ?, ?, ?, ?)
+  `;
+  pool.query(sql, [orgName, date, foodItem, quantity, pickupLocation, notes || '', status || 'Pending'], (err, result) => {
+    if (err) {
+      console.error('DB error:', err);
+      return res.status(500).json({ success: false, message: 'Database error.' });
+    }
+    return res.json({ success: true, message: 'Food need submitted.' });
+  });
+});
+
+// GET /api/foodneeds?org=ORG_NAME - Get food needs for an org
+app.get('/api/foodneeds', (req, res) => {
+  const orgName = req.query.org;
+  if (!orgName) {
+    return res.status(400).json({ success: false, message: 'Missing org name.' });
+  }
+  const sql = `SELECT * FROM food_needs WHERE org_name = ? ORDER BY date DESC, id DESC`;
+  pool.query(sql, [orgName], (err, results) => {
+    if (err) {
+      console.error('DB error:', err);
+      return res.status(500).json({ success: false, message: 'Database error.' });
+    }
+    return res.json(results);
+  });
+});
+
 //  Start Server
 app.listen(3000, () => {
   console.log(' Server running on http://localhost:3000');
