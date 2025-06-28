@@ -275,9 +275,11 @@
                 <tr>
                   <th>Date</th>
                   <th>Type</th>
-                  <th>Details</th>
+                  <th>Food Item</th>
+                  <th>Quantity</th>
+                  <th>Pickup Location</th>
+                  <th>Notes</th>
                   <th>Status</th>
-                  <th>Amount</th>
                 </tr>
               </thead>
               <tbody id="recent-activity-body">
@@ -312,32 +314,36 @@
         if (jwtObj && jwtObj.name) orgName = jwtObj.name;
       } catch {}
       if (!orgName) {
-        tbody.innerHTML = '<tr><td colspan="5">Please log in as a charity to view your activity.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7">Please log in as a charity to view your activity.</td></tr>';
         return;
       }
       try {
-        const res = await fetch(`/api/foodneeds?org=${encodeURIComponent(orgName)}`, {
+        const res = await fetch('http://localhost:3000/api/foodneeds?org=' + encodeURIComponent(orgName), {
           headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {}
         });
         if (!res.ok) throw new Error('Failed to fetch food needs');
         const foodNeeds = await res.json();
         if (foodNeeds.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="5">No food needs posted yet.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7">No food needs posted yet.</td></tr>';
         } else {
           foodNeeds.forEach(need => {
             const tr = document.createElement('tr');
+            // Format date to show only YYYY-MM-DD
+            let dateStr = need.date ? String(need.date).slice(0, 10) : '';
             tr.innerHTML = `
-              <td>${need.date}</td>
+              <td>${dateStr}</td>
               <td>Request</td>
-              <td>${need.foodItem}${need.notes ? ' (' + need.notes + ')' : ''}</td>
-              <td><span class="status">${need.status}</span></td>
+              <td>${need.food_item}</td>
               <td>${need.quantity}</td>
+              <td>${need.pickup_location}</td>
+              <td>${need.notes || ''}</td>
+              <td><span class="status">${need.status}</span></td>
             `;
             tbody.appendChild(tr);
           });
         }
       } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="5">Error loading activity.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7">Error loading activity.</td></tr>';
       }
       // Optionally, add static rows below if needed
     }
