@@ -137,21 +137,24 @@
     <a href="CharityDashboard.html" class="back-link">← Back to Dashboard</a>
   </div>
   <script>
-    document.getElementById('foodNeedForm').addEventListener('submit', function(e) {
+    document.getElementById('foodNeedForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       // JWT check for verification
       let jwt = localStorage.getItem('jwt');
-      let verified = false;
+      // let verified = false;
+      let orgName = '';
       if (jwt) {
         try {
-          verified = JSON.parse(jwt).verified;
+          const jwtObj = JSON.parse(jwt);
+          // verified = jwtObj.verified;
+          orgName = jwtObj.name || '';
         } catch {}
       }
-      if (!verified) {
+      /* if (!verified) {
         alert('You must verify your account before posting a new food need.');
         window.location.href = 'Profile.html';
         return;
-      }
+      } */
       // Collect form data
       const foodItem = document.getElementById('foodItem').value;
       const quantity = document.getElementById('quantity').value;
@@ -161,18 +164,29 @@
       const today = new Date();
       const dateStr = today.toISOString().slice(0, 10);
       const foodNeed = {
+        orgName: orgName,
         date: dateStr,
-        type: 'Request',
-        details: foodItem + (notes ? ' (' + notes + ')' : ''),
-        status: 'Pending',
-        amount: quantity
+        foodItem: foodItem,
+        quantity: quantity,
+        pickupLocation: pickupLocation,
+        notes: notes,
+        status: 'Pending'
       };
-      // Save to localStorage
-      let foodNeeds = JSON.parse(localStorage.getItem('foodNeeds') || '[]');
-      foodNeeds.unshift(foodNeed); // Add to start
-      localStorage.setItem('foodNeeds', JSON.stringify(foodNeeds));
-      alert('Food need submitted!');
-      window.location.href = "CharityDashboard.html";
+      try {
+        const res = await fetch('http://localhost:3000/api/foodneeds', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(jwt ? { 'Authorization': 'Bearer ' + jwt } : {})
+          },
+          body: JSON.stringify(foodNeed)
+        });
+        if (!res.ok) throw new Error('Failed to submit food need');
+        alert('Food need submitted!');
+        window.location.href = "CharityDashboard.html";
+      } catch (err) {
+        alert('Error submitting food need. Please try again.');
+      }
     });
     function signOut() {
       // Optionally clear session or token here

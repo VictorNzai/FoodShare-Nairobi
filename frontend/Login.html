@@ -135,11 +135,11 @@
     <header>
       <div class="logo">🍴 FoodShare</div>
       <nav>
-        <a href="#">Home</a>
+        <a href="/Index.html">Home</a>
         <a href="#">About</a>
         <a href="#">How it Works</a>
         <a href="#">Contact</a>
-        <a href="Signup.html" class="sign-up-btn">Sign Up</a>
+        <a href="/Signup.html" class="sign-up-btn">Sign Up</a>
       </nav>
     </header>
 
@@ -192,70 +192,77 @@
       function setRole(role, btn) {
         document.getElementById("role").value = role;
 
-        document.querySelectorAll(".toggle-role button").forEach((b) =>
-          b.classList.remove("active")
-        );
+        document
+          .querySelectorAll(".toggle-role button")
+          .forEach((b) => b.classList.remove("active"));
         btn.classList.add("active");
 
-        const accessKeyContainer = document.getElementById("accessKeyContainer");
+        const accessKeyContainer =
+          document.getElementById("accessKeyContainer");
         accessKeyContainer.style.display = role === "admin" ? "block" : "none";
       }
 
-      document.getElementById("loginForm").addEventListener("submit", async function (e) {
-        e.preventDefault();
+      document
+        .getElementById("loginForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
 
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
-        const role = document.getElementById("role").value;
-        const accessKey = document.getElementById("accessKey").value;
+          const email = document.getElementById("email").value;
+          const password = document.getElementById("password").value;
+          const role = document.getElementById("role").value;
+          const accessKey = document.getElementById("accessKey").value;
 
-        let endpoint = "";
-        let body = { email, password };
+          let endpoint = "";
+          let body = { email, password };
 
-        if (role === "donor") {
-          endpoint = "http://localhost:3000/auth/login/donor";
-        } else if (role === "charity") {
-          endpoint = "http://localhost:3000/auth/login/charity";
-        } else if (role === "admin") {
-          endpoint = "http://localhost:3000/auth/login";
-          body = { email, password, role, accessKey };
-        }
-
-        try {
-          const response = await fetch(endpoint, {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(body),
-          });
-
-          const data = await response.json();
-
-          if (data.success) {
-            if (role === "donor") {
-              localStorage.setItem("donorName", data.donor.fullname);
-              window.location.href = "Food Donor Pages/FoodDonor.html";
-            } else if (role === "charity") {
-              // Store full charity info for profile/dashboard linkage
-              const charityJwt = {
-                name: data.charity.orgname,
-                email: data.charity.email,
-                phone: data.charity.phone,
-                reg: data.charity.reg,
-                verified: false // You can update this if you return verification status from backend
-              };
-              localStorage.setItem('jwt', JSON.stringify(charityJwt));
-              window.location.href = "Charity Pages/CharityDashboard.html";
-            } else {
-              window.location.href = "AdminDashboard.html";
-            }
-          } else {
-            alert(data.message || "Login failed");
+          if (role === "donor") {
+            endpoint = "http://localhost:3000/auth/login/donor";
+          } else if (role === "charity") {
+            endpoint = "http://localhost:3000/auth/login/charity";
+          } else if (role === "admin") {
+            endpoint = "http://localhost:3000/auth/login";
+            body = { email, password, role, accessKey };
           }
-        } catch (error) {
-          console.error("Login error:", error);
-          alert("An error occurred during login.");
-        }
-      });
+
+          try {
+            const response = await fetch(endpoint, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(body),
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+              if (role === "donor") {
+                localStorage.setItem("donorName", data.donor.fullname);
+                window.location.href = "/Food%20Donor%20Pages/FoodDonor.html";
+              } else if (role === "charity") {
+                // Store full charity info for profile/dashboard linkage
+                const charityJwt = {
+                  name: data.charity.orgname,
+                  email: data.charity.email,
+                  phone: data.charity.phone,
+                  reg: data.charity.reg,
+                  verified:
+                    data.charity.verified === true ||
+                    data.charity.verified === 1,
+                };
+                localStorage.setItem("jwt", JSON.stringify(charityJwt));
+                window.location.href = "/Charity%20Pages/CharityDashboard.html";
+              } else if (role === "admin" && data.dashboard) {
+                window.location.href = "/AdminPages/AdminDashboard.html";
+              } else {
+                window.location.href = "/AdminPages/AdminDashboard.html";
+              }
+            } else {
+              alert(data.message || "Login failed");
+            }
+          } catch (error) {
+            console.error("Login error:", error);
+            alert("An error occurred during login.");
+          }
+        });
     </script>
   </body>
 </html>

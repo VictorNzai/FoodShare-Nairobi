@@ -226,10 +226,9 @@
 </head>
 <body>
   <header>
-    <div class="logo">🍴 FoodShare</div>
+    <div class="logo" style="cursor:pointer;" onclick="window.location.href='../../Index.html'">🍴 FoodShare</div>
     <nav>
-      <a href="../BrowseCharities.html">Browse Charities</a>
-      <a href="../Donate.html">Donate</a>
+      <a href="Profile.html">Profile</a>
       <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
     </nav>
   </header>
@@ -256,7 +255,7 @@
           </div>
           <div class="stat-card">
             <p>Total Donations Received</p>
-            <div class="stat-value">1,200 kg</div>
+            <div class="stat-value">1,200 kg</div> 
           </div>
           <div class="stat-card">
             <p>Beneficiaries Served</p>
@@ -275,9 +274,11 @@
                 <tr>
                   <th>Date</th>
                   <th>Type</th>
-                  <th>Details</th>
+                  <th>Food Item</th>
+                  <th>Quantity</th>
+                  <th>Pickup Location</th>
+                  <th>Notes</th>
                   <th>Status</th>
-                  <th>Amount</th>
                 </tr>
               </thead>
               <tbody id="recent-activity-body">
@@ -301,55 +302,74 @@
     } catch {}
     document.getElementById('charity-greeting').textContent = `Welcome back, ${charityName}`;
 
-    // Dynamically load food needs from localStorage
-    function renderRecentActivity() {
+    // Dynamically load food needs from backend for this org
+    async function renderRecentActivity() {
       const tbody = document.getElementById('recent-activity-body');
       tbody.innerHTML = '';
-      // Get food needs from localStorage
-      let foodNeeds = JSON.parse(localStorage.getItem('foodNeeds') || '[]');
-      // Add food needs rows
-      foodNeeds.forEach(need => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${need.date}</td>
-          <td>${need.type}</td>
-          <td>${need.details}</td>
-          <td><span class="status">${need.status}</span></td>
-          <td>${need.amount}</td>
-        `;
-        tbody.appendChild(tr);
-      });
-      // Add static rows (existing hardcoded rows)
-      tbody.innerHTML += `
-        <tr>
-          <td>2024-06-20</td>
-          <td>Request</td>
-          <td>Food Request #201</td>
-          <td><span class="status">Pending</span></td>
-          <td>100 kg</td>
-        </tr>
-        <tr>
-          <td>2024-06-18</td>
-          <td>Donation</td>
-          <td>Donation from DonorX</td>
-          <td><span class="status">Received</span></td>
-          <td>50 kg</td>
-        </tr>
-        <tr>
-          <td>2024-06-15</td>
-          <td>Request</td>
-          <td>Food Request #200</td>
-          <td><span class="status">Completed</span></td>
-          <td>80 kg</td>
-        </tr>
-        <tr>
-          <td>2024-06-12</td>
-          <td>Donation</td>
-          <td>Donation from DonorY</td>
-          <td><span class="status">Received</span></td>
-          <td>120 kg</td>
-        </tr>
-      `;
+      let jwt = localStorage.getItem('jwt');
+      let orgName = '';
+      try {
+        const jwtObj = JSON.parse(jwt);
+        if (jwtObj && jwtObj.name) orgName = jwtObj.name;
+      } catch {}
+      if (!orgName) {
+        tbody.innerHTML = '<tr><td colspan="7">Please log in as a charity to view your activity.</td></tr>';
+        return;
+      }
+      try {
+        const res = await fetch('http://localhost:3000/api/foodneeds?org=' + encodeURIComponent(orgName), {
+          headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {}
+        });
+        if (!res.ok) throw new Error('Failed to fetch food needs');
+        const foodNeeds = await res.json();
+        // Update Active Requests stat
+        const activeCount = foodNeeds.filter(need => need.status === 'Pending').length;
+        const statCards = document.querySelectorAll('.stat-card');
+        statCards.forEach(card => {
+          const label = card.querySelector('p');
+          const value = card.querySelector('.stat-value');
+          if (label && value) {
+            if (label.textContent.includes('Active Requests')) {
+              value.textContent = activeCount;
+            } else if (label.textContent.includes('Total Donations Received')) {
+              // Sum quantity for completed requests (assuming quantity is a number or ends with 'kg')
+              let total = foodNeeds
+                .filter(need => need.status === 'Completed')
+                .reduce((sum, need) => {
+                  let qty = parseFloat(String(need.quantity).replace(/[^\d.]/g, ''));
+                  return sum + (isNaN(qty) ? 0 : qty);
+                }, 0);
+              value.textContent = total + ' kg';
+            } else if (label.textContent.includes('Beneficiaries Served')) {
+              // Count completed requests as beneficiaries served
+              let served = foodNeeds.filter(need => need.status === 'Completed').length;
+              value.textContent = served;
+            }
+          }
+        });
+        if (foodNeeds.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="7">No food needs posted yet.</td></tr>';
+        } else {
+          foodNeeds.forEach(need => {
+            const tr = document.createElement('tr');
+            // Format date to show only YYYY-MM-DD
+            let dateStr = need.date ? String(need.date).slice(0, 10) : '';
+            tr.innerHTML = `
+              <td>${dateStr}</td>
+              <td>Request</td>
+              <td>${need.food_item}</td>
+              <td>${need.quantity}</td>
+              <td>${need.pickup_location}</td>
+              <td>${need.notes || ''}</td>
+              <td><span class="status">${need.status}</span></td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="7">Error loading activity.</td></tr>';
+      }
+      // Optionally, add static rows below if needed
     }
     renderRecentActivity();
   </script>
