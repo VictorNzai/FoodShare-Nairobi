@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Dashboard - FoodShare</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
+        box-sizing: border-box;
+      }
+      body {
+        background: #f9fcf8;
+        color: #111b0e;
+      }
+      header {
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        border-bottom: 1px solid #eaf3e7;
+        position: relative;
+        z-index: 2;
+      }
+      .logo {
+        font-weight: bold;
+        font-size: 20px;
+        color: #54d12b;
+      }
+      .admin-flex {
+        display: flex;
+        min-height: 100vh;
+      }
+      /* Sidebar */
+      .sidebar {
+        width: 250px;
+        padding: 32px 24px;
+        border-right: 1px solid #eaf3e7;
+        background: #fff;
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        height: calc(100vh - 70px);
+        z-index: 1;
+      }
+      @media (min-width: 1024px) {
+        .sidebar {
+          display: block;
+        }
+      }
+      .sidebar .logo {
+        font-size: 22px;
+        font-weight: 800;
+        margin-bottom: 32px;
+        color: #54d12b;
+      }
+      .sidebar nav {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sidebar nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        border-radius: 999px;
+        background: none;
+        color: #222;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+      }
+      .sidebar nav a.active,
+      .sidebar nav a:hover {
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
+      }
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 32px 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-left: 320px;
+        margin-top: 70px;
+      }
+      .main-content h2 {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 24px;
+        letter-spacing: -1px;
+        text-align: left;
+      }
+      .filter-bar {
+        margin-bottom: 20px;
+        text-align: right;
+      }
+      .filter-bar label {
+        font-weight: bold;
+      }
+      .filter-bar select {
+        padding: 6px 12px;
+        border-radius: 8px;
+        border: 1px solid #d5e7d0;
+        font-size: 15px;
+        margin-left: 8px;
+      }
+      .table-section {
+        margin-bottom: 32px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 16px;
+        border: 1px solid #d5e7d0;
+        background: #fff;
+        margin-bottom: 24px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 900px;
+      }
+      th,
+      td {
+        padding: 16px;
+        text-align: left;
+        border-bottom: 1px solid #eaf3e7;
+      }
+      th {
+        background: #f5f5f5;
+        font-size: 15px;
+        font-weight: 700;
+        color: #222;
+      }
+      td {
+        font-size: 14px;
+        color: #222;
+      }
+      .status {
+        display: inline-block;
+        padding: 4px 16px;
+        border-radius: 999px;
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
+        font-size: 13px;
+        text-transform: capitalize;
+      }
+      .action-btn {
+        padding: 8px 22px;
+        border: none;
+        border-radius: 999px;
+        font-weight: 700;
+        font-size: 15px;
+        cursor: pointer;
+        margin-right: 8px;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        box-shadow: 0 2px 8px 0 rgba(84, 209, 43, 0.08);
+      }
+      .approve {
+        background: linear-gradient(90deg, #53d22c 60%, #66ea42 100%);
+        color: #fff;
+      }
+      .approve:hover {
+        background: linear-gradient(90deg, #43b81a 60%, #54d12b 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px 0 rgba(84, 209, 43, 0.16);
+      }
+      .reject {
+        background: #e74c3c;
+        color: #fff;
+      }
+      .reject:hover {
+        background: #c0392b;
+        color: #fff;
+      }
+      .file-link {
+        color: #54d12b;
+        text-decoration: underline;
+        cursor: pointer;
+        font-weight: 500;
+      }
+      .no-requests {
+        text-align: center;
+        color: #888;
+        font-size: 16px;
+        margin-top: 24px;
+      }
+      footer {
+        text-align: center;
+        margin-top: 40px;
+        color: #888;
+        font-size: 13px;
+      }
+      @media (max-width: 900px) {
+        .main-content {
+          padding: 16px 4vw;
+          margin-left: 0;
+          margin-top: 70px;
+        }
+        .sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo">🍴 FoodShare</div>
+    </header>
+    <div class="admin-flex">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">Admin Panel</div>
+        <nav>
+          <a
+            href="#"
+            id="sidebar-verifications"
+            class="active"
+            onclick="showSection('charity-verification-section')"
+            >Charity Verifications</a
+          >
+          <a
+            href="#"
+            id="sidebar-users"
+            onclick="showSection('user-management-section')"
+            >User Management</a
+          >
+          <a href="#">Reports</a>
+          <a href="#">Settings</a>
+          <a href="../Login.html">Logout</a>
+        </nav>
+      </aside>
+      <!-- Main Content -->
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        "
+      >
+        <main class="main-content">
+          <div id="charity-verification-section">
+            <h2>Charity Verification Requests</h2>
+            <div class="filter-bar">
+              <label for="statusFilter">Filter by Status:</label>
+              <select id="statusFilter" onchange="fetchVerifications()">
+                <option value="all">All</option>
+                <option value="pending">Pending</option>
+                <option value="approved">Approved</option>
+                <option value="rejected">Rejected</option>
+              </select>
+            </div>
+            <div class="table-section">
+              <div class="table-wrap">
+                <table id="verificationsTable">
+                  <thead>
+                    <tr>
+                      <th>ID</th>
+                      <th>Charity Name</th>
+                      <th>Address</th>
+                      <th>Contact</th>
+                      <th>Description</th>
+                      <th>ID File</th>
+                      <th>Cert File</th>
+                      <th>Status</th>
+                      <th>Submitted At</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <!-- Rows will be inserted here -->
+                  </tbody>
+                </table>
+              </div>
+              <div id="noRequests" class="no-requests" style="display: none">
+                No verifications found.
+              </div>
+            </div>
+          </div>
+          <!-- User Management Section -->
+          <div id="user-management-section" style="display: none">
+            <h2>User Management</h2>
+            <div style="margin-bottom: 18px">
+              <button
+                class="action-btn"
+                id="tab-donor"
+                onclick="switchUserTab('donor')"
+              >
+                Donors
+              </button>
+              <button
+                class="action-btn"
+                id="tab-charity"
+                onclick="switchUserTab('charity')"
+              >
+                Charities
+              </button>
+              <button
+                class="action-btn"
+                id="tab-admin"
+                onclick="switchUserTab('admin')"
+              >
+                Admins
+              </button>
+            </div>
+            <div class="filter-bar">
+              <input
+                type="text"
+                id="userSearch"
+                placeholder="Search by name or email..."
+                style="
+                  padding: 7px 12px;
+                  border-radius: 8px;
+                  border: 1px solid #d5e7d0;
+                  font-size: 15px;
+                "
+                oninput="fetchUsers()"
+              />
+              <label for="userStatusFilter">Status:</label>
+              <select id="userStatusFilter" onchange="fetchUsers()">
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="banned">Banned</option>
+              </select>
+            </div>
+            <div class="table-section">
+              <div class="table-wrap">
+                <table id="usersTable">
+                  <thead>
+                    <tr id="usersTableHead">
+                      <!-- Dynamic -->
+                    </tr>
+                  </thead>
+                  <tbody id="usersTableBody">
+                    <!-- Dynamic -->
+                  </tbody>
+                </table>
+              </div>
+              <div id="noUsers" class="no-requests" style="display: none">
+                No users found.
+              </div>
+            </div>
+          </div>
+        </main>
+      </div>
+    </div>
+    <footer>
+      <p>&copy; 2025 FoodShare. All rights reserved.</p>
+    </footer>
+    <script>
+      // Sidebar navigation
+      function showSection(sectionId) {
+        document.getElementById("charity-verification-section").style.display =
+          sectionId === "charity-verification-section" ? "" : "none";
+        document.getElementById("user-management-section").style.display =
+          sectionId === "user-management-section" ? "" : "none";
+        document
+          .getElementById("sidebar-verifications")
+          .classList.toggle(
+            "active",
+            sectionId === "charity-verification-section"
+          );
+        document
+          .getElementById("sidebar-users")
+          .classList.toggle("active", sectionId === "user-management-section");
+      }
+
+      // User Management Tab logic
+      let currentUserType = "donor";
+      function switchUserTab(type) {
+        currentUserType = type;
+        document
+          .getElementById("tab-donor")
+          .classList.toggle("approve", type === "donor");
+        document
+          .getElementById("tab-charity")
+          .classList.toggle("approve", type === "charity");
+        document
+          .getElementById("tab-admin")
+          .classList.toggle("approve", type === "admin");
+        fetchUsers();
+      }
+
+      async function fetchUsers() {
+        const search = document.getElementById("userSearch").value;
+        const status = document.getElementById("userStatusFilter").value;
+        let url = `http://localhost:3000/api/admin/users?type=${currentUserType}`;
+        if (search) url += `&search=${encodeURIComponent(search)}`;
+        if (status && status !== "all") url += `&status=${status}`;
+        try {
+          const res = await fetch(url);
+          const data = await res.json();
+          const head = document.getElementById("usersTableHead");
+          const body = document.getElementById("usersTableBody");
+          body.innerHTML = "";
+          // Table headers
+          if (currentUserType === "charity") {
+            head.innerHTML =
+              "<th>ID</th><th>Org Name</th><th>Email</th><th>Status</th><th>Action</th>";
+          } else {
+            head.innerHTML =
+              "<th>ID</th><th>Name</th><th>Email</th><th>Status</th><th>Action</th>";
+          }
+          if (data.success && data.users.length > 0) {
+            document.getElementById("noUsers").style.display = "none";
+            data.users.forEach((u) => {
+              let name = u.name;
+              let actionBtns = "";
+              // Ban/Unban
+              if (u.status === "active") {
+                actionBtns += `<button class=\"action-btn reject\" onclick=\"banUser('${currentUserType}', ${u.id})\">Ban</button>`;
+              } else {
+                actionBtns += `<button class=\"action-btn approve\" onclick=\"unbanUser('${currentUserType}', ${u.id})\">Unban</button>`;
+              }
+              // Promote (for donor/charity)
+              if (
+                currentUserType === "donor" ||
+                currentUserType === "charity"
+              ) {
+                actionBtns += `<button class=\"action-btn approve\" onclick=\"promoteUser('${currentUserType}', ${u.id})\">Promote</button>`;
+              }
+              // Demote (for admin, but not self)
+              if (currentUserType === "admin") {
+                actionBtns += `<button class=\"action-btn reject\" onclick=\"demoteUser(${u.id})\">Demote</button>`;
+              }
+              actionBtns += `<button class=\"action-btn reject\" onclick=\"deleteUser('${currentUserType}', ${u.id})\">Delete</button>`;
+              actionBtns += `<button class=\"action-btn\" onclick=\"viewUserDetails('${currentUserType}', ${u.id})\">View</button>`;
+              body.innerHTML += `<tr><td>${u.id}</td><td>${name}</td><td>${u.email}</td><td class=\"status\">${u.status}</td><td>${actionBtns}</td></tr>`;
+            });
+          } else {
+            document.getElementById("noUsers").style.display = "block";
+          }
+          // Promote user to admin
+          async function promoteUser(type, id) {
+            if (!confirm("Promote this user to admin?")) return;
+            const url = `http://localhost:3000/api/admin/users/${type}/${id}/promote`;
+            const res = await fetch(url, { method: "POST" });
+            const data = await res.json();
+            if (data.success) fetchUsers();
+            else alert(data.message || "Action failed");
+          }
+
+          // Demote admin
+          async function demoteUser(id) {
+            if (!confirm("Demote/remove this admin?")) return;
+            const url = `http://localhost:3000/api/admin/users/admin/${id}/demote`;
+            const res = await fetch(url, { method: "POST" });
+            const data = await res.json();
+            if (data.success) fetchUsers();
+            else alert(data.message || "Action failed");
+          }
+        } catch (err) {
+          document.getElementById("noUsers").style.display = "block";
+          console.error("Fetch error:", err);
+        }
+      }
+
+      async function banUser(type, id) {
+        if (!confirm("Ban this user?")) return;
+        const url = `http://localhost:3000/api/admin/users/${type}/${id}/ban`;
+        const res = await fetch(url, { method: "POST" });
+        const data = await res.json();
+        if (data.success) fetchUsers();
+        else alert(data.message || "Action failed");
+      }
+      async function unbanUser(type, id) {
+        if (!confirm("Unban this user?")) return;
+        const url = `http://localhost:3000/api/admin/users/${type}/${id}/unban`;
+        const res = await fetch(url, { method: "POST" });
+        const data = await res.json();
+        if (data.success) fetchUsers();
+        else alert(data.message || "Action failed");
+      }
+      async function deleteUser(type, id) {
+        if (!confirm("Permanently delete this user? This cannot be undone."))
+          return;
+        const url = `http://localhost:3000/api/admin/users/${type}/${id}`;
+        const res = await fetch(url, { method: "DELETE" });
+        const data = await res.json();
+        if (data.success) fetchUsers();
+        else alert(data.message || "Action failed");
+      }
+      async function viewUserDetails(type, id) {
+        const url = `http://localhost:3000/api/admin/users/${type}/${id}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        if (data.success) {
+          const user = data.user;
+          let details = "";
+          for (const key in user) {
+            details += `<b>${key}:</b> ${user[key]}<br>`;
+          }
+          alert(details);
+        } else {
+          alert("User not found.");
+        }
+      }
+
+      // Charity Verification logic
+      async function fetchVerifications() {
+        const status = document.getElementById("statusFilter").value;
+        let url = "http://localhost:3000/api/admin/charity-verifications";
+        if (status && status !== "all") {
+          url += `?status=${status}`;
+        }
+        try {
+          const res = await fetch(url, { credentials: "include" });
+          const data = await res.json();
+          const table = document
+            .getElementById("verificationsTable")
+            .getElementsByTagName("tbody")[0];
+          table.innerHTML = "";
+          if (data.success && data.verifications.length > 0) {
+            document.getElementById("noRequests").style.display = "none";
+            data.verifications.forEach((v) => {
+              const row = document.createElement("tr");
+              row.innerHTML = `
+                <td>${v.id}</td>
+                <td>${v.charity_name}</td>
+                <td>${v.address}</td>
+                <td>${v.contact}</td>
+                <td>${v.description}</td>
+                <td><a class="file-link" href="/uploads/charity-verifications/${
+                  v.id_file
+                }" target="_blank">View</a></td>
+                <td><a class="file-link" href="/uploads/charity-verifications/${
+                  v.cert_file
+                }" target="_blank">View</a></td>
+                <td class="status">${v.status}</td>
+                <td>${new Date(v.submitted_at).toLocaleString()}</td>
+                <td>
+                  ${
+                    v.status === "pending"
+                      ? `<button class="action-btn approve" onclick="handleAction(${v.id}, 'approve')">Approve</button>
+                  <button class="action-btn reject" onclick="handleAction(${v.id}, 'reject')">Reject</button>`
+                      : ""
+                  }
+                </td>
+              `;
+              table.appendChild(row);
+            });
+          } else {
+            document.getElementById("noRequests").style.display = "block";
+          }
+        } catch (err) {
+          document.getElementById("noRequests").style.display = "block";
+          console.error("Fetch error:", err);
+        }
+      }
+
+      async function handleAction(id, action) {
+        const confirmMsg =
+          action === "approve"
+            ? "Approve this verification?"
+            : "Reject this verification?";
+        if (!confirm(confirmMsg)) return;
+        const url = `http://localhost:3000/api/admin/charity-verifications/${id}/${action}`;
+        const res = await fetch(url, {
+          method: "POST",
+          credentials: "include",
+        });
+        const data = await res.json();
+        if (data.success) {
+          fetchVerifications();
+        } else {
+          alert(data.message || "Action failed");
+        }
+      }
+
+      // Initial tab state and fetches
+      document.addEventListener("DOMContentLoaded", () => {
+        switchUserTab("donor");
+        fetchVerifications();
+      });
+    </script>
+  </body>
+</html>

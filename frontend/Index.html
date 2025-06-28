@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Food Share- Kenya</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
+        background: linear-gradient(135deg, #f9fbf9 0%, #eaf3e7 100%);
+        color: #121a0f;
+        min-height: 100vh;
+      }
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        border-bottom: 1px solid #ebf2e9;
+        padding: 18px 40px;
+        background: #fff;
+        box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.04);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+      .header-left {
+        display: flex;
+        align-items: center;
+        gap: 16px;
+        color: #121a0f;
+      }
+      .header-logo {
+        width: 36px;
+        height: 36px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      .header-title {
+        font-size: 1.25rem;
+        font-weight: bold;
+        letter-spacing: -0.015em;
+      }
+      .header-links {
+        display: flex;
+        align-items: center;
+        gap: 36px;
+      }
+      .header-links a {
+        color: #121a0f;
+        font-size: 1rem;
+        font-weight: 500;
+        text-decoration: none;
+        transition: color 0.2s;
+        border-bottom: 2px solid transparent;
+        padding-bottom: 2px;
+      }
+      .header-links a:hover {
+        color: #54d12b;
+        border-bottom: 2px solid #54d12b;
+      }
+      .header-actions {
+        display: flex;
+        gap: 10px;
+      }
+      .btn {
+        min-width: 90px;
+        height: 42px;
+        padding: 0 20px;
+        border: none;
+        border-radius: 999px;
+        font-size: 1rem;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 8px 0 rgba(84, 209, 43, 0.08);
+      }
+      .btn-green {
+        background: linear-gradient(90deg, #53d22c 60%, #66ea42 100%);
+        color: #fff;
+      }
+      .btn-green:hover {
+        background: linear-gradient(90deg, #43b81a 60%, #54d12b 100%);
+        color: #fff;
+        box-shadow: 0 4px 16px 0 rgba(84, 209, 43, 0.16);
+      }
+      .btn-light {
+        background: #ebf2e9;
+        color: #121a0f;
+      }
+      .btn-light:hover {
+        background: #d6e5d2;
+        color: #54d12b;
+      }
+      .main-hero {
+        display: flex;
+        justify-content: center;
+        padding: 48px 0 0 0;
+      }
+      .hero-content {
+        max-width: 960px;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        align-items: center;
+      }
+      .hero-bg {
+        width: 100%;
+        min-height: 480px;
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+        align-items: center;
+        justify-content: center;
+        border-radius: 32px;
+        background: linear-gradient(
+            rgba(84, 209, 43, 0.18) 0%,
+            rgba(0, 0, 0, 0.32) 100%
+          ),
+          url("https://i.pinimg.com/736x/37/2e/ab/372eab06cef3b588d88cd78e2abb7113.jpg")
+            center/cover no-repeat;
+        padding: 48px 24px;
+        text-align: center;
+        box-shadow: 0 8px 32px 0 rgba(84, 209, 43, 0.1);
+      }
+      .hero-title {
+        color: #fff;
+        font-size: 2.8rem;
+        font-weight: 900;
+        line-height: 1.1;
+        letter-spacing: -0.033em;
+        margin-bottom: 8px;
+        text-shadow: 0 2px 12px rgba(84, 209, 43, 0.12),
+          0 1px 2px rgba(0, 0, 0, 0.12);
+      }
+      .hero-subtitle {
+        color: #eaf3e7;
+        font-size: 1.15rem;
+        font-weight: 400;
+        margin-bottom: 16px;
+        text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      }
+      .hero-actions {
+        display: flex;
+        gap: 16px;
+        flex-wrap: wrap;
+        justify-content: center;
+      }
+      .section {
+        padding: 48px 16px 0 16px;
+        max-width: 960px;
+        margin: 0 auto;
+      }
+      .section-title {
+        font-size: 2.2rem;
+        font-weight: bold;
+        letter-spacing: -0.033em;
+        margin-bottom: 8px;
+        color: #121a0f;
+      }
+      .section-desc {
+        color: #121a0f;
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-bottom: 28px;
+        max-width: 720px;
+      }
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 18px;
+        margin-bottom: 36px;
+      }
+      .feature-card {
+        background: #fff;
+        border: 1px solid #d6e5d2;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        align-items: flex-start;
+        box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.06);
+        transition: box-shadow 0.2s, transform 0.2s;
+      }
+      .feature-card:hover {
+        box-shadow: 0 8px 24px 0 rgba(84, 209, 43, 0.16);
+        transform: translateY(-4px) scale(1.03);
+      }
+      .feature-title {
+        font-size: 1.08rem;
+        font-weight: bold;
+        color: #121a0f;
+        margin-bottom: 2px;
+      }
+      .feature-desc {
+        color: #639155;
+        font-size: 1rem;
+        font-weight: 400;
+      }
+      .partners-title,
+      .impact-title,
+      .testimonials-title {
+        font-size: 1.45rem;
+        font-weight: bold;
+        margin: 40px 0 16px 0;
+        color: #121a0f;
+        letter-spacing: -0.015em;
+        padding-left: 16px;
+      }
+      .partners-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(158px, 1fr));
+        gap: 18px;
+        padding: 0 16px 36px 16px;
+      }
+      .partner-img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background-size: cover;
+        background-position: center;
+        border-radius: 18px;
+        box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+        border: 2px solid #eaf3e7;
+      }
+      .impact-grid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+        padding: 0 16px 36px 16px;
+      }
+      .impact-card {
+        min-width: 170px;
+        flex: 1 1 170px;
+        background: #ebf2e9;
+        border-radius: 14px;
+        padding: 28px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+        align-items: flex-start;
+        box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.06);
+      }
+      .impact-label {
+        color: #121a0f;
+        font-size: 1.08rem;
+        font-weight: 500;
+      }
+      .impact-value {
+        color: #121a0f;
+        font-size: 1.6rem;
+        font-weight: bold;
+      }
+      .testimonials-scroll {
+        display: flex;
+        overflow-x: auto;
+        gap: 18px;
+        padding: 0 16px 36px 16px;
+        scrollbar-width: none;
+      }
+      .testimonials-scroll::-webkit-scrollbar {
+        display: none;
+      }
+      .testimonial-card {
+        min-width: 260px;
+        background: #fff;
+        border-radius: 16px;
+        padding: 20px;
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+        align-items: flex-start;
+        box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+        border: 1px solid #eaf3e7;
+        transition: box-shadow 0.2s, transform 0.2s;
+      }
+      .testimonial-card:hover {
+        box-shadow: 0 8px 24px 0 rgba(84, 209, 43, 0.16);
+        transform: translateY(-4px) scale(1.03);
+      }
+      .testimonial-img {
+        width: 100%;
+        aspect-ratio: 1/1;
+        background-size: cover;
+        background-position: center;
+        border-radius: 12px;
+      }
+      .testimonial-name {
+        color: #121a0f;
+        font-size: 1.08rem;
+        font-weight: 500;
+      }
+      .testimonial-text {
+        color: #639155;
+        font-size: 1rem;
+        font-weight: 400;
+      }
+      .cta-section {
+        padding: 48px 16px;
+        max-width: 960px;
+        margin: 0 auto;
+        text-align: center;
+      }
+      .cta-title {
+        font-size: 2.2rem;
+        font-weight: bold;
+        color: #121a0f;
+        margin-bottom: 10px;
+      }
+      .cta-desc {
+        color: #121a0f;
+        font-size: 1.1rem;
+        font-weight: 400;
+        margin-bottom: 28px;
+        max-width: 720px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      .cta-actions {
+        display: flex;
+        justify-content: center;
+        gap: 16px;
+      }
+      footer {
+        background: #fff;
+        padding: 48px 16px 28px 16px;
+        text-align: center;
+        border-top: 1px solid #ebf2e9;
+        box-shadow: 0 -2px 12px 0 rgba(84, 209, 43, 0.04);
+      }
+      .footer-links {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 36px;
+        margin-bottom: 18px;
+      }
+      .footer-links a {
+        color: #639155;
+        font-size: 1.08rem;
+        font-weight: 400;
+        text-decoration: none;
+        min-width: 120px;
+        transition: color 0.2s;
+      }
+      .footer-links a:hover {
+        color: #54d12b;
+      }
+      .footer-social {
+        display: flex;
+        justify-content: center;
+        gap: 18px;
+        margin-bottom: 14px;
+      }
+      .footer-social svg {
+        color: #639155;
+        width: 26px;
+        height: 26px;
+        transition: color 0.2s;
+      }
+      .footer-social a:hover svg {
+        color: #54d12b;
+      }
+      .footer-copy {
+        color: #639155;
+        font-size: 1.08rem;
+        font-weight: 400;
+      }
+      @media (max-width: 900px) {
+        .main-hero,
+        .section,
+        .cta-section,
+        footer {
+          padding-left: 8px;
+          padding-right: 8px;
+        }
+        .hero-title {
+          font-size: 2rem;
+        }
+        .section-title,
+        .cta-title {
+          font-size: 1.25rem;
+        }
+        .hero-bg {
+          min-height: 320px;
+          padding: 24px 6px;
+        }
+        .features-grid,
+        .partners-grid,
+        .impact-grid,
+        .testimonials-scroll {
+          gap: 10px;
+        }
+        .feature-card,
+        .partner-img,
+        .impact-card,
+        .testimonial-card {
+          padding: 12px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout-container">
+      <!-- Header -->
+      <header>
+        <div class="header-left">
+          <div class="header-logo">
+            <!-- SVG logo -->
+            <svg
+              viewBox="0 0 48 48"
+              fill="none"
+              width="32"
+              height="32"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z"
+                fill="currentColor"
+              ></path>
+              <path
+                fill-rule="evenodd"
+                clip-rule="evenodd"
+                d="M39.998 35.764C39.9944 35.7463 39.9875 35.7155 39.9748 35.6706C39.9436 35.5601 39.8949 35.4259 39.8346 35.2825C39.8168 35.2403 39.7989 35.1993 39.7813 35.1602C38.5103 34.2887 35.9788 33.0607 33.7095 32.5189C30.9875 31.8691 27.6413 31.4783 24 31.4783C20.3587 31.4783 17.0125 31.8691 14.2905 32.5189C12.0012 33.0654 9.44505 34.3104 8.18538 35.1832C8.17384 35.2075 8.16216 35.233 8.15052 35.2592C8.09919 35.3751 8.05721 35.4886 8.02977 35.589C8.00356 35.6848 8.00039 35.7333 8.00004 35.7388C8.00004 35.739 8 35.7393 8.00004 35.7388C8.00004 35.7641 8.0104 36.0767 8.68485 36.6314C9.34546 37.1746 10.4222 37.7531 11.9291 38.2772C14.9242 39.319 19.1919 40 24 40C28.8081 40 33.0758 39.319 36.0709 38.2772C37.5778 37.7531 38.6545 37.1746 39.3151 36.6314C39.9006 36.1499 39.9857 35.8511 39.998 35.764ZM4.95178 32.7688L21.4543 6.30267C22.6288 4.4191 25.3712 4.41909 26.5457 6.30267L43.0534 32.777C43.0709 32.8052 43.0878 32.8338 43.104 32.8629L41.3563 33.8352C43.104 32.8629 43.1038 32.8626 43.104 32.8629L43.1051 32.865L43.1065 32.8675L43.1101 32.8739L43.1199 32.8918C43.1276 32.906 43.1377 32.9246 43.1497 32.9473C43.1738 32.9925 43.2062 33.0545 43.244 33.1299C43.319 33.2792 43.4196 33.489 43.5217 33.7317C43.6901 34.1321 44 34.9311 44 35.7391C44 37.4427 43.003 38.7775 41.8558 39.7209C40.6947 40.6757 39.1354 41.4464 37.385 42.0552C33.8654 43.2794 29.133 44 24 44C18.867 44 14.1346 43.2794 10.615 42.0552C8.86463 41.4464 7.30529 40.6757 6.14419 39.7209C4.99695 38.7775 3.99999 37.4427 3.99999 35.7391C3.99999 34.8725 4.29264 34.0922 4.49321 33.6393C4.60375 33.3898 4.71348 33.1804 4.79687 33.0311C4.83898 32.9556 4.87547 32.8935 4.9035 32.8471C4.91754 32.8238 4.92954 32.8043 4.93916 32.7889L4.94662 32.777L4.95178 32.7688ZM35.9868 29.004L24 9.77997L12.0131 29.004C12.4661 28.8609 12.9179 28.7342 13.3617 28.6282C16.4281 27.8961 20.0901 27.4783 24 27.4783C27.9099 27.4783 31.5719 27.8961 34.6383 28.6282C35.082 28.7342 35.5339 28.8609 35.9868 29.004Z"
+                fill="currentColor"
+              ></path>
+            </svg>
+          </div>
+          <span class="header-title">FoodShare Kenya</span>
+        </div>
+        <div class="header-links">
+          <a href="#">How it Works</a>
+          <a href="#">For Donors</a>
+          <a href="#">For Charities</a>
+          <a href="#">About Us</a>
+        </div>
+        <div class="header-actions">
+          <a href="/Signup.html"
+            ><button class="btn btn-green">Register</button></a
+          >
+          <a href="/Login.html"><button class="btn btn-light">Login</button></a>
+        </div>
+      </header>
+
+      <!-- Hero Section -->
+      <section class="main-hero">
+        <div class="hero-content">
+          <div class="hero-bg">
+            <div>
+              <h1 class="hero-title">Connect, Donate, and Nourish Nairobi</h1>
+              <h2 class="hero-subtitle">
+                FoodShare Kenya bridges the gap between food donors and verified
+                charities, ensuring surplus food reaches those in need. Join us
+                in our mission to reduce food waste and combat hunger in our
+                community.
+              </h2>
+            </div>
+            <div class="hero-actions">
+              <a href="/Donate.html"
+                ><button class="btn btn-green">Donate Food</button></a
+              >
+              <a href="/BrowseCharities.html"
+                ><button class="btn btn-light">Find Charities</button></a
+              >
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- How It Works Section -->
+      <section class="section">
+        <h1 class="section-title">How FoodShare Kenya Works</h1>
+        <p class="section-desc">
+          Our platform simplifies the process of food donation and distribution,
+          ensuring efficiency and transparency.
+        </p>
+        <div class="features-grid">
+          <div class="feature-card">
+            <div>
+              <!-- HandWaving SVG -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M220.2,100l-18-31.18a28,28,0,0,0-47.3-1.92L139.56,40.31a28,28,0,0,0-48.12-.63,28,28,0,0,0-43,34.78l3.34,5.79a28,28,0,0,0-22,41.92l38,65.82a87.46,87.46,0,0,0,53.43,41,88.56,88.56,0,0,0,22.92,3A88,88,0,0,0,220.2,100Zm-6.67,62.63A72,72,0,0,1,81.63,180l-38-65.82a12,12,0,0,1,20.79-12l22,38.1a8,8,0,1,0,13.85-8l-38-65.81a12,12,0,0,1,13.5-17.59,11.9,11.9,0,0,1,7.29,5.59l34,58.89a8,8,0,0,0,13.85-8l-26-45h0a12,12,0,0,1,20.78-12L160,107.78a48.08,48.08,0,0,0-11,61,8,8,0,0,0,13.86-8,32,32,0,0,1,11.71-43.71,8,8,0,0,0,2.93-10.93l-10-17.32a12,12,0,0,1,20.78-12l18,31.18A71.49,71.49,0,0,1,213.53,162.62ZM184.27,29.93a8,8,0,0,1,9.8-5.66c15.91,4.27,29,14.11,36.86,27.73a8,8,0,0,1-13.86,8c-5.72-9.92-15.36-17.12-27.14-20.27A8,8,0,0,1,184.27,29.93ZM80.91,237a8,8,0,0,1-11.24,1.33c-11-8.69-20.11-19.58-28.6-34.28a8,8,0,0,1,13.86-8c7.44,12.88,15.27,22.32,24.65,29.72A8,8,0,0,1,80.91,237Z"
+                ></path>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title">For Donors</div>
+              <div class="feature-desc">
+                Easily list surplus food items, schedule pickups, and track your
+                donations.
+              </div>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div>
+              <!-- Users SVG -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M117.25,157.92a60,60,0,1,0-66.5,0A95.83,95.83,0,0,0,3.53,195.63a8,8,0,1,0,13.4,8.74,80,80,0,0,1,134.14,0,8,8,0,0,0,13.4-8.74A95.83,95.83,0,0,0,117.25,157.92ZM40,108a44,44,0,1,1,44,44A44.05,44.05,0,0,1,40,108Zm210.14,98.7a8,8,0,0,1-11.07-2.33A79.83,79.83,0,0,0,172,168a8,8,0,0,1,0-16,44,44,0,1,0-16.34-84.87,8,8,0,1,1-5.94-14.85,60,60,0,0,1,55.53,105.64,95.83,95.83,0,0,1,47.22,37.71A8,8,0,0,1,250.14,206.7Z"
+                ></path>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title">For Charities</div>
+              <div class="feature-desc">
+                Connect with verified donors, manage food requests, and receive
+                timely deliveries.
+              </div>
+            </div>
+          </div>
+          <div class="feature-card">
+            <div>
+              <!-- Heart SVG -->
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24px"
+                height="24px"
+                fill="currentColor"
+                viewBox="0 0 256 256"
+              >
+                <path
+                  d="M178,32c-20.65,0-38.73,8.88-50,23.89C116.73,40.88,98.65,32,78,32A62.07,62.07,0,0,0,16,94c0,70,103.79,126.66,108.21,129a8,8,0,0,0,7.58,0C136.21,220.66,240,164,240,94A62.07,62.07,0,0,0,178,32ZM128,206.8C109.74,196.16,32,147.69,32,94A46.06,46.06,0,0,1,78,48c19.45,0,35.78,10.36,42.6,27a8,8,0,0,0,14.8,0c6.82-16.67,23.15-27,42.6-27a46.06,46.06,0,0,1,46,46C224,147.61,146.24,196.15,128,206.8Z"
+                ></path>
+              </svg>
+            </div>
+            <div>
+              <div class="feature-title">Impact</div>
+              <div class="feature-desc">
+                See the real-time impact of your contributions, including food
+                rescued and meals provided.
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Partners Section -->
+      <div class="partners-title">Our Partners</div>
+      <div class="partners-grid">
+        <div
+          class="partner-img"
+          style="
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBBteIbGGvyk0BRzjjv2SrKysaxo4ZaEXnRKRjs-nyq7709VG82BNaV9RTTlKhh6lu5HzQIBJlxsJ8mpr9CJMxpye0dwKKeqP7GyMC_gRERTklDdN1dXAJ2lyIFxcdkQAm8Fj-PnXKIFZjRnVbxZVtSzJQlj8FBN37VGXpjCgLXzey_GukYJJ0B7aIMXONNhC1_hxrRFxkBXGkY-X1tsmGVvQN3RzHDvmMn9dvmVHDZ3fD-h99IlheyYPgYtQFhV31Hbjf3j5tn6awn');
+          "
+        ></div>
+        <div
+          class="partner-img"
+          style="
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCUDSnix_C7MaQPjKqeKi4wi1UgQtW0XPz3p_xi_a0xK4eZ57bzT-W_o_jVP2s-So8Uz3_BStmBYf28J3lv9S_LNed9-snOJalaaCTYrxrw21oQ8r38zCabPo-MnMzbzSHfIGaxf-HoQ78YvRc45RiBgdJq5GYZmqnm8spTa3BshbUDM_sa6ibtu0qLhhehxk6vS4-zDwOkWM_vxOjv_SkfGKTL_FmpYq2DAlSdAX-_mGoNj18J2zc-1HJzuUx19doMQSW8yLEJNgiV');
+          "
+        ></div>
+        <div
+          class="partner-img"
+          style="
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC_qJR4BmWYKavxgcHIfQrszgJjRslY6qY82-rCNharRB1JaWttC-mrZl-4uOjtr-mojCzm9CYbfwb_9L_X3ZKdG0yQ0GkfkszTl6n2kK4jAK7G8hHluMQhd3gLL6Aa0inLufl1EprSQtT_buoL0r5zORQnFb5LuKEnf57KGY9cqHbdHGpn0-MUDI28u8HKeNMaxVaVMK_irV7lpkdge8U9VvLKfdIbXCy3fONIKGXh-0n875lMUrQsMuNMCiwQFS1N8bLmuqx2Vp06');
+          "
+        ></div>
+        <div
+          class="partner-img"
+          style="
+            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCPMY0hLqaG0l6LW4gmxSFTBMjQv9sZpjrOiFwhzQk4Sy-_xrmmoLKreA84YUJC9m69sjAbheHzj3M5r5D98EwUL94VG-qjbvi2HtIey4sIMazHroiZj8v9c_s-tRyHvMKyRExuAOp1f5y5khYBlfz6J-JjS1sm_f5s7lOBB2uSQWNm3cgj9t5RGtUWIDddrCXxPw5dfo3XxdVi4Px_opYohwujDSCicPtm1Nmzpg5GogudTkX9Eq9WgThJXaBPahsfFxIl8gu6x7_i');
+          "
+        ></div>
+      </div>
+
+      <!-- Impact Section -->
+      <div class="impact-title">Our Impact</div>
+      <div class="impact-grid">
+        <div class="impact-card">
+          <div class="impact-label">Tons of Food Rescued</div>
+          <div class="impact-value">150+</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-label">Meals Provided</div>
+          <div class="impact-value">50,000+</div>
+        </div>
+        <div class="impact-card">
+          <div class="impact-label">Charities Supported</div>
+          <div class="impact-value">30+</div>
+        </div>
+      </div>
+
+      <!-- Testimonials Section -->
+      <div class="testimonials-title">Testimonials</div>
+      <div class="testimonials-scroll">
+        <div class="testimonial-card">
+          <div
+            class="testimonial-img"
+            style="
+              background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBaGRS9wiEB8Q8fWJLgbd5Bh2B_cOJuETSFAxi10Cq_vtN9nC4XerCEvZ2725S4VwHgOnvmJwLcPQlg_4UhasPD0w4CUyGZe-yMN7H7ehmjD3gXLDWYKOie2trkBJuxLEeC4oHniP9qKkcZo0hF8lZ9749KPgVqKfefWnGuJJf-pusno2dCxv5cN-QMDT1HqBaaze5iA0PszmKsiUsEsgzo5IX0kn6_OA_EtVuepM3JPK1TZVP7BJ2pp7r4e7glZVKeztoiGiBubYHz');
+            "
+          ></div>
+          <div class="testimonial-name">Sarah, Donor</div>
+          <div class="testimonial-text">
+            "FoodShare Kenya has made it so easy for my restaurant to donate
+            surplus food. It's rewarding to know we're helping those in need."
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div
+            class="testimonial-img"
+            style="
+              background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCAACATfcvKJzfqLB3IZ8viBSDCBLuQZqOVrlpL2nl6TMwt4FTt44eW59ncUnBo8a2RvKHV2Xn0MzhaAhRFXHXqC36qLwbR2feqm3Puc_FoyvkHygytWTsMaVzbopWXezFy_NgzRajgm2sksaSmAVfPoaHlQNTedyrZLlqbu_jKtpUtVCPRajaTO-dhvZDYK2--vWwj7uYmJMBKa7cFxeiIYICVLb8PVFBbWW1bYiIC6AGYJXEUcNAlrqszkTXyQMTPDvXsZKh2wZrn');
+            "
+          ></div>
+          <div class="testimonial-name">David, Charity Worker</div>
+          <div class="testimonial-text">
+            "This platform has been a game-changer for our organization. We can
+            now access a consistent supply of food to support our programs."
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div
+            class="testimonial-img"
+            style="
+              background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvh6iI4Kk133RiB5rdNeGvdQtRQBhEeC7Q7RpQ0rbBpPyjOuf5yPgeIqxSwTw-whUD-DGk11FfdPyLQabkUTm-Jzscyi1T0y9X3N7TblEYsUg4eiYxvPotU3sIW51-1ynYQHSRgnk0ch5DqWFbklxnEuhwwQl1niduXzk2UQW-BhSoSTT-XoQpY8nN8xUi8Ihh3x94xDUGoLA3VezbjZSYCtbauIDvvP5o43iTXbvubCJIfY8bIUZYjo7fABfOYyYUVzYxxdzFuKAE');
+            "
+          ></div>
+          <div class="testimonial-name">Community Member</div>
+          <div class="testimonial-text">
+            "The food we receive through FoodShare Kenya is a lifeline for many
+            families in our community. We are incredibly grateful."
+          </div>
+        </div>
+      </div>
+
+      <!-- CTA Section -->
+      <section class="cta-section">
+        <h1 class="cta-title">Join FoodShare Kenya Today</h1>
+        <p class="cta-desc">
+          Make a difference in your community. Register as a donor or charity
+          and start connecting today.
+        </p>
+        <div class="cta-actions">
+          <a href="/Signup.html"
+            ><button class="btn btn-green">Get Started</button></a
+          >
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer>
+        <div class="footer-links">
+          <a href="#">About Us</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+        <div class="footer-social">
+          <a href="#"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 256 256"
+            >
+              <path
+                d="M247.39,68.94A8,8,0,0,0,240,64H209.57A48.66,48.66,0,0,0,168.1,40a46.91,46.91,0,0,0-33.75,13.7A47.9,47.9,0,0,0,120,88v6.09C79.74,83.47,46.81,50.72,46.46,50.37a8,8,0,0,0-13.65,4.92c-4.31,47.79,9.57,79.77,22,98.18a110.93,110.93,0,0,0,21.88,24.2c-15.23,17.53-39.21,26.74-39.47,26.84a8,8,0,0,0-3.85,11.93c.75,1.12,3.75,5.05,11.08,8.72C53.51,229.7,65.48,232,80,232c70.67,0,129.72-54.42,135.75-124.44l29.91-29.9A8,8,0,0,0,247.39,68.94Zm-45,29.41a8,8,0,0,0-2.32,5.14C196,166.58,143.28,216,80,216c-10.56,0-18-1.4-23.22-3.08,11.51-6.25,27.56-17,37.88-32.48A8,8,0,0,0,92,169.08c-.47-.27-43.91-26.34-44-96,16,13,45.25,33.17,78.67,38.79A8,8,0,0,0,136,104V88a32,32,0,0,1,9.6-22.92A30.94,30.94,0,0,1,167.9,56c12.66.16,24.49,7.88,29.44,19.21A8,8,0,0,0,204.67,80h16Z"
+              ></path></svg
+          ></a>
+          <a href="#"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 256 256"
+            >
+              <path
+                d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm8,191.63V152h24a8,8,0,0,0,0-16H136V112a16,16,0,0,1,16-16h16a8,8,0,0,0,0-16H152a32,32,0,0,0-32,32v24H96a8,8,0,0,0,0,16h24v63.63a88,88,0,1,1,16,0Z"
+              ></path></svg
+          ></a>
+          <a href="#"
+            ><svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="currentColor"
+              viewBox="0 0 256 256"
+            >
+              <path
+                d="M128,80a48,48,0,1,0,48,48A48.05,48.05,0,0,0,128,80Zm0,80a32,32,0,1,1,32-32A32,32,0,0,1,128,160ZM176,24H80A56.06,56.06,0,0,0,24,80v96a56.06,56.06,0,0,0,56,56h96a56.06,56.06,0,0,0,56-56V80A56.06,56.06,0,0,0,176,24Zm40,152a40,40,0,0,1-40,40H80a40,40,0,0,1-40-40V80A40,40,0,0,1,80,40h96a40,40,0,0,1,40,40ZM192,76a12,12,0,1,1-12-12A12,12,0,0,1,192,76Z"
+              ></path></svg
+          ></a>
+        </div>
+        <div class="footer-copy">
+          @2024 FoodShare Kenya. All rights reserved.
+        </div>
+      </footer>
+    </div>
+  </body>
+</html>
