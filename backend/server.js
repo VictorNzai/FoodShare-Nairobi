@@ -3,6 +3,11 @@
 // ...existing code...
 // Place these at the end of the file, after all other endpoints:
 // (Moved below app.listen)
+// --- Admin User Management Endpoints ---
+// (Now correctly placed after app initialization and all middleware)
+// ...existing code...
+// Place these at the end of the file, after all other endpoints:
+// (Moved below app.listen)
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
@@ -13,8 +18,11 @@ const multer = require('multer');
 const fs = require('fs');
 const authRoutes = require('./Routes/auth'); // Adjust path if needed
 
+const authRoutes = require('./Routes/auth'); // Adjust path if needed
+
 const app = express();
 
+// Middleware
 // Middleware
 app.use(cors());
 app.use(bodyParser.json());
@@ -25,6 +33,7 @@ app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/uploads/charity-verifications', express.static(path.join(__dirname, 'uploads/charity-verifications')));
 
 // File Upload (Charity Verifications)
+// File Upload (Charity Verifications)
 const uploadDir = path.join(__dirname, './uploads/charity-verifications');
 if (!fs.existsSync(uploadDir)) {
   fs.mkdirSync(uploadDir, { recursive: true });
@@ -32,12 +41,16 @@ if (!fs.existsSync(uploadDir)) {
 const storage = multer.diskStorage({
   destination: (req, file, cb) => cb(null, uploadDir),
   filename: (req, file, cb) => {
+  destination: (req, file, cb) => cb(null, uploadDir),
+  filename: (req, file, cb) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
     cb(null, uniqueSuffix + '-' + file.originalname.replace(/\s+/g, '_'));
   }
 });
 const upload = multer({ storage });
+const upload = multer({ storage });
 
+// DB Connection
 // DB Connection
 const pool = mysql.createPool({
   host: '25.18.191.107',
@@ -48,9 +61,73 @@ const pool = mysql.createPool({
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
+  host: '25.18.191.107',
+  user: 'Dexter',
+  password: 'F00dshare123',
+  database: 'foodshare_db',
+  port: 3306,
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0
 });
 pool.getConnection((err, conn) => {
+pool.getConnection((err, conn) => {
   if (err) throw err;
+  console.log('Connected to foodshare_db');
+  conn.release();
+});
+
+// --- Admin Charity Verification Endpoints ---
+app.get('/api/admin/charity-verifications', (req, res) => {
+  let sql = 'SELECT * FROM charity_verifications';
+  const params = [];
+  if (req.query.status && req.query.status !== 'all') {
+    sql += ' WHERE status = ?';
+    params.push(req.query.status);
+  }
+  sql += ' ORDER BY submitted_at DESC';
+  pool.query(sql, params, (err, results) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+    res.json({ success: true, verifications: results });
+  });
+});
+
+app.post('/api/admin/charity-verifications/:id/approve', (req, res) => {
+  const id = req.params.id;
+  // First, approve the verification
+  const approveSql = 'UPDATE charity_verifications SET status = "approved" WHERE id = ?';
+  pool.query(approveSql, [id], (err) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+    // Get the charity name from the verification row
+    const getCharitySql = 'SELECT charity_name FROM charity_verifications WHERE id = ?';
+    pool.query(getCharitySql, [id], (err2, results) => {
+      if (err2 || !results.length) return res.json({ success: true, message: 'Charity verification approved, but could not update charity verified status.' });
+      const charityName = results[0].charity_name;
+      // Update the charity table to set verified = 1
+      const updateCharitySql = 'UPDATE charity SET verified = 1 WHERE orgname = ?';
+      pool.query(updateCharitySql, [charityName], (err3) => {
+        if (err3) return res.json({ success: true, message: 'Charity verification approved, but failed to update charity verified status.' });
+        // Also update the charity_verifications table to set verified = 1 for this row
+        const updateVerificationSql = 'UPDATE charity_verifications SET verified = 1 WHERE id = ?';
+        pool.query(updateVerificationSql, [id], (err4) => {
+          if (err4) return res.json({ success: true, message: 'Charity and verification approved, but failed to update verification verified status.' });
+          res.json({ success: true, message: 'Charity verification approved and both tables marked as verified.' });
+        });
+      });
+    });
+  });
+});
+
+app.post('/api/admin/charity-verifications/:id/reject', (req, res) => {
+  const id = req.params.id;
+  const sql = 'UPDATE charity_verifications SET status = "rejected" WHERE id = ?';
+  pool.query(sql, [id], (err) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+    res.json({ success: true, message: 'Charity verification rejected.' });
+  });
+});
+
+// Donor Signup
   console.log('Connected to foodshare_db');
   conn.release();
 });
@@ -110,7 +187,14 @@ app.post('/signup/donor', async (req, res) => {
   const { fullname, email, phone, password, confirmPassword } = req.body;
   if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
 
+  if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
+
   try {
+    const hashed = await bcrypt.hash(password, 10);
+    const query = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
+    pool.query(query, [fullname, email, phone, hashed], (err) => {
+      if (err) return res.status(500).json({ success: false, message: err.sqlMessage });
+      res.status(200).json({ success: true, message: 'Donor account created successfully' });
     const hashed = await bcrypt.hash(password, 10);
     const query = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
     pool.query(query, [fullname, email, phone, hashed], (err) => {
@@ -119,12 +203,17 @@ app.post('/signup/donor', async (req, res) => {
     });
   } catch {
     res.status(500).json({ success: false, message: 'Server error' });
+  } catch {
+    res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
 // Charity Signup
+// Charity Signup
 app.post('/signup/charity', async (req, res) => {
   const { orgname, email, phone, reg, password, confirmPassword } = req.body;
+  if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
+
   if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
 
   try {
@@ -133,12 +222,20 @@ app.post('/signup/charity', async (req, res) => {
     pool.query(query, [orgname, email, phone, reg, hashed], (err) => {
       if (err) return res.status(500).json({ success: false, message: err.sqlMessage });
       res.status(200).json({ success: true, message: 'Charity account created successfully' });
+    const hashed = await bcrypt.hash(password, 10);
+    const query = 'INSERT INTO charity (orgname, email, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
+    pool.query(query, [orgname, email, phone, reg, hashed], (err) => {
+      if (err) return res.status(500).json({ success: false, message: err.sqlMessage });
+      res.status(200).json({ success: true, message: 'Charity account created successfully' });
     });
+  } catch {
+    res.status(500).json({ success: false, message: 'Server error' });
   } catch {
     res.status(500).json({ success: false, message: 'Server error' });
   }
 });
 
+// Login (general)
 // Login (general)
 app.post('/auth/login', (req, res) => {
   const { email, password, role, accessKey } = req.body;
@@ -215,16 +312,103 @@ app.post('/auth/login', (req, res) => {
   } else {
     res.status(400).json({ message: 'Unknown role' });
   }
+  if (role === 'admin') {
+    const query = 'SELECT * FROM admins WHERE email = ?';
+    pool.query(query, [email], (err, results) => {
+      if (err) return res.status(500).json({ message: 'Server error' });
+      if (results.length === 0 || results[0].password !== password || results[0].access_key !== accessKey)
+        return res.status(401).json({ message: 'Invalid credentials or access key' });
+      if (results[0].status === 'banned') {
+        return res.status(403).json({
+          success: false,
+          banned: true,
+          message: 'Your admin account has been banned. If you believe this is a mistake, please appeal.',
+          canAppeal: true
+        });
+      }
+      res.json({
+        success: true,
+        message: 'Admin login successful',
+        admin: { id: results[0].id, fullname: results[0].fullname, email: results[0].email },
+        dashboard: '/AdminPages/AdminDashboard.html'
+      });
+    });
+  } else if (role === 'donor') {
+    const query = 'SELECT * FROM donor WHERE email = ?';
+    pool.query(query, [email], async (err, results) => {
+      if (err || results.length === 0) return res.status(401).json({ message: 'Invalid email or password' });
+      const match = await bcrypt.compare(password, results[0].password);
+      if (!match) return res.status(401).json({ message: 'Invalid email or password' });
+      if (results[0].status === 'banned') {
+        return res.status(403).json({
+          success: false,
+          banned: true,
+          message: 'Your donor account has been banned. If you believe this is a mistake, please appeal.',
+          canAppeal: true
+        });
+      }
+      res.json({
+        success: true,
+        message: 'Donor login successful',
+        donor: { id: results[0].id, fullname: results[0].fullname, email: results[0].email, phone: results[0].phone },
+        dashboard: '/FoodDonor Pages/FoodDonor.html'
+      });
+    });
+  } else if (role === 'charity') {
+    const query = 'SELECT * FROM charity WHERE email = ?';
+    pool.query(query, [email], async (err, results) => {
+      if (err || results.length === 0) return res.status(401).json({ message: 'Invalid email or password' });
+      const match = await bcrypt.compare(password, results[0].password);
+      if (!match) return res.status(401).json({ message: 'Invalid email or password' });
+      if (results[0].status === 'banned') {
+        return res.status(403).json({
+          success: false,
+          banned: true,
+          message: 'Your charity account has been banned. If you believe this is a mistake, please appeal.',
+          canAppeal: true
+        });
+      }
+      res.json({
+        success: true,
+        message: 'Charity login successful',
+        charity: {
+          id: results[0].id,
+          orgname: results[0].orgname,
+          email: results[0].email,
+          phone: results[0].phone,
+          reg: results[0].reg,
+          verified: results[0].verified === 1 || results[0].verified === true
+        },
+        dashboard: '/Charity Pages/CharityDashboard.html'
+      });
+    });
+  } else {
+    res.status(400).json({ message: 'Unknown role' });
+  }
 });
 
+// Donor Login
 // Donor Login
 app.post('/auth/login/donor', (req, res) => {
   const { email, password } = req.body;
   const query = 'SELECT * FROM donor WHERE email = ?';
+  const query = 'SELECT * FROM donor WHERE email = ?';
   pool.query(query, [email], async (err, results) => {
     if (err || results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const match = await bcrypt.compare(password, results[0].password);
+    if (err || results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    const match = await bcrypt.compare(password, results[0].password);
     if (!match) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    if (results[0].status === 'banned') {
+      return res.status(403).json({
+        success: false,
+        banned: true,
+        message: 'Your donor account has been banned. If you believe this is a mistake, please appeal.',
+        canAppeal: true
+      });
+    }
+    const donor = results[0];
+    res.json({ success: true, message: 'Login successful', donor: { id: donor.id, fullname: donor.fullname, email: donor.email, phone: donor.phone } });
     if (results[0].status === 'banned') {
       return res.status(403).json({
         success: false,
@@ -239,14 +423,39 @@ app.post('/auth/login/donor', (req, res) => {
 });
 
 // Charity Login
+// Charity Login
 app.post('/auth/login/charity', (req, res) => {
   const { email, password } = req.body;
+  // Use charity table
   // Use charity table
   const query = 'SELECT * FROM charity WHERE email = ?';
   pool.query(query, [email], async (err, results) => {
     if (err || results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const match = await bcrypt.compare(password, results[0].password);
+    if (err || results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    const match = await bcrypt.compare(password, results[0].password);
     if (!match) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+    if (results[0].status === 'banned') {
+      return res.status(403).json({
+        success: false,
+        banned: true,
+        message: 'Your charity account has been banned. If you believe this is a mistake, please appeal.',
+        canAppeal: true
+      });
+    }
+    const charity = results[0];
+    res.json({
+      success: true,
+      message: 'Login successful',
+      charity: {
+        id: charity.id,
+        orgname: charity.orgname,
+        email: charity.email,
+        phone: charity.phone,
+        reg: charity.reg,
+        verified: charity.verified === 1 || charity.verified === true
+      }
+    });
     if (results[0].status === 'banned') {
       return res.status(403).json({
         success: false,
@@ -272,6 +481,7 @@ app.post('/auth/login/charity', (req, res) => {
 });
 
 // Submit Charity Verification
+// Submit Charity Verification
 app.post('/api/verify-charity', upload.fields([
   { name: 'idUpload', maxCount: 1 },
   { name: 'certUpload', maxCount: 1 }
@@ -279,7 +489,10 @@ app.post('/api/verify-charity', upload.fields([
   const { charityName, address, contact, desc } = req.body;
   const idFile = req.files['idUpload']?.[0]?.filename;
   const certFile = req.files['certUpload']?.[0]?.filename;
+  const idFile = req.files['idUpload']?.[0]?.filename;
+  const certFile = req.files['certUpload']?.[0]?.filename;
 
+  if (!charityName || !address || !contact || !desc || !idFile || !certFile)
   if (!charityName || !address || !contact || !desc || !idFile || !certFile)
     return res.status(400).json({ success: false, message: 'Missing required fields or files.' });
 
