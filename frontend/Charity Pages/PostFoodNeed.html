@@ -138,31 +138,23 @@
   </div>
   <script>
     document.getElementById('foodNeedForm').addEventListener('submit', async function(e) {
-    document.getElementById('foodNeedForm').addEventListener('submit', async function(e) {
       e.preventDefault();
       // JWT check for verification
       let jwt = localStorage.getItem('jwt');
       // let verified = false;
       let orgName = '';
-      // let verified = false;
-      let orgName = '';
       if (jwt) {
         try {
           const jwtObj = JSON.parse(jwt);
-          // verified = jwtObj.verified;
-          orgName = jwtObj.name || '';
-          const jwtObj = JSON.parse(jwt);
-          // verified = jwtObj.verified;
           orgName = jwtObj.name || '';
         } catch {}
       }
-      /* if (!verified) {
-      /* if (!verified) {
-        alert('You must verify your account before posting a new food need.');
-        window.location.href = 'Profile.html';
-        return;
-      } */
-      } */
+      // If you want to require verification, uncomment below:
+      // if (!verified) {
+      //   alert('You must verify your account before posting a new food need.');
+      //   window.location.href = 'Profile.html';
+      //   return;
+      // }
       // Collect form data
       const foodItem = document.getElementById('foodItem').value;
       const quantity = document.getElementById('quantity').value;
