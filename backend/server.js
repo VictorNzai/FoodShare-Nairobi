@@ -449,3 +449,34 @@ app.post('/api/admin/users/admin/:id/demote', (req, res) => {
     res.json({ success: true, message: 'Admin demoted/removed.' });
   });
 });
+
+// --- Food Needs Endpoints ---
+// POST a new food need
+app.post('/api/food_needs', (req, res) => {
+  const { org_name, date, food_item, quantity, pickup_location, notes, status } = req.body;
+  if (!org_name || !date || !food_item || !quantity || !pickup_location || !status) {
+    return res.status(400).json({ success: false, message: 'Missing required fields.' });
+  }
+  const sql = `INSERT INTO food_needs (org_name, date, food_item, quantity, pickup_location, notes, status) VALUES (?, ?, ?, ?, ?, ?, ?)`;
+  pool.query(sql, [org_name, date, food_item, quantity, pickup_location, notes, status], (err, result) => {
+    if (err) {
+      console.error('Error inserting food need:', err);
+      return res.status(500).json({ success: false, message: 'Database error.' });
+    }
+    res.json({ success: true, message: 'Food need submitted.' });
+  });
+});
+
+// GET food needs for a specific org
+app.get('/api/food_needs', (req, res) => {
+  const org = req.query.org;
+  if (!org) return res.status(400).json({ success: false, message: 'Missing org parameter.' });
+  const sql = 'SELECT * FROM food_needs WHERE org_name = ? ORDER BY date DESC';
+  pool.query(sql, [org], (err, results) => {
+    if (err) {
+      console.error('Error fetching food needs:', err);
+      return res.status(500).json({ success: false, message: 'Database error.' });
+    }
+    res.json(results);
+  });
+});

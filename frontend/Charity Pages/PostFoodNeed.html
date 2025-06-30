@@ -164,16 +164,16 @@
       const today = new Date();
       const dateStr = today.toISOString().slice(0, 10);
       const foodNeed = {
-        orgName: orgName,
+        org_name: orgName,
         date: dateStr,
-        foodItem: foodItem,
+        food_item: foodItem,
         quantity: quantity,
-        pickupLocation: pickupLocation,
+        pickup_location: pickupLocation,
         notes: notes,
         status: 'Pending'
       };
       try {
-        const res = await fetch('http://localhost:3000/api/foodneeds', {
+        const res = await fetch('http://localhost:3000/api/food_needs', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -182,8 +182,21 @@
           body: JSON.stringify(foodNeed)
         });
         if (!res.ok) throw new Error('Failed to submit food need');
+        // If on dashboard, update activity table and stats without redirect
+        if (window.opener && window.opener.location.pathname.includes('CharityDashboard.html')) {
+          // If opened as a new window or tab, refresh parent dashboard
+          window.opener.location.reload();
+          window.close();
+        } else if (window.location.pathname.includes('CharityDashboard.html')) {
+          if (typeof renderRecentActivity === 'function') {
+            await renderRecentActivity();
+          } else {
+            window.location.reload();
+          }
+        } else {
+          window.location.href = "CharityDashboard.html";
+        }
         alert('Food need submitted!');
-        window.location.href = "CharityDashboard.html";
       } catch (err) {
         alert('Error submitting food need. Please try again.');
       }

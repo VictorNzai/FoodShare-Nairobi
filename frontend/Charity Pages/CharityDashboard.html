@@ -317,7 +317,7 @@
         return;
       }
       try {
-        const res = await fetch('http://localhost:3000/api/foodneeds?org=' + encodeURIComponent(orgName), {
+        const res = await fetch('http://localhost:3000/api/food_needs?org=' + encodeURIComponent(orgName), {
           headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {}
         });
         if (!res.ok) throw new Error('Failed to fetch food needs');
@@ -336,7 +336,7 @@
               let total = foodNeeds
                 .filter(need => need.status === 'Completed')
                 .reduce((sum, need) => {
-                  let qty = parseFloat(String(need.quantity).replace(/[^\d.]/g, ''));
+                  let qty = parseFloat(String(need.quantity).replace(/[^-9.]/g, ''));
                   return sum + (isNaN(qty) ? 0 : qty);
                 }, 0);
               value.textContent = total + ' kg';
@@ -352,7 +352,7 @@
         } else {
           foodNeeds.forEach(need => {
             const tr = document.createElement('tr');
-            // Format date to show only YYYY-MM-DD
+            // Use DB column names exactly as returned
             let dateStr = need.date ? String(need.date).slice(0, 10) : '';
             tr.innerHTML = `
               <td>${dateStr}</td>
