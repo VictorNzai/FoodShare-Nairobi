@@ -227,9 +227,7 @@
 <body>
   <header>
     <div class="logo" style="cursor:pointer;" onclick="window.location.href='../../Index.html'">🍴 FoodShare</div>
-    <div class="logo" style="cursor:pointer;" onclick="window.location.href='../../Index.html'">🍴 FoodShare</div>
     <nav>
-      <a href="Profile.html">Profile</a>
       <a href="Profile.html">Profile</a>
       <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
     </nav>
@@ -338,7 +336,11 @@
               let total = foodNeeds
                 .filter(need => need.status === 'Completed')
                 .reduce((sum, need) => {
+<<<<<<< HEAD
                   let qty = parseFloat(String(need.quantity).replace(/[^\d.]/g, ''));
+=======
+                  let qty = parseFloat(String(need.quantity).replace(/[^-9.]/g, ''));
+>>>>>>> parent of 22e11ec (Merge branch 'main' of https://github.com/VictorNzai/FoodShare-Nairobi)
                   return sum + (isNaN(qty) ? 0 : qty);
                 }, 0);
               value.textContent = total + ' kg';
@@ -354,7 +356,11 @@
         } else {
           foodNeeds.forEach(need => {
             const tr = document.createElement('tr');
+<<<<<<< HEAD
             // Format date to show only YYYY-MM-DD
+=======
+            // Use DB column names exactly as returned
+>>>>>>> parent of 22e11ec (Merge branch 'main' of https://github.com/VictorNzai/FoodShare-Nairobi)
             let dateStr = need.date ? String(need.date).slice(0, 10) : '';
             tr.innerHTML = `
               <td>${dateStr}</td>
@@ -371,6 +377,10 @@
       } catch (err) {
         tbody.innerHTML = '<tr><td colspan="7">Error loading activity.</td></tr>';
       }
+<<<<<<< HEAD
+=======
+      // Optionally, add static rows below if needed
+>>>>>>> parent of 22e11ec (Merge branch 'main' of https://github.com/VictorNzai/FoodShare-Nairobi)
     }
     renderRecentActivity();
   </script>

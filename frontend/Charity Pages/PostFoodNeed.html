@@ -146,6 +146,7 @@
       if (jwt) {
         try {
           const jwtObj = JSON.parse(jwt);
+<<<<<<< HEAD
           orgName = jwtObj.name || '';
         } catch {}
       }
@@ -155,6 +156,17 @@
       //   window.location.href = 'Profile.html';
       //   return;
       // }
+=======
+          // verified = jwtObj.verified;
+          orgName = jwtObj.name || '';
+        } catch {}
+      }
+      /* if (!verified) {
+        alert('You must verify your account before posting a new food need.');
+        window.location.href = 'Profile.html';
+        return;
+      } */
+>>>>>>> parent of 22e11ec (Merge branch 'main' of https://github.com/VictorNzai/FoodShare-Nairobi)
       // Collect form data
       const foodItem = document.getElementById('foodItem').value;
       const quantity = document.getElementById('quantity').value;
