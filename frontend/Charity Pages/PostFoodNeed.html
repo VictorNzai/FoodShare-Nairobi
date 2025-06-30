@@ -141,21 +141,21 @@
       e.preventDefault();
       // JWT check for verification
       let jwt = localStorage.getItem('jwt');
-      // let verified = false;
+      let verified = false;
       let orgName = '';
       if (jwt) {
         try {
           const jwtObj = JSON.parse(jwt);
+          verified = jwtObj.verified;
 <<<<<<< HEAD
           orgName = jwtObj.name || '';
         } catch {}
       }
-      // If you want to require verification, uncomment below:
-      // if (!verified) {
-      //   alert('You must verify your account before posting a new food need.');
-      //   window.location.href = 'Profile.html';
-      //   return;
-      // }
+      if (!verified) {
+        alert('You must verify your account before posting a new food need.');
+        window.location.href = 'Profile.html';
+        return;
+      }
 =======
           // verified = jwtObj.verified;
           orgName = jwtObj.name || '';
@@ -176,16 +176,16 @@
       const today = new Date();
       const dateStr = today.toISOString().slice(0, 10);
       const foodNeed = {
-        org_name: orgName,
+        orgName: orgName,
         date: dateStr,
-        food_item: foodItem,
+        foodItem: foodItem,
         quantity: quantity,
-        pickup_location: pickupLocation,
+        pickupLocation: pickupLocation,
         notes: notes,
         status: 'Pending'
       };
       try {
-        const res = await fetch('http://localhost:3000/api/food_needs', {
+        const res = await fetch('http://localhost:3000/api/foodneeds', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -194,21 +194,8 @@
           body: JSON.stringify(foodNeed)
         });
         if (!res.ok) throw new Error('Failed to submit food need');
-        // If on dashboard, update activity table and stats without redirect
-        if (window.opener && window.opener.location.pathname.includes('CharityDashboard.html')) {
-          // If opened as a new window or tab, refresh parent dashboard
-          window.opener.location.reload();
-          window.close();
-        } else if (window.location.pathname.includes('CharityDashboard.html')) {
-          if (typeof renderRecentActivity === 'function') {
-            await renderRecentActivity();
-          } else {
-            window.location.reload();
-          }
-        } else {
-          window.location.href = "CharityDashboard.html";
-        }
         alert('Food need submitted!');
+        window.location.href = "CharityDashboard.html";
       } catch (err) {
         alert('Error submitting food need. Please try again.');
       }
