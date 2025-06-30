@@ -1,8 +1,3 @@
-// --- Admin User Management Endpoints ---
-// (Now correctly placed after app initialization and all middleware)
-// ...existing code...
-// Place these at the end of the file, after all other endpoints:
-// (Moved below app.listen)
 const express = require('express');
 const cors = require('cors');
 const mysql = require('mysql2');
@@ -108,13 +103,7 @@ app.post('/api/admin/charity-verifications/:id/reject', (req, res) => {
 app.post('/signup/donor', async (req, res) => {
   const { fullname, email, phone, password, confirmPassword } = req.body;
   if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
-
   try {
-    const hashed = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
-    pool.query(query, [fullname, email, phone, hashed], (err) => {
-      if (err) return res.status(500).json({ success: false, message: err.sqlMessage });
-      res.status(200).json({ success: true, message: 'Donor account created successfully' });
     const hashed = await bcrypt.hash(password, 10);
     const query = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
     pool.query(query, [fullname, email, phone, hashed], (err) => {
@@ -130,9 +119,6 @@ app.post('/signup/donor', async (req, res) => {
 app.post('/signup/charity', async (req, res) => {
   const { orgname, email, phone, reg, password, confirmPassword } = req.body;
   if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
-
-  if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
-
   try {
     const hashed = await bcrypt.hash(password, 10);
     const query = 'INSERT INTO charity (orgname, email, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
@@ -247,7 +233,6 @@ app.post('/auth/login/donor', (req, res) => {
 // Charity Login (dedicated endpoint)
 app.post('/auth/login/charity', (req, res) => {
   const { email, password } = req.body;
-  // Use charity table
   const query = 'SELECT * FROM charity WHERE email = ?';
   pool.query(query, [email], async (err, results) => {
     if (err || results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
@@ -285,10 +270,6 @@ app.post('/api/verify-charity', upload.fields([
   const { charityName, address, contact, desc } = req.body;
   const idFile = req.files['idUpload']?.[0]?.filename;
   const certFile = req.files['certUpload']?.[0]?.filename;
-  const idFile = req.files['idUpload']?.[0]?.filename;
-  const certFile = req.files['certUpload']?.[0]?.filename;
-
-  if (!charityName || !address || !contact || !desc || !idFile || !certFile)
   if (!charityName || !address || !contact || !desc || !idFile || !certFile)
     return res.status(400).json({ success: false, message: 'Missing required fields or files.' });
   const sql = `INSERT INTO charity_verifications 
