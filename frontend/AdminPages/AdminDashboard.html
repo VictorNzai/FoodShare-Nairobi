@@ -222,8 +222,14 @@
         <nav>
           <a
             href="#"
-            id="sidebar-verifications"
+            id="sidebar-dashboard"
             class="active"
+            onclick="showSection('dashboard-section')"
+            >Dashboard</a
+          >
+          <a
+            href="#"
+            id="sidebar-verifications"
             onclick="showSection('charity-verification-section')"
             >Charity Verifications</a
           >
@@ -233,7 +239,12 @@
             onclick="showSection('user-management-section')"
             >User Management</a
           >
-          <a href="#">Reports</a>
+          <a
+            href="#"
+            id="sidebar-reports"
+            onclick="showSection('reports-section')"
+            >Reports</a
+          >
           <a href="#">Settings</a>
           <a href="../Login.html">Logout</a>
         </nav>
@@ -248,7 +259,319 @@
         "
       >
         <main class="main-content">
-          <div id="charity-verification-section">
+          <!-- Dashboard Overview Section -->
+          <div id="dashboard-section">
+            <h2>Admin Dashboard</h2>
+            <div
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 24px;
+                margin-bottom: 32px;
+              "
+            >
+              <div
+                style="
+                  flex: 1 1 220px;
+                  min-width: 220px;
+                  background: #fff;
+                  border-radius: 18px;
+                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                  padding: 28px 20px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                "
+              >
+                <div
+                  style="
+                    color: #54d12b;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Total Food Rescued
+                </div>
+                <div
+                  id="stat-food"
+                  style="font-size: 2.1rem; font-weight: 900; color: #121a0f"
+                >
+                  --
+                </div>
+              </div>
+              <div
+                style="
+                  flex: 1 1 220px;
+                  min-width: 220px;
+                  background: #fff;
+                  border-radius: 18px;
+                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                  padding: 28px 20px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                "
+              >
+                <div
+                  style="
+                    color: #54d12b;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Active Donors
+                </div>
+                <div
+                  id="stat-donors"
+                  style="
+                    font-size: 2.1rem;
+                    font-weight: 900;
+                    color: #121a0f;
+                    cursor: pointer;
+                  "
+                  title="Click to view all donors"
+                  onclick="showDonorCount()"
+                >
+                  --
+                </div>
+              </div>
+              <div
+                style="
+                  flex: 1 1 220px;
+                  min-width: 220px;
+                  background: #fff;
+                  border-radius: 18px;
+                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                  padding: 28px 20px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                "
+              >
+                <div
+                  style="
+                    color: #54d12b;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Active Charities
+                </div>
+                <div
+                  id="stat-charities"
+                  style="
+                    font-size: 2.1rem;
+                    font-weight: 900;
+                    color: #121a0f;
+                    cursor: pointer;
+                  "
+                  title="Click to view all charities"
+                  onclick="showCharityCount()"
+                >
+                  --
+                </div>
+              </div>
+              <div
+                style="
+                  flex: 1 1 220px;
+                  min-width: 220px;
+                  background: #fff;
+                  border-radius: 18px;
+                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                  padding: 28px 20px;
+                  display: flex;
+                  flex-direction: column;
+                  align-items: flex-start;
+                "
+              >
+                <div
+                  style="
+                    color: #54d12b;
+                    font-size: 1.1rem;
+                    font-weight: 700;
+                    margin-bottom: 8px;
+                  "
+                >
+                  Pending Approvals
+                </div>
+                <div
+                  id="stat-pending"
+                  style="
+                    font-size: 2.1rem;
+                    font-weight: 900;
+                    color: #121a0f;
+                    cursor: pointer;
+                  "
+                  title="Click to view pending approvals"
+                  onclick="showSection('charity-verification-section')"
+                >
+                  --
+                </div>
+              </div>
+            </div>
+            <div
+              style="
+                display: flex;
+                flex-wrap: wrap;
+                gap: 24px;
+                margin-bottom: 32px;
+              "
+            >
+              <div
+                style="
+                  flex: 2 1 400px;
+                  min-width: 320px;
+                  background: #fff;
+                  border-radius: 18px;
+                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                  padding: 24px 20px;
+                "
+              >
+                <div
+                  style="font-weight: 700; color: #54d12b; margin-bottom: 12px"
+                >
+                  Donation Trends
+                </div>
+                <canvas id="donationTrendsChart" height="120"></canvas>
+              </div>
+              <div
+                style="
+                  flex: 1 1 220px;
+                  min-width: 220px;
+                  background: #fff;
+                  border-radius: 18px;
+                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                  padding: 24px 20px;
+                "
+              >
+                <div
+                  style="font-weight: 700; color: #54d12b; margin-bottom: 12px"
+                >
+                  Recent Feedback
+                </div>
+                <ul
+                  id="recentFeedback"
+                  style="
+                    list-style: none;
+                    padding: 0;
+                    margin: 0;
+                    font-size: 0.98rem;
+                    color: #639155;
+                  "
+                ></ul>
+              </div>
+            </div>
+            <div style="display: flex; gap: 18px; flex-wrap: wrap">
+              <button
+                class="action-btn approve"
+                onclick="showSection('charity-verification-section')"
+              >
+                Verify Institutions
+              </button>
+              <button
+                class="action-btn approve"
+                onclick="showSection('user-management-section')"
+              >
+                Manage Users
+              </button>
+              <button
+                class="action-btn"
+                style="background: #ebf2e9; color: #121a0f"
+                onclick="showSection('reports-section')"
+              >
+                Generate Reports
+              </button>
+              <button
+                class="action-btn"
+                style="background: #ebf2e9; color: #121a0f"
+                onclick="alert('Send announcement coming soon!')"
+              >
+                Send Announcement
+              </button>
+            </div>
+          </div>
+          <!-- Reports Section -->
+          <div id="reports-section" style="display: none">
+            <h2>Generate Reports</h2>
+            <form
+              id="reportForm"
+              style="
+                background: #fff;
+                border-radius: 16px;
+                box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                padding: 32px 24px;
+                max-width: 480px;
+                margin-bottom: 32px;
+              "
+            >
+              <div style="margin-bottom: 18px">
+                <label for="reportType" style="font-weight: 600; color: #54d12b"
+                  >Report Type:</label
+                >
+                <select
+                  id="reportType"
+                  name="reportType"
+                  style="
+                    margin-left: 12px;
+                    padding: 7px 12px;
+                    border-radius: 8px;
+                    border: 1px solid #d5e7d0;
+                    font-size: 15px;
+                  "
+                >
+                  <option value="donations">Donation Trends</option>
+                  <option value="users">User Activity</option>
+                  <option value="food">Food Rescued</option>
+                  <option value="feedback">Feedback Summary</option>
+                </select>
+              </div>
+              <div style="margin-bottom: 18px">
+                <label for="startDate" style="font-weight: 600; color: #54d12b"
+                  >Start Date:</label
+                >
+                <input
+                  type="date"
+                  id="startDate"
+                  name="startDate"
+                  style="
+                    margin-left: 12px;
+                    padding: 7px 12px;
+                    border-radius: 8px;
+                    border: 1px solid #d5e7d0;
+                    font-size: 15px;
+                  "
+                  required
+                />
+              </div>
+              <div style="margin-bottom: 24px">
+                <label for="endDate" style="font-weight: 600; color: #54d12b"
+                  >End Date:</label
+                >
+                <input
+                  type="date"
+                  id="endDate"
+                  name="endDate"
+                  style="
+                    margin-left: 12px;
+                    padding: 7px 12px;
+                    border-radius: 8px;
+                    border: 1px solid #d5e7d0;
+                    font-size: 15px;
+                  "
+                  required
+                />
+              </div>
+              <button type="submit" class="action-btn approve">
+                Generate Report
+              </button>
+            </form>
+            <div id="reportResult" style="margin-top: 18px"></div>
+          </div>
+          <!-- Charity Verification Section -->
+          <div id="charity-verification-section" style="display: none">
             <h2>Charity Verification Requests</h2>
             <div class="filter-bar">
               <label for="statusFilter">Filter by Status:</label>
@@ -357,12 +680,54 @@
       <p>&copy; 2025 FoodShare. All rights reserved.</p>
     </footer>
     <script>
+      // Show total donors in system
+      async function showDonorCount() {
+        try {
+          const res = await fetch(
+            "http://localhost:3000/api/admin/users?type=donor"
+          );
+          const data = await res.json();
+          if (data.success) {
+            alert(`Total Donors: ${data.users.length}`);
+          } else {
+            alert("Could not fetch donor count.");
+          }
+        } catch (e) {
+          alert("Error fetching donor count.");
+        }
+      }
+
+      // Show total charities in system
+      async function showCharityCount() {
+        try {
+          const res = await fetch(
+            "http://localhost:3000/api/admin/users?type=charity"
+          );
+          const data = await res.json();
+          if (data.success) {
+            alert(`Total Charities: ${data.users.length}`);
+          } else {
+            alert("Could not fetch charity count.");
+          }
+        } catch (e) {
+          alert("Error fetching charity count.");
+        }
+      }
       // Sidebar navigation
       function showSection(sectionId) {
+        // Hide all main sections
+        document.getElementById("dashboard-section").style.display =
+          sectionId === "dashboard-section" ? "" : "none";
         document.getElementById("charity-verification-section").style.display =
           sectionId === "charity-verification-section" ? "" : "none";
         document.getElementById("user-management-section").style.display =
           sectionId === "user-management-section" ? "" : "none";
+        document.getElementById("reports-section").style.display =
+          sectionId === "reports-section" ? "" : "none";
+        // Sidebar active state
+        document
+          .getElementById("sidebar-dashboard")
+          .classList.toggle("active", sectionId === "dashboard-section");
         document
           .getElementById("sidebar-verifications")
           .classList.toggle(
@@ -372,7 +737,24 @@
         document
           .getElementById("sidebar-users")
           .classList.toggle("active", sectionId === "user-management-section");
+        document
+          .getElementById("sidebar-reports")
+          .classList.toggle("active", sectionId === "reports-section");
       }
+      // Reports form handler (scaffold only)
+      document.addEventListener("DOMContentLoaded", function () {
+        var reportForm = document.getElementById("reportForm");
+        if (reportForm) {
+          reportForm.addEventListener("submit", function (e) {
+            e.preventDefault();
+            var type = document.getElementById("reportType").value;
+            var start = document.getElementById("startDate").value;
+            var end = document.getElementById("endDate").value;
+            var result = document.getElementById("reportResult");
+            result.innerHTML = `<div style='color:#54d12b;font-weight:600;'>Generating <b>${type}</b> report from <b>${start}</b> to <b>${end}</b>... (feature coming soon)</div>`;
+          });
+        }
+      });
 
       // User Management Tab logic
       let currentUserType = "donor";
@@ -439,6 +821,7 @@
           } else {
             document.getElementById("noUsers").style.display = "block";
           }
+          // ...existing code...
           // Promote user to admin
           async function promoteUser(type, id) {
             if (!confirm("Promote this user to admin?")) return;
@@ -464,6 +847,7 @@
         }
       }
 
+      // Ban user
       async function banUser(type, id) {
         if (!confirm("Ban this user?")) return;
         const url = `http://localhost:3000/api/admin/users/${type}/${id}/ban`;
@@ -472,6 +856,7 @@
         if (data.success) fetchUsers();
         else alert(data.message || "Action failed");
       }
+      // Unban user
       async function unbanUser(type, id) {
         if (!confirm("Unban this user?")) return;
         const url = `http://localhost:3000/api/admin/users/${type}/${id}/unban`;
@@ -480,6 +865,7 @@
         if (data.success) fetchUsers();
         else alert(data.message || "Action failed");
       }
+      // Delete user
       async function deleteUser(type, id) {
         if (!confirm("Permanently delete this user? This cannot be undone."))
           return;
@@ -489,6 +875,7 @@
         if (data.success) fetchUsers();
         else alert(data.message || "Action failed");
       }
+      // View user details
       async function viewUserDetails(type, id) {
         const url = `http://localhost:3000/api/admin/users/${type}/${id}`;
         const res = await fetch(url);
@@ -519,9 +906,11 @@
             .getElementById("verificationsTable")
             .getElementsByTagName("tbody")[0];
           table.innerHTML = "";
+          let pendingCount = 0;
           if (data.success && data.verifications.length > 0) {
             document.getElementById("noRequests").style.display = "none";
             data.verifications.forEach((v) => {
+              if (v.status === "pending") pendingCount++;
               const row = document.createElement("tr");
               row.innerHTML = `
                 <td>${v.id}</td>
@@ -551,6 +940,9 @@
           } else {
             document.getElementById("noRequests").style.display = "block";
           }
+          // Update pending approvals stat on dashboard
+          const statPending = document.getElementById("stat-pending");
+          if (statPending) statPending.textContent = pendingCount;
         } catch (err) {
           document.getElementById("noRequests").style.display = "block";
           console.error("Fetch error:", err);
@@ -577,10 +969,116 @@
       }
 
       // Initial tab state and fetches
+      // Fetch dashboard stats and feedback (placeholder logic)
+      async function fetchDashboardStats() {
+        // Replace with real API endpoints as needed
+        try {
+          // Example endpoints
+          const statsRes = await fetch(
+            "http://localhost:3000/api/admin/dashboard-stats"
+          );
+          const stats = await statsRes.json();
+          document.getElementById("stat-food").textContent =
+            stats.totalFoodRescued || "--";
+          // Fetch and set live donor and charity counts
+          try {
+            const donorRes = await fetch(
+              "http://localhost:3000/api/admin/users?type=donor"
+            );
+            const donorData = await donorRes.json();
+            document.getElementById("stat-donors").textContent =
+              donorData.success ? donorData.users.length : "--";
+          } catch (e) {
+            document.getElementById("stat-donors").textContent = "--";
+          }
+          try {
+            const charityRes = await fetch(
+              "http://localhost:3000/api/admin/users?type=charity"
+            );
+            const charityData = await charityRes.json();
+            document.getElementById("stat-charities").textContent =
+              charityData.success ? charityData.users.length : "--";
+          } catch (e) {
+            document.getElementById("stat-charities").textContent = "--";
+          }
+          // Only set stat-pending if it is not already set by fetchVerifications
+          const statPending = document.getElementById("stat-pending");
+          if (
+            statPending &&
+            (statPending.textContent === "--" ||
+              statPending.textContent === "0")
+          ) {
+            statPending.textContent = stats.pendingApprovals || "--";
+          }
+          // Feedback
+          const feedbackList = document.getElementById("recentFeedback");
+          feedbackList.innerHTML = "";
+          (stats.recentFeedback || []).forEach((f) => {
+            const li = document.createElement("li");
+            li.textContent = `"${f.comment}" – ${f.user}`;
+            feedbackList.appendChild(li);
+          });
+          // Chart
+          if (window.renderDonationTrendsChart && stats.donationTrends) {
+            window.renderDonationTrendsChart(stats.donationTrends);
+          }
+        } catch (e) {
+          // fallback
+          document.getElementById("stat-food").textContent = "--";
+          document.getElementById("stat-donors").textContent = "--";
+          document.getElementById("stat-charities").textContent = "--";
+          document.getElementById("stat-pending").textContent = "--";
+        }
+      }
+
+      // Chart.js for donation trends
+      function renderDonationTrendsChart(data) {
+        if (!window.Chart) return;
+        const ctx = document
+          .getElementById("donationTrendsChart")
+          .getContext("2d");
+        if (window.donationTrendsChartInstance)
+          window.donationTrendsChartInstance.destroy();
+        window.donationTrendsChartInstance = new Chart(ctx, {
+          type: "line",
+          data: {
+            labels: data.labels,
+            datasets: [
+              {
+                label: "Donations",
+                data: data.values,
+                borderColor: "#54d12b",
+                backgroundColor: "rgba(84,209,43,0.08)",
+                fill: true,
+                tension: 0.3,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true } },
+          },
+        });
+      }
+      window.renderDonationTrendsChart = renderDonationTrendsChart;
+
       document.addEventListener("DOMContentLoaded", () => {
+        showSection("dashboard-section");
+        fetchDashboardStats();
         switchUserTab("donor");
         fetchVerifications();
       });
+      // Load Chart.js
+      (function loadChartJs() {
+        if (window.Chart) return;
+        var script = document.createElement("script");
+        script.src = "https://cdn.jsdelivr.net/npm/chart.js";
+        script.onload = function () {
+          fetchDashboardStats();
+        };
+        document.head.appendChild(script);
+      })();
     </script>
   </body>
 </html>
