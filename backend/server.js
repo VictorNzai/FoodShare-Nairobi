@@ -324,6 +324,107 @@ app.get('/api/admin/users', (req, res) => {
   });
 });
 
+// Ban user (admin action)
+app.post('/api/admin/users/:type/:id/ban', (req, res) => {
+  const { type, id } = req.params;
+  let table = '';
+  if (type === 'donor') table = 'donor';
+  else if (type === 'charity') table = 'charity';
+  else if (type === 'admin') table = 'admins';
+  else return res.status(400).json({ success: false, message: 'Invalid user type' });
+  const sql = `UPDATE ${table} SET status = 'banned' WHERE id = ?`;
+  pool.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+    if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+    res.json({ success: true, message: 'User banned.' });
+  });
+});
+
+// Unban user (admin action)
+app.post('/api/admin/users/:type/:id/unban', (req, res) => {
+  const { type, id } = req.params;
+  let table = '';
+  if (type === 'donor') table = 'donor';
+  else if (type === 'charity') table = 'charity';
+  else if (type === 'admin') table = 'admins';
+  else return res.status(400).json({ success: false, message: 'Invalid user type' });
+  const sql = `UPDATE ${table} SET status = 'active' WHERE id = ?`;
+  pool.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+    if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+    res.json({ success: true, message: 'User unbanned.' });
+  });
+});
+
+// Promote user to admin (for donor/charity)
+app.post('/api/admin/users/:type/:id/promote', (req, res) => {
+  const { type, id } = req.params;
+  let selectSql = '';
+  if (type === 'donor') selectSql = 'SELECT * FROM donor WHERE id = ?';
+  else if (type === 'charity') selectSql = 'SELECT * FROM charity WHERE id = ?';
+  else return res.status(400).json({ success: false, message: 'Invalid user type' });
+  pool.query(selectSql, [id], (err, results) => {
+    if (err || results.length === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+    const user = results[0];
+    // Insert into admins table
+    const insertSql = 'INSERT INTO admins (fullname, email, status, password) VALUES (?, ?, ?, ?)';
+    pool.query(insertSql, [user.fullname || user.orgname, user.email, 'active', user.password], (err2) => {
+      if (err2) return res.status(500).json({ success: false, message: 'Failed to promote user.' });
+      res.json({ success: true, message: 'User promoted to admin.' });
+    });
+  });
+});
+
+// Demote admin (remove from admins table)
+app.post('/api/admin/users/admin/:id/demote', (req, res) => {
+  const { id } = req.params;
+  const sql = 'DELETE FROM admins WHERE id = ?';
+  pool.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+    if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+    res.json({ success: true, message: 'Admin demoted/removed.' });
+  });
+});
+
+// Delete user (admin action)
+app.delete('/api/admin/users/:type/:id', (req, res) => {
+  const { type, id } = req.params;
+  let table = '';
+  if (type === 'donor') table = 'donor';
+  else if (type === 'charity') table = 'charity';
+  else if (type === 'admin') table = 'admins';
+  else return res.status(400).json({ success: false, message: 'Invalid user type' });
+  const sql = `DELETE FROM ${table} WHERE id = ?`;
+  pool.query(sql, [id], (err, result) => {
+    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+    if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+    res.json({ success: true, message: 'User deleted.' });
+  });
+});
+
+// View user details (admin action)
+app.get('/api/admin/users/:type/:id', (req, res) => {
+  const { type, id } = req.params;
+  let table = '';
+  let selectSql = '';
+  if (type === 'donor') {
+    table = 'donor';
+    selectSql = 'SELECT id, fullname AS name, email, status FROM donor WHERE id = ?';
+  } else if (type === 'charity') {
+    table = 'charity';
+    selectSql = 'SELECT id, orgname AS name, email, status FROM charity WHERE id = ?';
+  } else if (type === 'admin') {
+    table = 'admins';
+    selectSql = 'SELECT id, fullname AS name, email, status FROM admins WHERE id = ?';
+  } else {
+    return res.status(400).json({ success: false, message: 'Invalid user type' });
+  }
+  pool.query(selectSql, [id], (err, results) => {
+    if (err || results.length === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+    res.json({ success: true, user: results[0] });
+  });
+});
+
 // --- Admin Dashboard Data Endpoints ---
 app.get('/api/admin/dashboard-data', (req, res) => {
   const data = {};
