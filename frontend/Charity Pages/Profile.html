@@ -242,10 +242,15 @@
 </head>
 <body>
   <header>
-    <div class="logo">🍴 FoodShare</div>
+    <div
+      class="logo"
+      style="cursor: pointer"
+      onclick="window.location.href='../../Index.html'"
+    >
+      🍴 FoodShare
+    </div>
     <nav>
-      <a href="../BrowseCharities.html">Browse Charities</a>
-      <a href="../Donate.html">Donate</a>
+      <a href="Profile.html">Profile</a>
       <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
     </nav>
   </header>
@@ -255,9 +260,11 @@
       <div class="logo">FoodShare</div>
       <nav>
         <a href="CharityDashboard.html">Dashboard</a>
-        <a href="#">Requests</a>
+        <a href="PostFoodNeed.html" id="sidebar-post-need">Post Food Need</a>
+        <a href="#" id="sidebar-browse-donor">Browse Donor Offers</a>
+        <a href="Requests.html">Requests</a>
         <a href="#">Donations</a>
-        <a href="#">Beneficiaries</a>
+        <!-- <a href="#">Beneficiaries</a> -->
         <a href="Profile.html" class="active">Profile</a>
       </nav>
     </aside>
@@ -278,6 +285,21 @@
           <div id="verifySection"></div>
         </div>
         <a href="CharityDashboard.html" class="back-link" style="margin-left:32px;">← Back to Dashboard</a>
+  <script>
+    // Sidebar actions for Post Need and Browse Donor Offers
+    document.addEventListener('DOMContentLoaded', function() {
+      var postNeed = document.getElementById('sidebar-post-need');
+      if (postNeed) postNeed.onclick = function(e) {
+        e.preventDefault();
+        window.location.href = 'PostFoodNeed.html';
+      };
+      var browseDonor = document.getElementById('sidebar-browse-donor');
+      if (browseDonor) browseDonor.onclick = function(e) {
+        e.preventDefault();
+        window.location.href = 'BrowseDonorOffers.html';
+      };
+    });
+  </script>
       </main>
     </div>
   </div>
