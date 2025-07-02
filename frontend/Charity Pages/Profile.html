@@ -280,8 +280,89 @@
             </div>
           </div>
           <div class="profile-details" id="profileDetails"></div>
-          <div class="profile-actions" id="profileActions"></div>
+          <div class="profile-actions" id="profileActions">
+            <div class="profile-action-buttons">
+              <button class="edit-btn" type="button" onclick="showEditForm()">
+                <svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2h6"/></svg>
+                Edit Profile
+              </button>
+              <button class="delete-btn" type="button" onclick="deleteAccount()">
+                <svg class="icon" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                Delete Account
+              </button>
+            </div>
+            <form id="editForm" style="display:none;margin-top:24px;" class="profile-verify-form">
+              <label for="editName">Organization Name</label>
+              <input type="text" id="editName" name="editName" required />
+              <label for="editAddress">Address</label>
+              <input type="text" id="editAddress" name="editAddress" required />
+              <label for="editContact">Contact Phone/Email</label>
+              <input type="text" id="editContact" name="editContact" required />
+              <label for="editDesc">Description</label>
+              <textarea id="editDesc" name="editDesc" required></textarea>
+              <button type="submit" class="submit-btn">Save Changes</button>
+            </form>
+          </div>
           <div id="verifySection"></div>
+  <style>
+    .profile-action-buttons {
+      display: flex;
+      gap: 18px;
+      margin-bottom: 10px;
+    }
+    .profile-action-buttons button {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 999px;
+      padding: 10px 28px;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
+    .profile-action-buttons .edit-btn {
+      background: #54d12b;
+      color: #fff;
+    }
+    .profile-action-buttons .edit-btn:hover {
+      background: #43a81a;
+    }
+    .profile-action-buttons .delete-btn {
+      background: #e67e22;
+      color: #fff;
+    }
+    .profile-action-buttons .delete-btn:hover {
+      background: #cf7c1b;
+    }
+    .profile-action-buttons .icon {
+      margin-right: 4px;
+      vertical-align: middle;
+    }
+  </style>
+  <script>
+    // Prefill edit form with current data
+    function showEditForm() {
+      const jwt = getJWT() || { name: localStorage.getItem('charityName') || 'Charity Org', address: '', contact: '', desc: '' };
+      document.getElementById('editName').value = jwt.name || '';
+      document.getElementById('editAddress').value = jwt.address || '';
+      document.getElementById('editContact').value = jwt.contact || '';
+      document.getElementById('editDesc').value = jwt.desc || '';
+      document.getElementById('editForm').style.display = 'block';
+    }
+
+    function deleteAccount() {
+      if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
+        // TODO: Call backend to delete, then clear localStorage
+        localStorage.removeItem('jwt');
+        localStorage.removeItem('charityName');
+        alert('Account deleted.');
+        window.location.href = '../Login.html';
+      }
+    }
+  </script>
+
         </div>
         <a href="CharityDashboard.html" class="back-link" style="margin-left:32px;">← Back to Dashboard</a>
   <script>
@@ -326,6 +407,25 @@
     if (jwt.contact) details += `<div><b>Contact:</b> ${jwt.contact}</div>`;
     if (jwt.desc) details += `<div><b>Description:</b> ${jwt.desc}</div>`;
     document.getElementById('profileDetails').innerHTML = details;
+
+    // Handle edit form submit
+    document.addEventListener('submit', function(e) {
+      if (e.target && e.target.id === 'editForm') {
+        e.preventDefault();
+        const form = document.getElementById('editForm');
+        const updated = {
+          ...getJWT(),
+          name: form.editName.value,
+          address: form.editAddress.value,
+          contact: form.editContact.value,
+          desc: form.editDesc.value,
+          verified: (getJWT() && getJWT().verified) || false
+        };
+        setJWT(updated);
+        alert('Profile updated!');
+        window.location.reload();
+      }
+    });
     // Verification section
     const verifySection = document.getElementById('verifySection');
     if (!jwt.verified) {
