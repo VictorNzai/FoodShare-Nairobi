@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donor Account - FoodShare Nairobi</title>
+    <link rel="stylesheet" href="../styles/sidebar.css" />
+    <link rel="stylesheet" href="../styles/account.css" />
+    <link rel="stylesheet" href="../styles/common.css" />
+    <script defer src="DonorAccount.js"></script>
+  </head>
+  <body>
+    <div class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <h2>FoodShare</h2>
+      </div>
+      <ul class="sidebar-nav">
+        <li><a href="./FoodDonor.html">Dashboard</a></li>
+        <li><a href="./CharityRequestsPage.html">Charity Requests</a></li>
+        <li class="active"><a href="./DonorAccount.html">Account</a></li>
+      </ul>
+    </div>
+    <div class="main-content">
+      <div class="account-container">
+        <h1>My Account</h1>
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="profile">Profile</button>
+          <button class="tab-btn" data-tab="notifications">
+            Notifications
+          </button>
+        </div>
+        <div class="tab-content" id="profile-tab">
+          <form id="profile-form">
+            <div class="form-group">
+              <label for="fullName">Full Name</label>
+              <input type="text" id="fullName" name="fullName" required />
+            </div>
+            <div class="form-group">
+              <label for="email">Email</label>
+              <input type="email" id="email" name="email" required disabled />
+              <span id="email-status" class="email-status"></span>
+              <button
+                type="button"
+                id="verify-email-btn"
+                class="verify-btn"
+                style="display: none"
+              >
+                Verify Email
+              </button>
+            </div>
+            <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" id="phone" name="phone" />
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="save-btn">Save Changes</button>
+              <button type="button" id="delete-account-btn" class="delete-btn">
+                Delete Account
+              </button>
+            </div>
+          </form>
+        </div>
+        <div class="tab-content" id="notifications-tab" style="display: none">
+          <p>No notifications yet.</p>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

@@ -6,9 +6,12 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
+
 const authRoutes = require('./Routes/auth'); // Adjust path if needed
+// Move require for charityRequestsRoutes after pool is defined
 
 const app = express();
+
 
 // Middleware
 app.use(cors());
@@ -17,6 +20,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRoutes);
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/uploads/charity-verifications', express.static(path.join(__dirname, 'uploads/charity-verifications')));
+
+// Charity Requests API (modular route) - require after pool is defined
+// (Moved to after pool definition below)
 
 // File Upload (Charity Verifications)
 const uploadDir = path.join(__dirname, './uploads/charity-verifications');
@@ -48,6 +54,15 @@ pool.getConnection((err, conn) => {
   console.log('Connected to foodshare_db');
   conn.release();
 });
+
+
+// Charity Requests API (modular route) - require after pool is defined
+const charityRequestsRoutes = require('./Routes/charityRequests');
+app.use('/', charityRequestsRoutes(pool));
+
+// Donor Account/Profile API (modular route)
+const donorAccountRoutes = require('./Routes/donorAccount');
+app.use('/api/donor', donorAccountRoutes(pool));
 
 // --- Admin Charity Verification Endpoints ---
 app.get('/api/admin/charity-verifications', (req, res) => {

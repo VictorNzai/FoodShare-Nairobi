@@ -1,0 +1,62 @@
+/* Basic sidebar styles for donor pages */
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 0;
+    width: 220px;
+    height: 100vh;
+    background: #2d3748;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    z-index: 100;
+}
+.sidebar-header {
+    padding: 2rem 1rem 1rem 1.5rem;
+    font-size: 1.5rem;
+    font-weight: bold;
+    border-bottom: 1px solid #444;
+}
+.sidebar-nav {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex: 1;
+}
+.sidebar-nav li {
+    margin: 0;
+}
+.sidebar-nav a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 1rem 1.5rem;
+    transition: background 0.2s;
+}
+.sidebar-nav a:hover, .sidebar-nav .active a, .sidebar-nav li.active a {
+    background: #4a5568;
+}
+
+@media (max-width: 800px) {
+    .sidebar {
+        width: 60px;
+    }
+    .sidebar-header h2 {
+        font-size: 1rem;
+    }
+    .sidebar-nav a {
+        padding: 1rem 0.5rem;
+        font-size: 0.95rem;
+    }
+}
+
+.main-content {
+    margin-left: 220px;
+    padding: 2rem 2rem 2rem 2rem;
+}
+@media (max-width: 800px) {
+    .main-content {
+        margin-left: 60px;
+        padding: 1rem;
+    }
+}
