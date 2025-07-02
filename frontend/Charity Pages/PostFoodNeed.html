@@ -205,7 +205,13 @@
           <input type="text" id="foodItem" name="foodItem" required />
 
           <label for="quantity">Quantity</label>
-          <input type="text" id="quantity" name="quantity" required />
+          <div style="display: flex; gap: 10px; align-items: center;">
+            <input type="number" id="quantity" name="quantity" min="0" step="any" required style="flex:1;" />
+            <select id="unit" name="unit" required style="padding: 8px; border: 3px solid #ccc; border-radius: 5px; font-size: 15px; margin-top: -21px;">
+              <option value="kg">kg</option>
+              <option value="l">litre(s)</option>
+            </select>
+          </div>
 
           <label for="pickupLocation">Pickup Location</label>
           <input type="text" id="pickupLocation" name="pickupLocation" required />
@@ -248,6 +254,7 @@
         // Collect form data
         const foodItem = document.getElementById('foodItem').value;
         const quantity = document.getElementById('quantity').value;
+        const unit = document.getElementById('unit').value;
         const pickupLocation = document.getElementById('pickupLocation').value;
         const notes = document.getElementById('notes').value;
         // Create food need object
@@ -257,7 +264,7 @@
           orgName: orgName,
           date: dateStr,
           foodItem: foodItem,
-          quantity: quantity,
+          quantity: quantity + ' ' + unit,
           pickupLocation: pickupLocation,
           notes: notes,
           status: 'Pending'
