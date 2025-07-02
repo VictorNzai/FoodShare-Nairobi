@@ -1,0 +1,110 @@
+/* Donor Account/Profile page styles */
+.account-container {
+    max-width: 500px;
+    margin: 2rem auto;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 12px rgba(0,0,0,0.08);
+    padding: 2rem 2.5rem 2rem 2.5rem;
+}
+.account-container h1 {
+    margin-bottom: 1.5rem;
+    font-size: 2rem;
+    color: #2d3748;
+}
+.tabs {
+    display: flex;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+.tab-btn {
+    background: none;
+    border: none;
+    outline: none;
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+    cursor: pointer;
+    color: #4a5568;
+    border-bottom: 2px solid transparent;
+    transition: border 0.2s, color 0.2s;
+}
+.tab-btn.active {
+    color: #2b6cb0;
+    border-bottom: 2px solid #2b6cb0;
+}
+.tab-content {
+    margin-top: 1.5rem;
+}
+.form-group {
+    margin-bottom: 1.2rem;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #4a5568;
+}
+.form-group input {
+    width: 100%;
+    padding: 0.6rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 5px;
+    font-size: 1rem;
+    background: #f7fafc;
+}
+.form-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+}
+.save-btn {
+    background: #2b6cb0;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.5rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.save-btn:hover {
+    background: #225ea8;
+}
+.delete-btn {
+    background: #e53e3e;
+    color: #fff;
+    border: none;
+    padding: 0.7rem 1.2rem;
+    border-radius: 5px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.delete-btn:hover {
+    background: #c53030;
+}
+.verify-btn {
+    background: #ecc94b;
+    color: #2d3748;
+    border: none;
+    padding: 0.4rem 1rem;
+    border-radius: 5px;
+    font-size: 0.95rem;
+    margin-left: 1rem;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+.verify-btn:hover {
+    background: #d69e2e;
+}
+.email-status {
+    margin-left: 0.5rem;
+    font-size: 0.95rem;
+    font-weight: 500;
+}
+.email-status.verified {
+    color: #38a169;
+}
+.email-status.not-verified {
+    color: #e53e3e;
+}
