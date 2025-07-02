@@ -3,12 +3,9 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FoodShare Charity Dashboard</title>
+    <title>Charity Requests - FoodShare</title>
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-    <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
-      rel="stylesheet"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet" />
     <style>
       body {
         margin: 0;
@@ -114,69 +111,9 @@
         margin-bottom: 24px;
         letter-spacing: -1px;
       }
-      .stats {
-        display: flex;
-        gap: 24px;
-        margin-bottom: 32px;
-        flex-wrap: wrap;
-      }
-      .stat-card {
-        background: #eaf3e7;
-        border-radius: 18px;
-        padding: 32px 24px;
-        flex: 1 1 220px;
-        min-width: 220px;
-        text-align: center;
-      }
-      .stat-card p {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 500;
-        color: #222;
-      }
-      .stat-card .stat-value {
-        font-size: 28px;
-        font-weight: 800;
-        color: #111b0e;
-        margin-top: 8px;
-      }
-      .actions {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-      }
-      .action-btn {
-        background: #66ea42;
-        color: #111b0e;
-        border: none;
-        border-radius: 999px;
-        padding: 12px 32px;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      .action-btn.secondary {
-        background: #eaf3e7;
-        color: #222;
-      }
-      .action-btn:hover {
-        background: #54d12b;
-        color: #fff;
-      }
-      /* Table */
-      .table-section {
-        margin-bottom: 32px;
-      }
-      .table-section h3 {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: 12px;
-      }
       .table-wrap {
         overflow-x: auto;
-        border-radius: 16px;
+        border-radius: 12px;
         border: 1px solid #d5e7d0;
         background: #fff;
         margin-bottom: 24px;
@@ -186,9 +123,8 @@
         border-collapse: collapse;
         min-width: 600px;
       }
-      th,
-      td {
-        padding: 16px;
+      th, td {
+        padding: 14px;
         text-align: left;
         border-bottom: 1px solid #eaf3e7;
       }
@@ -211,7 +147,17 @@
         font-weight: 700;
         font-size: 13px;
       }
-      /* Responsive */
+      .back-link {
+        display: inline-block;
+        margin-top: 18px;
+        color: #54d12b;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
       @media (max-width: 900px) {
         .main-content {
           padding: 16px 4vw;
@@ -220,10 +166,6 @@
         }
         .sidebar {
           display: none;
-        }
-        .stats {
-          flex-direction: column;
-          gap: 16px;
         }
       }
     </style>
@@ -247,10 +189,10 @@
       <aside class="sidebar">
         <div class="logo">FoodShare</div>
         <nav>
-          <a href="#" class="active">Dashboard</a>
+          <a href="CharityDashboard.html">Dashboard</a>
           <a href="PostFoodNeed.html" id="sidebar-post-need">Post Food Need</a>
           <a href="#" id="sidebar-browse-donor">Browse Donor Offers</a>
-          <a href="Requests.html">Requests</a>
+          <a href="#" class="active">Requests</a>
           <a href="#">Donations</a>
           <!-- <a href="#">Beneficiaries</a> -->
           <a href="Profile.html">Profile</a>
@@ -266,48 +208,27 @@
         "
       >
         <main class="main-content">
-          <h2 id="charity-greeting">Welcome back, Charity Org</h2>
-          <div class="stats">
-            <div class="stat-card">
-              <p>Active Requests</p>
-              <div class="stat-value">7</div>
-            </div>
-            <div class="stat-card">
-              <p>Total Donations Received</p>
-              <div class="stat-value" id="total-donations-kg">1,200 kg</div>
-            </div>
-            <div class="stat-card">
-              <p>Beneficiaries Served</p>
-              <div class="stat-value">350</div>
-            </div>
+          <h2>Recent Requests</h2>
+          <div class="table-wrap">
+            <table id="requests-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Type</th>
+                  <th>Food Item</th>
+                  <th>Quantity</th>
+                  <th>Pickup Location</th>
+                  <th>Notes</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="requests-body">
+                <!-- Dynamic rows will be inserted here -->
+              </tbody>
+            </table>
           </div>
-          <div class="actions">
-            <a href="PostFoodNeed.html"
-              ><button class="action-btn">Post a New Food Need</button></a
-            >
-            <button class="action-btn secondary">Browse Donor Offers</button>
-          </div>
-          <div class="table-section">
-            <h3>Recent Activity</h3>
-            <div class="table-wrap">
-              <table id="recent-activity-table">
-                <thead>
-                  <tr>
-                    <th>Date</th>
-                    <th>Type</th>
-                    <th>Food Item</th>
-                    <th>Quantity</th>
-                    <th>Pickup Location</th>
-                    <th>Notes</th>
-                    <th>Status</th>
-                  </tr>
-                </thead>
-                <tbody id="recent-activity-body">
-                  <!-- Dynamic rows will be inserted here -->
-                </tbody>
-              </table>
-            </div>
-          </div>
+          <a href="CharityDashboard.html" class="back-link">&larr; Back to Dashboard</a>
         </main>
       </div>
     </div>
@@ -315,18 +236,13 @@
       function signOut() {
         window.location.href = "../Login.html";
       }
-      // Set greeting from localStorage if available
-      let charityName = "Charity Org";
-      try {
-        const jwt = JSON.parse(localStorage.getItem("jwt"));
-        if (jwt && jwt.name) charityName = jwt.name;
-      } catch {}
-      document.getElementById("charity-greeting").textContent =
-        "Welcome back, " + charityName;
-
+      document.getElementById('sidebar-browse-donor').onclick = function(e) {
+        e.preventDefault();
+        window.location.href = 'BrowseDonorOffers.html';
+      };
       // Dynamically load food needs from backend for this org
-      async function renderRecentActivity() {
-        const tbody = document.getElementById("recent-activity-body");
+      async function renderRequests() {
+        const tbody = document.getElementById("requests-body");
         tbody.innerHTML = "";
         let jwt = localStorage.getItem("jwt");
         let orgName = "";
@@ -336,7 +252,7 @@
         } catch {}
         if (!orgName) {
           tbody.innerHTML =
-            '<tr><td colspan="7">Please log in as a charity to view your activity.</td></tr>';
+            '<tr><td colspan="7">Please log in as a charity to view your requests.</td></tr>';
           return;
         }
         try {
@@ -349,37 +265,6 @@
           );
           if (!res.ok) throw new Error("Failed to fetch food needs");
           const foodNeeds = await res.json();
-          // Update Active Requests stat
-          const activeCount = foodNeeds.filter(
-            (need) => need.status === "Pending"
-          ).length;
-          const statCards = document.querySelectorAll(".stat-card");
-          statCards.forEach((card) => {
-            const label = card.querySelector("p");
-            const value = card.querySelector(".stat-value");
-            if (label && value) {
-              if (label.textContent.includes("Active Requests")) {
-                value.textContent = activeCount;
-              } else if (
-                label.textContent.includes("Total Donations Received")
-              ) {
-                // Sum quantity for completed requests in kg
-                let totalKg = foodNeeds
-                  .filter((need) => need.status === "Completed" && String(need.quantity).toLowerCase().includes("kg"))
-                  .reduce((sum, need) => {
-                    let qty = parseFloat(String(need.quantity).replace(/[^\d.]/g, ""));
-                    return sum + (isNaN(qty) ? 0 : qty);
-                  }, 0);
-                value.textContent = totalKg + " kg";
-              } else if (label.textContent.includes("Beneficiaries Served")) {
-                // Count completed requests as beneficiaries served
-                let served = foodNeeds.filter(
-                  (need) => need.status === "Completed"
-                ).length;
-                value.textContent = served;
-              }
-            }
-          });
           if (foodNeeds.length === 0) {
             tbody.innerHTML =
               '<tr><td colspan="7">No food needs posted yet.</td></tr>';
@@ -396,35 +281,37 @@
                 <td>${need.pickup_location}</td>
                 <td>${need.notes || ""}</td>
                 <td><span class="status">${need.status}</span></td>
+                <td><button class="cancel-btn" data-id="${need._id || need.id || ''}" style="background:#ffdddd;color:#b30000;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;">Cancel</button></td>
               `;
               tbody.appendChild(tr);
             });
           }
         } catch (err) {
           tbody.innerHTML =
-            '<tr><td colspan="7">Error loading activity.</td></tr>';
+            '<tr><td colspan="7">Error loading requests.</td></tr>';
         }
-        // Optionally, add static rows below if needed
       }
-      renderRecentActivity();
-
-      // Sidebar actions for Post Need and Browse Donor Offers
-      document.getElementById('sidebar-post-need').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = 'PostFoodNeed.html';
-      };
-      document.getElementById('sidebar-browse-donor').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = 'BrowseDonorOffers.html';
-      };
-      document.getElementById('sidebar-requests').onclick = function() {
-        // Scroll to or focus on recent activity table
-        document.querySelector('.table-section').scrollIntoView({behavior: 'smooth'});
-      };
-      document.getElementById('sidebar-reports').onclick = function() {
-        // Implement reports view (Amt to Donation received)
-        alert('Reports feature coming soon!');
-      };
+      // Cancel request handler
+      document.addEventListener('click', async function(e) {
+        if (e.target && e.target.classList.contains('cancel-btn')) {
+          const id = e.target.getAttribute('data-id');
+          if (!id) return;
+          if (!confirm('Are you sure you want to cancel this request? This action cannot be undone and the request will be permanently removed.')) return;
+          try {
+            const jwt = localStorage.getItem('jwt');
+            const res = await fetch(`http://localhost:3000/api/foodneeds/${id}`, {
+              method: 'DELETE',
+              headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {},
+            });
+            if (!res.ok) throw new Error('Failed to cancel request');
+            alert('Request cancelled.');
+            renderRequests();
+          } catch (err) {
+            alert('Error cancelling request.');
+          }
+        }
+      });
+      renderRequests();
     </script>
   </body>
 </html>

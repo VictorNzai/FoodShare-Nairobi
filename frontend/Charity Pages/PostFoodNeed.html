@@ -1,197 +1,290 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Post a New Food Need - FoodShare</title>
-  <style>
-    body {
-      background: #f4f6f8;
-      font-family: Arial, sans-serif;
-      margin: 0;
-      padding: 0;
-    }
-    .container {
-      max-width: 500px;
-      margin: 60px auto;
-      background: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
-      padding: 40px 30px;
-    }
-    h2 {
-      color: #54D12B;
-      margin-bottom: 30px;
-      text-align: center;
-    }
-    label {
-      display: block;
-      margin-bottom: 8px;
-      color: #333;
-      font-weight: bold;
-    }
-    input, textarea {
-      width: 100%;
-      padding: 10px;
-      margin-bottom: 22px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      font-size: 15px;
-      box-sizing: border-box;
-    }
-    textarea {
-      min-height: 70px;
-      resize: vertical;
-    }
-    .submit-btn {
-      background: #54D12B;
-      color: #fff;
-      border: none;
-      border-radius: 20px;
-      padding: 12px 0;
-      width: 100%;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-    .submit-btn:hover {
-      background: #43a81a;
-    }
-    .back-link {
-      display: block;
-      text-align: center;
-      margin-top: 18px;
-      color: #54D12B;
-      text-decoration: none;
-      font-size: 15px;
-    }
-    .back-link:hover {
-      text-decoration: underline;
-    }
-    header {
-      background: white;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 20px 40px;
-      border-bottom: 1px solid #ddd;
-    }
-    .logo {
-      font-weight: bold;
-      font-size: 18px;
-      color: #54D12B;
-      text-align: center;
-      margin-bottom: 10px;
-    }
-    nav {
-      text-align: center;
-    }
-    nav a {
-      margin-left: 30px;
-      text-decoration: none;
-      color: #333;
-      font-size: 14px;
-      font-weight: 500;
-    }
-    nav a:hover {
-      text-decoration: underline;
-    }
-    .sign-up-btn {
-      background-color: #54d12b;
-      color: white;
-      padding: 8px 18px;
-      border: none;
-      border-radius: 20px;
-      font-weight: bold;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <div class="logo">🍴 FoodShare</div>
-    <nav>
-      <a href="../BrowseCharities.html">Browse Charities</a>
-      <a href="../Donate.html">Donate</a>
-      <a href="Profile.html">Profile</a>
-      <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
-    </nav>
-  </header>
-  <div class="container">
-    <h2>Post a New Food Need</h2>
-    <form id="foodNeedForm">
-      <label for="foodItem">Food Item</label>
-      <input type="text" id="foodItem" name="foodItem" required />
-
-      <label for="quantity">Quantity</label>
-      <input type="text" id="quantity" name="quantity" required />
-
-      <label for="pickupLocation">Pickup Location</label>
-      <input type="text" id="pickupLocation" name="pickupLocation" required />
-
-      <label for="notes">Additional Notes</label>
-      <textarea id="notes" name="notes" placeholder="Any extra information..."></textarea>
-
-      <button type="submit" class="submit-btn">Submit Need</button>
-    </form>
-    <a href="CharityDashboard.html" class="back-link">← Back to Dashboard</a>
-  </div>
-  <script>
-    document.getElementById('foodNeedForm').addEventListener('submit', async function(e) {
-      e.preventDefault();
-      // JWT check for verification
-      let jwt = localStorage.getItem('jwt');
-      let verified = false;
-      let orgName = '';
-      if (jwt) {
-        try {
-          const jwtObj = JSON.parse(jwt);
-          verified = jwtObj.verified;
-          orgName = jwtObj.name || '';
-        } catch {}
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Post a New Food Need - FoodShare</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        background: #f4f6f8;
+        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        color: #111b0e;
       }
-      if (!verified) {
-        alert('You must verify your account before posting a new food need.');
-        window.location.href = 'Profile.html';
-        return;
+      header {
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        z-index: 2;
       }
-      // Collect form data
-      const foodItem = document.getElementById('foodItem').value;
-      const quantity = document.getElementById('quantity').value;
-      const pickupLocation = document.getElementById('pickupLocation').value;
-      const notes = document.getElementById('notes').value;
-      // Create food need object
-      const today = new Date();
-      const dateStr = today.toISOString().slice(0, 10);
-      const foodNeed = {
-        orgName: orgName,
-        date: dateStr,
-        foodItem: foodItem,
-        quantity: quantity,
-        pickupLocation: pickupLocation,
-        notes: notes,
-        status: 'Pending'
+      .logo {
+        font-weight: bold;
+        font-size: 18px;
+        color: #54D12B;
+        text-align: center;
+        margin-bottom: 10px;
+      }
+      nav a {
+        margin-left: 30px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+        font-weight: 500;
+      }
+      nav a:hover {
+        text-decoration: underline;
+      }
+      .sign-up-btn {
+        background-color: #54d12b;
+        color: white;
+        padding: 8px 18px;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-left: 30px;
+      }
+      .flex {
+        display: flex;
+        min-height: 100vh;
+      }
+      /* Sidebar */
+      .sidebar {
+        width: 250px;
+        padding: 32px 24px;
+        border-right: 1px solid #eaf3e7;
+        background: #fff;
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        height: calc(100vh - 70px);
+        z-index: 1;
+      }
+      @media (min-width: 1024px) {
+        .sidebar {
+          display: block;
+        }
+      }
+      .sidebar .logo {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 32px;
+        color: #54d12b;
+      }
+      .sidebar nav {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sidebar nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        border-radius: 999px;
+        background: none;
+        color: #222;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+      }
+      .sidebar nav a.active,
+      .sidebar nav a:hover {
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
+      }
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 32px 24px;
+        max-width: 600px;
+        margin: 0 auto;
+        margin-left: 320px;
+        margin-top: 70px;
+      }
+      h2 {
+        color: #54D12B;
+        margin-bottom: 30px;
+        text-align: center;
+        font-size: 28px;
+        font-weight: 800;
+      }
+      label {
+        display: block;
+        margin-bottom: 8px;
+        color: #333;
+        font-weight: bold;
+      }
+      input, textarea {
+        width: 100%;
+        padding: 10px;
+        margin-bottom: 22px;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 15px;
+        box-sizing: border-box;
+      }
+      textarea {
+        min-height: 70px;
+        resize: vertical;
+      }
+      .submit-btn {
+        background: #54D12B;
+        color: #fff;
+        border: none;
+        border-radius: 20px;
+        padding: 12px 0;
+        width: 100%;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background 0.2s;
+      }
+      .submit-btn:hover {
+        background: #43a81a;
+      }
+      .back-link {
+        display: block;
+        text-align: center;
+        margin-top: 18px;
+        color: #54D12B;
+        text-decoration: none;
+        font-size: 15px;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      @media (max-width: 900px) {
+        .main-content {
+          padding: 16px 4vw;
+          margin-left: 0;
+          margin-top: 70px;
+        }
+        .sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo" style="cursor: pointer" onclick="window.location.href='../../Index.html'">🍴 FoodShare</div>
+      <nav>
+        <a href="Profile.html">Profile</a>
+        <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
+      </nav>
+    </header>
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">FoodShare</div>
+        <nav>
+          <a href="CharityDashboard.html">Dashboard</a>
+          <a href="#" class="active">Post Food Need</a>
+          <a href="#" id="sidebar-browse-donor">Browse Donor Offers</a>
+          <a href="Requests.html">Requests</a>
+          <a href="#">Donations</a>
+          <!-- <a href="#">Beneficiaries</a> -->
+          <a href="Profile.html">Profile</a>
+        </nav>
+      </aside>
+      <!-- Main Content -->
+      <div class="main-content">
+        <h2>Post a New Food Need</h2>
+        <form id="foodNeedForm">
+          <label for="foodItem">Food Item</label>
+          <input type="text" id="foodItem" name="foodItem" required />
+
+          <label for="quantity">Quantity</label>
+          <input type="text" id="quantity" name="quantity" required />
+
+          <label for="pickupLocation">Pickup Location</label>
+          <input type="text" id="pickupLocation" name="pickupLocation" required />
+
+          <label for="notes">Additional Notes</label>
+          <textarea id="notes" name="notes" placeholder="Any extra information..."></textarea>
+
+          <button type="submit" class="submit-btn">Submit Need</button>
+        </form>
+        <button id="another-need-btn" class="submit-btn" style="margin-top:10px; display:none; background:#eaf3e7; color:#222;">Post Another Need</button>
+        <a href="CharityDashboard.html" class="back-link">&larr; Back to Dashboard</a>
+      </div>
+    </div>
+    <script>
+      function signOut() {
+        window.location.href = "../Login.html";
+      }
+      document.getElementById('sidebar-browse-donor').onclick = function(e) {
+        e.preventDefault();
+        window.location.href = 'BrowseDonorOffers.html';
       };
-      try {
-        const res = await fetch('http://localhost:3000/api/foodneeds', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            ...(jwt ? { 'Authorization': 'Bearer ' + jwt } : {})
-          },
-          body: JSON.stringify(foodNeed)
-        });
-        if (!res.ok) throw new Error('Failed to submit food need');
-        alert('Food need submitted!');
-        window.location.href = "CharityDashboard.html";
-      } catch (err) {
-        alert('Error submitting food need. Please try again.');
-      }
-    });
-    function signOut() {
-      // Optionally clear session or token here
-      window.location.href = "../Login.html";
-    }
-  </script>
-</body>
+      document.getElementById('foodNeedForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        // JWT check for verification
+        let jwt = localStorage.getItem('jwt');
+        let verified = false;
+        let orgName = '';
+        if (jwt) {
+          try {
+            const jwtObj = JSON.parse(jwt);
+            verified = jwtObj.verified;
+            orgName = jwtObj.name || '';
+          } catch {}
+        }
+        if (!verified) {
+          alert('You must verify your account before posting a new food need.');
+          window.location.href = 'Profile.html';
+          return;
+        }
+        // Collect form data
+        const foodItem = document.getElementById('foodItem').value;
+        const quantity = document.getElementById('quantity').value;
+        const pickupLocation = document.getElementById('pickupLocation').value;
+        const notes = document.getElementById('notes').value;
+        // Create food need object
+        const today = new Date();
+        const dateStr = today.toISOString().slice(0, 10);
+        const foodNeed = {
+          orgName: orgName,
+          date: dateStr,
+          foodItem: foodItem,
+          quantity: quantity,
+          pickupLocation: pickupLocation,
+          notes: notes,
+          status: 'Pending'
+        };
+        try {
+          const res = await fetch('http://localhost:3000/api/foodneeds', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              ...(jwt ? { 'Authorization': 'Bearer ' + jwt } : {})
+            },
+            body: JSON.stringify(foodNeed)
+          });
+          if (!res.ok) throw new Error('Failed to submit food need');
+          alert('Food need submitted!');
+          document.getElementById('another-need-btn').style.display = 'block';
+          document.getElementById('foodNeedForm').style.display = 'none';
+        } catch (err) {
+          alert('Error submitting food need. Please try again.');
+        }
+      });
+      document.getElementById('another-need-btn').onclick = function() {
+        document.getElementById('foodNeedForm').reset();
+        document.getElementById('foodNeedForm').style.display = 'block';
+        document.getElementById('another-need-btn').style.display = 'none';
+      };
+    </script>
+  </body>
 </html>

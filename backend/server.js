@@ -728,6 +728,22 @@ app.get('/api/foodneeds', (req, res) => {
     return res.json(results);
   });
 });
+// DELETE /api/foodneeds/:id - Delete a food need by ID
+app.delete('/api/foodneeds/:id', (req, res) => {
+  const id = req.params.id;
+  if (!id) return res.status(400).json({ success: false, message: 'Missing food need ID' });
+  const sql = 'DELETE FROM food_needs WHERE id = ?';
+  pool.query(sql, [id], (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ success: false, message: 'Failed to delete food need' });
+    }
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ success: false, message: 'Food need not found' });
+    }
+    res.json({ success: true, message: 'Food need deleted' });
+  });
+});
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Not found' });
