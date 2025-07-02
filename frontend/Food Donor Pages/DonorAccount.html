@@ -1,69 +1,224 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Donor Account - FoodShare Nairobi</title>
-    <link rel="stylesheet" href="../styles/sidebar.css" />
-    <link rel="stylesheet" href="../styles/account.css" />
-    <link rel="stylesheet" href="../styles/common.css" />
-    <script defer src="DonorAccount.js"></script>
-  </head>
-  <body>
-    <div class="sidebar" id="sidebar">
-      <div class="sidebar-header">
-        <h2>FoodShare</h2>
-      </div>
-      <ul class="sidebar-nav">
-        <li><a href="./FoodDonor.html">Dashboard</a></li>
-        <li><a href="./CharityRequestsPage.html">Charity Requests</a></li>
-        <li class="active"><a href="./DonorAccount.html">Account</a></li>
-      </ul>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Donor Profile - FoodShare</title>
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    body { font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
+    .sidebar-link.active,
+    .sidebar-link:hover {
+      background: #eaf3e7;
+      color: #54d12b;
+      font-weight: 700;
+    }
+  </style>
+</head>
+<body>
+  <header class="bg-white shadow-sm border-b border-[#eaf3e7] px-6 py-4 flex items-center justify-between sticky top-0 z-20">
+    <div class="flex items-center gap-2 cursor-pointer select-none" onclick="window.location.href='../../Index.html'">
+      <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
+      <span class="font-extrabold text-xl text-[#54d12b] tracking-tight">FoodShare</span>
     </div>
-    <div class="main-content">
-      <div class="account-container">
-        <h1>My Account</h1>
-        <div class="tabs">
-          <button class="tab-btn active" data-tab="profile">Profile</button>
-          <button class="tab-btn" data-tab="notifications">
-            Notifications
-          </button>
-        </div>
-        <div class="tab-content" id="profile-tab">
-          <form id="profile-form">
-            <div class="form-group">
-              <label for="fullName">Full Name</label>
-              <input type="text" id="fullName" name="fullName" required />
-            </div>
-            <div class="form-group">
-              <label for="email">Email</label>
-              <input type="email" id="email" name="email" required disabled />
-              <span id="email-status" class="email-status"></span>
-              <button
-                type="button"
-                id="verify-email-btn"
-                class="verify-btn"
-                style="display: none"
-              >
-                Verify Email
-              </button>
-            </div>
-            <div class="form-group">
-              <label for="phone">Phone</label>
-              <input type="text" id="phone" name="phone" />
-            </div>
-            <div class="form-actions">
-              <button type="submit" class="save-btn">Save Changes</button>
-              <button type="button" id="delete-account-btn" class="delete-btn">
-                Delete Account
-              </button>
-            </div>
-          </form>
-        </div>
-        <div class="tab-content" id="notifications-tab" style="display: none">
-          <p>No notifications yet.</p>
-        </div>
+    <nav class="flex items-center gap-2">
+      <a href="DonorAccount.html" class="px-5 py-2 rounded-full font-semibold text-[#121a0f] hover:bg-[#eaf3e7] hover:text-[#54d12b] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#54d12b] focus:ring-offset-2 bg-[#eaf3e7] text-[#54d12b]">Profile</a>
+      <button onclick="signOut()" class="ml-2 px-5 py-2 rounded-full font-semibold bg-[#54d12b] text-white hover:bg-[#43a81a] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#54d12b] focus:ring-offset-2">Sign Out</button>
+    </nav>
+  </header>
+  <div class="flex min-h-screen">
+    <!-- Sidebar -->
+    <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-[#eaf3e7] py-8 px-6 sticky top-0 h-screen z-10">
+      <div class="mb-10 flex items-center gap-2">
+        <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
+        <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
       </div>
+      <nav class="flex flex-col gap-2 text-base">
+        <a href="FoodDonor.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Dashboard</a>
+        <a href="#" id="sidebar-donations" class="sidebar-link px-4 py-2 rounded-full font-medium">Donations</a>
+        <a href="#" id="sidebar-charities" class="sidebar-link px-4 py-2 rounded-full font-medium">Charities</a>
+        <a href="CharityRequestsPage.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Charity Requests</a>
+        <a href="DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium active flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
+        <button id="logoutBtn" class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
+      </nav>
+      <div class="mt-auto flex items-center gap-3 pt-10">
+        <div class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]" id="donor-avatar" style="background-image: url('https://ui-avatars.com/api/?name=Donor');"></div>
+        <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name">Donor</span>
+      </div>
+    </aside>
+    <!-- Main Content -->
+    <div style="flex:1;display:flex;flex-direction:column;min-height:100vh;">
+      <main class="main-content">
+        <div class="container max-w-2xl mx-auto px-4 py-8">
+          <div class="profile-header relative flex flex-col items-start bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
+            <div class="profile-banner w-full h-40 bg-gradient-to-r from-[#54d12b] to-[#a8e063] absolute top-0 left-0"></div>
+            <img src="https://ui-avatars.com/api/?name=Donor&background=54d12b&color=fff&size=128" id="profileAvatar" class="profile-avatar w-40 h-40 rounded-full border-4 border-white object-cover shadow-lg mt-24 ml-8 z-10 bg-[#eee]" alt="Avatar" />
+            <div class="profile-info mt-8 ml-8 z-20 relative">
+              <h2 id="donorName" class="text-3xl font-extrabold text-[#222] mb-1"></h2>
+              <span id="verifyStatus" class="text-base"></span>
+            </div>
+          </div>
+          <div class="profile-details bg-white rounded-xl shadow p-6 mb-6 text-lg text-[#444] leading-relaxed" id="profileDetails"></div>
+          <div class="profile-actions flex flex-col gap-4 mb-6" id="profileActions"></div>
+          <div id="verifySection"></div>
+        </div>
+        <a href="FoodDonor.html" class="back-link block text-center text-[#54d12b] hover:underline text-base font-medium mt-4">← Back to Dashboard</a>
+<script>
+  // Sidebar actions
+  document.addEventListener('DOMContentLoaded', function() {
+    var donations = document.getElementById('sidebar-donations');
+    if (donations) donations.onclick = function(e) {
+      e.preventDefault();
+      alert('Donations page coming soon!');
+    };
+    var charities = document.getElementById('sidebar-charities');
+    if (charities) charities.onclick = function(e) {
+      e.preventDefault();
+      window.location.href = '../BrowseCharities.html';
+    };
+  });
+</script>
+      </main>
     </div>
-  </body>
+  </div>
+  <script>
+    // Sidebar actions, avatar logic, and account alert
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set donor name/avatar in sidebar
+      const donorName = localStorage.getItem('donorName') || 'Donor';
+      document.getElementById('sidebar-donor-name').textContent = donorName;
+      document.getElementById('donor-avatar').style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorName)}')`;
+      // Show exclamation if not verified
+      const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
+      const alertSpan = document.getElementById('sidebar-account-alert');
+      if (alertSpan) {
+        if (!donor.verified) {
+          alertSpan.style.display = 'inline-flex';
+          alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
+        } else {
+          alertSpan.style.display = 'none';
+        }
+      }
+      // Sidebar navigation
+      var donations = document.getElementById('sidebar-donations');
+      if (donations) donations.onclick = function(e) {
+        e.preventDefault();
+        alert('Donations page coming soon!');
+      };
+      var charities = document.getElementById('sidebar-charities');
+      if (charities) charities.onclick = function(e) {
+        e.preventDefault();
+        window.location.href = '../BrowseCharities.html';
+      };
+      // Logout
+      document.getElementById('logoutBtn').onclick = function() {
+        localStorage.clear();
+        window.location.href = '../Login.html';
+      };
+    });
+    // Profile logic (Charity Profile style)
+    function signOut() {
+      window.location.href = "../Login.html";
+    }
+    // Simulate donor info in localStorage: {name, email, phone, verified}
+    function getDonor() {
+      let donor = localStorage.getItem('donor');
+      if (!donor) return null;
+      try { return JSON.parse(donor); } catch { return null; }
+    }
+    function setDonor(donor) {
+      localStorage.setItem('donor', JSON.stringify(donor));
+    }
+    // Display name, avatar, and status
+    const donor = getDonor() || { name: localStorage.getItem('donorName') || 'Donor', email: '', phone: '', verified: false };
+    document.getElementById('donorName').textContent = donor.name;
+    document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(donor.name || 'Donor')}&background=54d12b&color=fff&size=128`;
+    document.getElementById('verifyStatus').innerHTML = donor.verified
+      ? '<span class="verified inline-flex items-center gap-1 bg-[#eaf3e7] text-[#54d12b] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#54d12b\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M5 13l4 4L19 7\'/></svg>Verified</span>'
+      : '<span class="not-verified inline-flex items-center gap-1 bg-[#fff7ea] text-[#e67e22] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#e67e22\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M12 8v4m0 4h.01\'/></svg>Not Verified</span>';
+    // Profile details
+    let details = '';
+    details += `<div class='mb-4 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Full Name:</span> <span class='text-lg'>${donor.name}</span></div>`;
+    if (donor.email) details += `<div class='mb-4 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Email:</span> <span class='text-lg'>${donor.email}</span></div>`;
+    if (donor.phone) details += `<div class='mb-2 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Phone:</span> <span class='text-lg'>${donor.phone}</span></div>`;
+    document.getElementById('profileDetails').innerHTML = details;
+    // Verification section (if not verified)
+    const verifySection = document.getElementById('verifySection');
+    if (!donor.verified) {
+      verifySection.innerHTML = `
+        <div class="profile-actions flex flex-col gap-2 mb-4"><button class="submit-btn w-full max-w-xs mx-auto" onclick="showVerifyForm()">Verify Account</button></div>
+        <form id="verifyForm" class="profile-verify-form bg-white rounded-xl shadow p-6 max-w-xl mx-auto" style="display:none;">
+          <label for="idUpload" class="block font-semibold mb-1">Upload National ID</label>
+          <input type="file" id="idUpload" name="idUpload" accept="image/*,.pdf" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+          <label for="address" class="block font-semibold mb-1">Your Address</label>
+          <input type="text" id="address" name="address" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+          <label for="phone" class="block font-semibold mb-1">Phone</label>
+          <input type="text" id="phone" name="phone" value="${donor.phone || ''}" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+          <button type="submit" class="submit-btn w-full">Submit Verification</button>
+        </form>
+      `;
+    }
+    function showEditForm() {
+      document.getElementById('editForm').style.display = 'block';
+    }
+    function showVerifyForm() {
+      document.getElementById('verifyForm').style.display = 'block';
+    }
+    // Handle edit form
+    document.addEventListener('submit', function(e) {
+      if (e.target && e.target.id === 'editForm') {
+        e.preventDefault();
+        const form = document.getElementById('editForm');
+        const updated = {
+          name: form.editName.value,
+          email: form.editEmail.value,
+          phone: form.editPhone.value,
+          verified: donor.verified
+        };
+        setDonor(updated);
+        alert('Profile updated!');
+        window.location.reload();
+      }
+      // Handle verify form
+      if (e.target && e.target.id === 'verifyForm') {
+        e.preventDefault();
+        // Simulate verification submission
+        alert('Verification submitted! Your documents and info have been sent for review.');
+        donor.verified = false;
+        donor.phone = e.target.phone.value;
+        setDonor(donor);
+        document.querySelector('.profile-actions').style.display = 'none';
+        e.target.style.display = 'none';
+        document.getElementById('verifyStatus').innerHTML = '<span class="not-verified">Verification Pending</span>';
+      }
+    });
+    // Profile actions (edit form)
+    document.getElementById('profileActions').innerHTML = `
+      <div class="flex flex-col sm:flex-row gap-4 justify-center">
+        <button class="submit-btn w-full sm:w-auto px-8 py-2 rounded-full font-bold text-base bg-[#54d12b] text-white hover:bg-[#43a81a] transition" onclick="showEditForm()"><svg class='inline w-5 h-5 mr-2 -ml-1' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2h6'/></svg>Edit Profile</button>
+        <button class="submit-btn w-full sm:w-auto px-8 py-2 rounded-full font-bold text-base bg-[#e67e22] text-white hover:bg-[#cf7c1b] transition" onclick="deleteAccount()"><svg class='inline w-5 h-5 mr-2 -ml-1' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'/></svg>Delete Account</button>
+      </div>
+      <form id="editForm" style="display:none;margin-top:24px;" class="profile-verify-form bg-white rounded-xl shadow p-6 max-w-xl mx-auto">
+        <label for="editName" class="block font-semibold mb-1">Full Name</label>
+        <input type="text" id="editName" name="editName" value="${donor.name || ''}" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+        <label for="editEmail" class="block font-semibold mb-1">Email</label>
+        <input type="email" id="editEmail" name="editEmail" value="${donor.email || ''}" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+        <label for="editPhone" class="block font-semibold mb-1">Phone</label>
+        <input type="text" id="editPhone" name="editPhone" value="${donor.phone || ''}" class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+        <button type="submit" class="submit-btn w-full">Save Changes</button>
+      </form>
+    `;
+    // Delete account
+    function deleteAccount() {
+      if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
+        // TODO: Call backend to delete, then clear localStorage
+        localStorage.removeItem('donor');
+        localStorage.removeItem('donorName');
+        alert('Account deleted.');
+        window.location.href = '../Login.html';
+      }
+    }
+  </script>
+</body>
 </html>

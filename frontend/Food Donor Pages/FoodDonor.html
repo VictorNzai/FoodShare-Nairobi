@@ -44,6 +44,22 @@
           <a href="#" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-charities">Charities</a>
           <a href="./CharityRequestsPage.html" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-requests">Charity Requests</a>
           <a href="./DonorAccount.html" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-account">Account</a>
+        <a href="./DonorAccount.html" class="nav-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="nav-account">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
+    <script>
+      // Show exclamation if not verified (sidebar Account link)
+      document.addEventListener('DOMContentLoaded', function() {
+        const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
+        const alertSpan = document.getElementById('sidebar-account-alert');
+        if (alertSpan) {
+          if (!donor.verified) {
+            alertSpan.style.display = 'inline-flex';
+            alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
+          } else {
+            alertSpan.style.display = 'none';
+          }
+        }
+      });
+    </script>
           <a href="#" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-help">Help</a>
           <button id="logoutBtn" class="nav-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
         </nav>
