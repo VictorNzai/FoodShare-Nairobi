@@ -12,134 +12,285 @@
     />
     <style>
       body {
-        font-family: 'Manrope', 'Noto Sans', sans-serif;
+        font-family: "Manrope", "Noto Sans", sans-serif;
+      }
+      .sticky-navbar {
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        background: #fff;
+        box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.04);
+      }
+      .nav-link.active,
+      .nav-link:hover {
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
       }
     </style>
   </head>
   <body class="bg-[#f9fcf8] text-[#111b0e]">
-    <div class="flex min-h-screen">
-      <!-- Sidebar -->
-      <aside class="w-80 p-4 border-r border-[#eaf3e7] hidden lg:block">
-        <div class="flex flex-col gap-4">
-          <h1 class="text-base font-medium">FoodShare</h1>
-          <nav class="flex flex-col gap-2">
-            <a class="flex items-center gap-3 px-3 py-2 rounded-full bg-[#eaf3e7] text-sm font-medium" href="#">Dashboard</a>
-            <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium" href="#">Donations</a>
-            <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium" href="#">Charities</a>
-            <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium" href="#">Account Settings</a>
-            <a class="flex items-center gap-3 px-3 py-2 text-sm font-medium" href="#">Help</a>
-          </nav>
+    <!-- Sticky Navbar -->
+    <nav
+      class="sticky-navbar flex items-center justify-between px-6 py-3 border-b border-[#eaf3e7]"
+    >
+      <div class="flex items-center gap-4">
+        <span class="font-extrabold text-xl text-[#54d12b]">🍴 FoodShare</span>
+        <a
+          href="#"
+          class="nav-link px-4 py-2 rounded-full text-sm font-medium active"
+          id="nav-dashboard"
+          >Dashboard</a
+        >
+        <a
+          href="#"
+          class="nav-link px-4 py-2 rounded-full text-sm font-medium"
+          id="nav-donations"
+          >Donations</a
+        >
+        <a
+          href="#"
+          class="nav-link px-4 py-2 rounded-full text-sm font-medium"
+          id="nav-charities"
+          >Charities</a
+        >
+        <a
+          href="#"
+          class="nav-link px-4 py-2 rounded-full text-sm font-medium"
+          id="nav-account"
+          >Account</a
+        >
+        <a
+          href="#"
+          class="nav-link px-4 py-2 rounded-full text-sm font-medium"
+          id="nav-help"
+          >Help</a
+        >
+      </div>
+      <div class="flex items-center gap-4">
+        <button
+          id="logoutBtn"
+          class="nav-link px-4 py-2 rounded-full text-sm font-medium"
+        >
+          Logout
+        </button>
+        <div
+          class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]"
+          id="donor-avatar"
+          style="
+            background-image: url('https://ui-avatars.com/api/?name=Donor');
+          "
+        ></div>
+      </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="flex-1">
+      <section class="p-6 max-w-screen-xl mx-auto">
+        <h2
+          id="donor-greeting"
+          class="text-[32px] font-bold leading-tight mb-6"
+        ></h2>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+          <div
+            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start"
+          >
+            <p class="text-base font-medium text-[#54d12b] mb-1">
+              Active Donations
+            </p>
+            <p
+              class="text-2xl font-extrabold text-[#121a0f]"
+              id="stat-active-donations"
+            >
+              --
+            </p>
+          </div>
+          <div
+            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start"
+          >
+            <p class="text-base font-medium text-[#54d12b] mb-1">
+              Total Food Donated
+            </p>
+            <p
+              class="text-2xl font-extrabold text-[#121a0f]"
+              id="stat-food-donated"
+            >
+              --
+            </p>
+          </div>
+
+          <div
+            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start"
+          >
+            <p class="text-base font-medium text-[#54d12b] mb-1">
+              People Served
+            </p>
+            <p
+              class="text-2xl font-extrabold text-[#121a0f]"
+              id="stat-people-served"
+            >
+              --
+            </p>
+          </div>
         </div>
-      </aside>
+        <div class="flex flex-wrap gap-3 mb-4">
+          <button
+            class="bg-[#53d22c] hover:bg-[#43b81a] text-white h-10 px-5 rounded-full text-sm font-bold shadow"
+            id="btn-make-donation"
+          >
+            Make a Donation
+          </button>
+          <button
+            class="bg-[#eaf3e7] hover:bg-[#d5e7d0] text-[#121a0f] h-10 px-5 rounded-full text-sm font-bold"
+            id="btn-schedule-pickup"
+          >
+            Schedule a Pickup
+          </button>
+          <button
+            class="bg-[#eaf3e7] hover:bg-[#d5e7d0] text-[#121a0f] h-10 px-5 rounded-full text-sm font-bold"
+            id="btn-browse-charities"
+          >
+            Browse Charities
+          </button>
+        </div>
 
-      <!-- Main Content -->
-      <main class="flex-1">
-        <!-- Topbar -->
-        <header class="flex justify-between items-center px-10 py-4 border-b border-[#eaf3e7]">
-          <div class="text-lg font-bold">FoodShare</div>
-          <!-- <nav class="hidden md:flex gap-8 text-sm font-medium">
-            <a href="#">Dashboard</a>
-            <a href="#">Donations</a>
-            <a href="#">Charities</a>
-            <a href="#">About</a>
-          </nav> -->
-          <div class="w-10 h-10 bg-cover bg-center rounded-full" style="background-image: url('https://lh3.googleusercontent.com/...');"></div>
-        </header>
+        <!-- Active Donations Table -->
+        <h3 class="text-[22px] font-bold tracking-tight mb-2 mt-8">
+          Active Donations
+        </h3>
+        <div
+          class="overflow-auto rounded-xl border border-[#d5e7d0] bg-white mb-6"
+        >
+          <table class="w-full text-sm" id="activeDonationsTable">
+            <thead class="text-left">
+              <tr class="border-b border-[#d5e7d0]">
+                <th class="px-4 py-3">Donation ID</th>
+                <th class="px-4 py-3">Charity</th>
+                <th class="px-4 py-3">Food Items</th>
+                <th class="px-4 py-3">Status</th>
+                <th class="px-4 py-3">Action</th>
+              </tr>
+            </thead>
+            <tbody id="activeDonationsBody">
+              <!-- Dynamic -->
+            </tbody>
+          </table>
+        </div>
 
-        <!-- Dashboard -->
-        <section class="p-6 max-w-screen-xl mx-auto">
-          <h2 id="donor-greeting" class="text-[32px] font-bold leading-tight mb-6"></h2>
-          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-            <div class="bg-[#eaf3e7] p-6 rounded-xl">
-              <p class="text-base font-medium">Active Donations</p>
-              <p class="text-2xl font-bold">3</p>
-            </div>
-            <div class="bg-[#eaf3e7] p-6 rounded-xl">
-              <p class="text-base font-medium">Total Food Donated</p>
-              <p class="text-2xl font-bold">500 kg</p>
-            </div>
-            <div class="bg-[#eaf3e7] p-6 rounded-xl">
-              <p class="text-base font-medium">People Served</p>
-              <p class="text-2xl font-bold">250</p>
-            </div>
+        <!-- Donation History -->
+        <h3 class="text-[22px] font-bold tracking-tight mb-2">
+          Donation History
+        </h3>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="border border-[#d5e7d0] rounded-xl p-6">
+            <p class="text-base font-medium mb-2">
+              Total Food Donated (Past 6 Months)
+            </p>
+            <img
+              src="https://via.placeholder.com/300x150"
+              alt="Chart"
+              class="w-full h-auto"
+            />
           </div>
-          <div class="flex flex-wrap gap-3 mb-4">
-            <button class="bg-[#66ea42] h-10 px-4 rounded-full text-sm font-bold">Make a Donation</button>
-            <button class="bg-[#eaf3e7] h-10 px-4 rounded-full text-sm font-bold">Schedule a Pickup</button>
+          <div class="border border-[#d5e7d0] rounded-xl p-6">
+            <p class="text-base font-medium mb-2">
+              People Served (Past 12 Months)
+            </p>
+            <img
+              src="https://via.placeholder.com/300x150"
+              alt="Chart"
+              class="w-full h-auto"
+            />
           </div>
-          <div class="mb-4">
-            <button class="bg-[#eaf3e7] h-10 px-4 rounded-full text-sm font-bold">Browse Charities</button>
-          </div>
+        </div>
+      </section>
 
-          <!-- Table -->
-          <h3 class="text-[22px] font-bold tracking-tight mb-2">Active Donations</h3>
-          <div class="overflow-auto rounded-xl border border-[#d5e7d0] bg-white mb-6">
-            <table class="w-full text-sm">
-              <thead class="text-left">
-                <tr class="border-b border-[#d5e7d0]">
-                  <th class="px-4 py-3">Donation ID</th>
-                  <th class="px-4 py-3">Charity</th>
-                  <th class="px-4 py-3">Food Items</th>
-                  <th class="px-4 py-3">Status</th>
-                  <th class="px-4 py-3">Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="border-t border-[#d5e7d0]">
-                  <td class="px-4 py-2">#12345</td>
-                  <td class="px-4 py-2 text-[#5e974e]">Helping Hands Shelter</td>
-                  <td class="px-4 py-2 text-[#5e974e]">Canned Goods, Rice, Pasta</td>
-                  <td class="px-4 py-2"><span class="inline-block bg-[#eaf3e7] px-4 py-1 rounded-full">Scheduled</span></td>
-                  <td class="px-4 py-2 text-[#5e974e] font-bold">View Details</td>
-                </tr>
-                <tr class="border-t border-[#d5e7d0]">
-                  <td class="px-4 py-2">#67890</td>
-                  <td class="px-4 py-2 text-[#5e974e]">Community Kitchen</td>
-                  <td class="px-4 py-2 text-[#5e974e]">Fresh Produce, Bread</td>
-                  <td class="px-4 py-2"><span class="inline-block bg-[#eaf3e7] px-4 py-1 rounded-full">In Transit</span></td>
-                  <td class="px-4 py-2 text-[#5e974e] font-bold">View Details</td>
-                </tr>
-                <tr class="border-t border-[#d5e7d0]">
-                  <td class="px-4 py-2">#11223</td>
-                  <td class="px-4 py-2 text-[#5e974e]">Food Bank of Cityville</td>
-                  <td class="px-4 py-2 text-[#5e974e]">Dairy Products, Eggs</td>
-                  <td class="px-4 py-2"><span class="inline-block bg-[#eaf3e7] px-4 py-1 rounded-full">Delivered</span></td>
-                  <td class="px-4 py-2 text-[#5e974e] font-bold">View Details</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
+      <!-- Footer -->
+      <footer class="text-center py-10 text-[#5e974e] text-sm">
+        <div class="flex flex-wrap justify-center gap-6 mb-4">
+          <a href="#">About</a>
+          <a href="#">Contact</a>
+          <a href="#">Terms of Service</a>
+          <a href="#">Privacy Policy</a>
+        </div>
+        <p>© 2025 FoodShare. All rights reserved.</p>
+      </footer>
+    </main>
 
-          <!-- History -->
-          <h3 class="text-[22px] font-bold tracking-tight mb-2">Donation History</h3>
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="border border-[#d5e7d0] rounded-xl p-6">
-              <p class="text-base font-medium mb-2">Total Food Donated (Past 6 Months)</p>
-              <img src="https://via.placeholder.com/300x150" alt="Chart" class="w-full h-auto" />
-            </div>
-            <div class="border border-[#d5e7d0] rounded-xl p-6">
-              <p class="text-base font-medium mb-2">People Served (Past 12 Months)</p>
-              <img src="https://via.placeholder.com/300x150" alt="Chart" class="w-full h-auto" />
-            </div>
-          </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="text-center py-10 text-[#5e974e] text-sm">
-          <div class="flex flex-wrap justify-center gap-6 mb-4">
-            <a href="#">About</a>
-            <a href="#">Contact</a>
-            <a href="#">Terms of Service</a>
-            <a href="#">Privacy Policy</a>
-          </div>
-          <p>© 2024 FoodShare. All rights reserved.</p>
-        </footer>
-      </main>
-    </div>
+    <!-- JS: Navbar, Stats, Table, Actions -->
     <script>
-  const donorName = localStorage.getItem('donorName') || 'Donor';
-  document.getElementById('donor-greeting').textContent = `Welcome back, ${donorName}`;
-</script>
+      // Sticky navbar active state
+      document.querySelectorAll(".nav-link").forEach((link) => {
+        link.addEventListener("click", function (e) {
+          document
+            .querySelectorAll(".nav-link")
+            .forEach((l) => l.classList.remove("active"));
+          this.classList.add("active");
+          // Section switching logic can go here
+          e.preventDefault();
+        });
+      });
 
+      // Dynamic greeting
+      const donorName = localStorage.getItem("donorName") || "Donor";
+      document.getElementById(
+        "donor-greeting"
+      ).textContent = `Welcome back, ${donorName}`;
+      document.getElementById(
+        "donor-avatar"
+      ).style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(
+        donorName
+      )}')`;
+
+      // Stats placeholders (replace with backend fetch)
+      document.getElementById("stat-active-donations").textContent = "--";
+      document.getElementById("stat-food-donated").textContent = "--";
+      document.getElementById("stat-people-served").textContent = "--";
+
+      // Active Donations Table placeholder
+      const activeDonations = [
+        {
+          id: "#12345",
+          charity: "Helping Hands Shelter",
+          items: "Canned Goods, Rice, Pasta",
+          status: "Scheduled",
+        },
+        {
+          id: "#67890",
+          charity: "Community Kitchen",
+          items: "Fresh Produce, Bread",
+          status: "In Transit",
+        },
+        {
+          id: "#11223",
+          charity: "Food Bank of Cityville",
+          items: "Dairy Products, Eggs",
+          status: "Delivered",
+        },
+      ];
+      const tbody = document.getElementById("activeDonationsBody");
+      tbody.innerHTML = "";
+      activeDonations.forEach((d) => {
+        tbody.innerHTML += `<tr class="border-t border-[#d5e7d0]">
+          <td class="px-4 py-2">${d.id}</td>
+          <td class="px-4 py-2 text-[#5e974e]">${d.charity}</td>
+          <td class="px-4 py-2 text-[#5e974e]">${d.items}</td>
+          <td class="px-4 py-2"><span class="inline-block bg-[#eaf3e7] px-4 py-1 rounded-full">${d.status}</span></td>
+          <td class="px-4 py-2 text-[#5e974e] font-bold cursor-pointer" onclick="alert('Details for ${d.id}')">View Details</td>
+        </tr>`;
+      });
+
+      // Button actions (scaffold)
+      document.getElementById("btn-make-donation").onclick = () =>
+        alert("Make a Donation form coming soon!");
+      document.getElementById("btn-schedule-pickup").onclick = () =>
+        alert("Schedule a Pickup coming soon!");
+      document.getElementById("btn-browse-charities").onclick = () =>
+        (window.location.href = "../BrowseCharities.html");
+      document.getElementById("logoutBtn").onclick = () => {
+        localStorage.clear();
+        window.location.href = "../Login.html";
+      };
+    </script>
   </body>
 </html>
