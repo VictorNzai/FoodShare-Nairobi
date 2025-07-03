@@ -236,6 +236,7 @@
             if (data.success) {
               if (role === "donor") {
                 localStorage.setItem("donorName", data.donor.fullname);
+                localStorage.setItem("donor", JSON.stringify(data.donor)); // Save full donor object
                 window.location.href = "/Food%20Donor%20Pages/FoodDonor.html";
               } else if (role === "charity") {
                 // Store full charity info for profile/dashboard linkage

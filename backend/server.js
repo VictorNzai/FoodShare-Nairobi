@@ -64,6 +64,10 @@ app.use('/', charityRequestsRoutes(pool));
 const donorAccountRoutes = require('./Routes/donorAccount');
 app.use('/api/donor', donorAccountRoutes(pool));
 
+// Food Donations API (modular route)
+const donationsRoutes = require('./Routes/donations');
+app.use('/api/donations', donationsRoutes);
+
 // --- Admin Charity Verification Endpoints ---
 app.get('/api/admin/charity-verifications', (req, res) => {
   let sql = 'SELECT * FROM charity_verifications';
