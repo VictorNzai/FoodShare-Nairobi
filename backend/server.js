@@ -76,6 +76,10 @@ app.use('/api/donations/analytics', donationAnalyticsRoutes);
 const adminDashboardRoutes = require('./Routes/adminDashboard');
 app.use('/api/admin', adminDashboardRoutes);
 
+// Admin Reports API (CSV download)
+const reportGenerator = require('./Routes/reportGenerator');
+app.use('/api/admin/reports', reportGenerator);
+
 // --- Admin Charity Verification Endpoints ---
 app.get('/api/admin/charity-verifications', (req, res) => {
   let sql = 'SELECT * FROM charity_verifications';

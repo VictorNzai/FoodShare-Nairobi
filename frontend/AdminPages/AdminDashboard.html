@@ -270,6 +270,7 @@
                 margin-bottom: 32px;
               "
             >
+              <!-- Dashboard Stats -->
               <div
                 style="
                   flex: 1 1 220px;
@@ -412,12 +413,14 @@
                 </div>
               </div>
             </div>
+
+            <!-- Donation Trends and Pie Chart Side by Side -->
             <div
               style="
                 display: flex;
                 flex-wrap: wrap;
                 gap: 24px;
-                margin-bottom: 32px;
+                margin-bottom: 24px;
               "
             >
               <div
@@ -435,33 +438,11 @@
                 >
                   Donation Trends
                 </div>
-                <canvas id="donationTrendsChart" height="120"></canvas>
-              </div>
-              <div
-                style="
-                  flex: 1 1 220px;
-                  min-width: 220px;
-                  background: #fff;
-                  border-radius: 18px;
-                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                  padding: 24px 20px;
-                "
-              >
-                <div
-                  style="font-weight: 700; color: #54d12b; margin-bottom: 12px"
-                >
-                  Recent Feedback
-                </div>
-                <ul
-                  id="recentFeedback"
-                  style="
-                    list-style: none;
-                    padding: 0;
-                    margin: 0;
-                    font-size: 0.98rem;
-                    color: #639155;
-                  "
-                ></ul>
+                <canvas
+                  id="donationTrendsChart"
+                  height="120"
+                  style="width: 100%; max-width: 100%"
+                ></canvas>
               </div>
               <div
                 style="
@@ -471,7 +452,6 @@
                   border-radius: 18px;
                   box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
                   padding: 24px 20px;
-                  margin-top: 24px;
                 "
               >
                 <div
@@ -491,6 +471,33 @@
                   "
                 ></canvas>
               </div>
+            </div>
+
+            <!-- Recent Feedback Full Width Below Trends and Pie Chart -->
+            <div
+              style="
+                background: #fff;
+                border-radius: 18px;
+                box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                padding: 24px 20px;
+                margin-bottom: 24px;
+              "
+            >
+              <div
+                style="font-weight: 700; color: #54d12b; margin-bottom: 12px"
+              >
+                Recent Feedback
+              </div>
+              <ul
+                id="recentFeedback"
+                style="
+                  list-style: none;
+                  padding: 0;
+                  margin: 0;
+                  font-size: 0.98rem;
+                  color: #639155;
+                "
+              ></ul>
             </div>
             <div style="display: flex; gap: 18px; flex-wrap: wrap">
               <button
@@ -551,9 +558,14 @@
                   "
                 >
                   <option value="donations">Donation Trends</option>
+                  <option value="category">Donations by Category</option>
                   <option value="users">User Activity</option>
                   <option value="food">Food Rescued</option>
                   <option value="feedback">Feedback Summary</option>
+                  <option value="approvals">
+                    Pending & Completed Approvals
+                  </option>
+                  <option value="top">Top Donors & Charities</option>
                 </select>
               </div>
               <div style="margin-bottom: 18px">
@@ -769,7 +781,7 @@
           .getElementById("sidebar-reports")
           .classList.toggle("active", sectionId === "reports-section");
       }
-      // Reports form handler (scaffold only)
+      // Reports form handler (CSV download)
       document.addEventListener("DOMContentLoaded", function () {
         var reportForm = document.getElementById("reportForm");
         if (reportForm) {
@@ -779,7 +791,43 @@
             var start = document.getElementById("startDate").value;
             var end = document.getElementById("endDate").value;
             var result = document.getElementById("reportResult");
-            result.innerHTML = `<div style='color:#54d12b;font-weight:600;'>Generating <b>${type}</b> report from <b>${start}</b> to <b>${end}</b>... (feature coming soon)</div>`;
+            result.innerHTML = `<div style='color:#54d12b;font-weight:600;'>Generating <b>${type}</b> report from <b>${start}</b> to <b>${end}</b>...`;
+            // Build the download URL
+            var url = `/api/admin/reports?type=${encodeURIComponent(
+              type
+            )}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(
+              end
+            )}`;
+            // Fetch the CSV and trigger download
+            fetch(url)
+              .then((response) => {
+                if (!response.ok) throw new Error("Failed to generate report.");
+                return response.blob();
+              })
+              .then((blob) => {
+                // Try to get filename from Content-Disposition
+                var filename = `report_${type}_${start}_to_${end}.csv`;
+                try {
+                  var disposition = event.target.getResponseHeader
+                    ? event.target.getResponseHeader("Content-Disposition")
+                    : null;
+                  if (disposition && disposition.indexOf("filename=") !== -1) {
+                    filename = disposition
+                      .split("filename=")[1]
+                      .replace(/['"]/g, "");
+                  }
+                } catch {}
+                var link = document.createElement("a");
+                link.href = window.URL.createObjectURL(blob);
+                link.download = filename;
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+                result.innerHTML = `<div style='color:#54d12b;font-weight:600;'>Report generated and downloaded: <b>${filename}</b></div>`;
+              })
+              .catch((err) => {
+                result.innerHTML = `<div style='color:#e74c3c;font-weight:600;'>${err.message}</div>`;
+              });
           });
         }
       });
