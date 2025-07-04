@@ -70,7 +70,11 @@ app.use('/api/donations', donationsRoutes);
 
 // Donation Analytics API (modular route)
 const donationAnalyticsRoutes = require('./Routes/donationAnalytics');
-app.use('/api/donations/analytics', donationAnalyticsRoutes(pool));
+app.use('/api/donations/analytics', donationAnalyticsRoutes);
+
+// Admin Dashboard API (modular route)
+const adminDashboardRoutes = require('./Routes/adminDashboard');
+app.use('/api/admin', adminDashboardRoutes);
 
 // --- Admin Charity Verification Endpoints ---
 app.get('/api/admin/charity-verifications', (req, res) => {

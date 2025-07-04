@@ -1091,11 +1091,15 @@
       window.renderDonationTrendsChart = renderDonationTrendsChart;
 
       // Pie Chart: Donations by Category (Admin)
+
       async function renderAdminDonationCategoryPie() {
         if (!window.Chart) return;
         try {
-          const res = await fetch("/api/donations/analytics/category-count");
-          const { data } = await res.json();
+          // Use the new admin endpoint for all donations
+          const res = await fetch("/api/admin/donations/category-count");
+          const result = await res.json();
+          console.log("Pie chart data:", result.data);
+          const data = result.data;
           const ctx = document
             .getElementById("adminDonationCategoryPie")
             .getContext("2d");
@@ -1139,10 +1143,35 @@
             .replaceWith("Failed to load chart");
         }
       }
-      document.addEventListener(
-        "DOMContentLoaded",
-        renderAdminDonationCategoryPie
-      );
+
+      // Ensure the pie chart only renders after Chart.js is loaded
+      (function ensurePieChartAfterChartJs() {
+        function tryRenderPie() {
+          if (window.Chart) {
+            renderAdminDonationCategoryPie();
+          } else {
+            setTimeout(tryRenderPie, 50);
+          }
+        }
+        // If Chart.js is already loaded, render immediately
+        if (window.Chart) {
+          renderAdminDonationCategoryPie();
+        } else {
+          // Otherwise, hook into the Chart.js script's onload
+          var scripts = document.getElementsByTagName("script");
+          for (var i = 0; i < scripts.length; i++) {
+            if (scripts[i].src && scripts[i].src.includes("chart.js")) {
+              scripts[i].addEventListener(
+                "load",
+                renderAdminDonationCategoryPie
+              );
+              return;
+            }
+          }
+          // If not found, fallback to polling
+          tryRenderPie();
+        }
+      })();
 
       document.addEventListener("DOMContentLoaded", () => {
         showSection("dashboard-section");
