@@ -43,7 +43,6 @@
           <a href="#" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-donations">Donations</a>
           <a href="#" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-charities">Charities</a>
           <a href="./CharityRequestsPage.html" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-requests">Charity Requests</a>
-          <a href="./DonorAccount.html" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-account">Account</a>
         <a href="./DonorAccount.html" class="nav-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="nav-account">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
     <script>
       // Show exclamation if not verified (sidebar Account link)
@@ -209,7 +208,11 @@
             />
           </div>
         </div>
-
+        <!-- Pie Chart: Donations by Category -->
+        <div class="border border-[#d5e7d0] rounded-xl p-6 mt-6">
+          <p class="text-base font-medium mb-2">Donations by Category</p>
+          <canvas id="donationCategoryPie" width="220" height="220" style="max-width:220px;max-height:220px;margin:auto;display:block;"></canvas>
+        </div>
         <!-- Charity Requests Section -->
         <h3 class="text-[22px] font-bold tracking-tight mb-2 mt-10">
           Charity Food Requests
@@ -243,6 +246,7 @@
     </div>
 
     <!-- JS: Navbar, Stats, Table, Actions -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="CharityRequests.js"></script>
     <script>
       // Sidebar navigation logic (fixes broken links)
@@ -394,6 +398,43 @@ document.getElementById('cancel-donation-btn').onclick = async function() {
       // Ensure fetchAndRenderDonations is called on page load
 fetchAndRenderDonations();
 document.getElementById('donation-status-filter').addEventListener('change', renderDonationsTable);
+
+      // Pie Chart: Donations by Category
+async function renderDonationCategoryPie() {
+  const donor = JSON.parse(localStorage.getItem('donor') || '{}');
+  let url = '/api/donations/analytics/category-count';
+  if (donor.id) url += `?donor_id=${donor.id}`;
+  try {
+    const res = await fetch(url);
+    const { data } = await res.json();
+    const ctx = document.getElementById('donationCategoryPie').getContext('2d');
+    const labels = data.map(row => row.category);
+    const counts = data.map(row => row.count);
+    const colors = [
+      '#54d12b', '#43b81a', '#a3e635', '#facc15', '#f87171', '#38bdf8', '#f472b6', '#818cf8', '#fbbf24', '#34d399'
+    ];
+    if (window.donationPieChart) window.donationPieChart.destroy();
+    window.donationPieChart = new Chart(ctx, {
+      type: 'pie',
+      data: {
+        labels,
+        datasets: [{
+          data: counts,
+          backgroundColor: colors.slice(0, labels.length),
+        }]
+      },
+      options: {
+        responsive: false,
+        plugins: {
+          legend: { position: 'bottom' },
+        }
+      }
+    });
+  } catch (e) {
+    document.getElementById('donationCategoryPie').replaceWith('Failed to load chart');
+  }
+}
+document.addEventListener('DOMContentLoaded', renderDonationCategoryPie);
     </script>
   </body>
 </html>

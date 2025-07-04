@@ -463,6 +463,34 @@
                   "
                 ></ul>
               </div>
+              <div
+                style="
+                  flex: 1 1 320px;
+                  min-width: 320px;
+                  background: #fff;
+                  border-radius: 18px;
+                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
+                  padding: 24px 20px;
+                  margin-top: 24px;
+                "
+              >
+                <div
+                  style="font-weight: 700; color: #54d12b; margin-bottom: 12px"
+                >
+                  Donations by Category
+                </div>
+                <canvas
+                  id="adminDonationCategoryPie"
+                  width="220"
+                  height="220"
+                  style="
+                    max-width: 220px;
+                    max-height: 220px;
+                    margin: auto;
+                    display: block;
+                  "
+                ></canvas>
+              </div>
             </div>
             <div style="display: flex; gap: 18px; flex-wrap: wrap">
               <button
@@ -821,7 +849,6 @@
           } else {
             document.getElementById("noUsers").style.display = "block";
           }
-          // ...existing code...
           // Promote user to admin
           async function promoteUser(type, id) {
             if (!confirm("Promote this user to admin?")) return;
@@ -1062,6 +1089,60 @@
         });
       }
       window.renderDonationTrendsChart = renderDonationTrendsChart;
+
+      // Pie Chart: Donations by Category (Admin)
+      async function renderAdminDonationCategoryPie() {
+        if (!window.Chart) return;
+        try {
+          const res = await fetch("/api/donations/analytics/category-count");
+          const { data } = await res.json();
+          const ctx = document
+            .getElementById("adminDonationCategoryPie")
+            .getContext("2d");
+          const labels = data.map((row) => row.category);
+          const counts = data.map((row) => row.count);
+          const colors = [
+            "#54d12b",
+            "#43b81a",
+            "#a3e635",
+            "#facc15",
+            "#f87171",
+            "#38bdf8",
+            "#f472b6",
+            "#818cf8",
+            "#fbbf24",
+            "#34d399",
+          ];
+          if (window.adminDonationPieChart)
+            window.adminDonationPieChart.destroy();
+          window.adminDonationPieChart = new Chart(ctx, {
+            type: "pie",
+            data: {
+              labels,
+              datasets: [
+                {
+                  data: counts,
+                  backgroundColor: colors.slice(0, labels.length),
+                },
+              ],
+            },
+            options: {
+              responsive: false,
+              plugins: {
+                legend: { position: "bottom" },
+              },
+            },
+          });
+        } catch (e) {
+          document
+            .getElementById("adminDonationCategoryPie")
+            .replaceWith("Failed to load chart");
+        }
+      }
+      document.addEventListener(
+        "DOMContentLoaded",
+        renderAdminDonationCategoryPie
+      );
 
       document.addEventListener("DOMContentLoaded", () => {
         showSection("dashboard-section");
