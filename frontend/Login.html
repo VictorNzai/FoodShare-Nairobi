@@ -236,7 +236,10 @@
             if (data.success) {
               if (role === "donor") {
                 // Store username for greeting/sidebar
-                let donorName = (data.donor && data.donor.username) ? data.donor.username : "Donor";
+                let donorName =
+                  data.donor && data.donor.username
+                    ? data.donor.username
+                    : "Donor";
                 localStorage.setItem("donorName", donorName);
                 localStorage.setItem("donor", JSON.stringify(data.donor)); // Save full donor object
                 window.location.href = "/Food%20Donor%20Pages/FoodDonor.html";
@@ -254,6 +257,16 @@
                 localStorage.setItem("jwt", JSON.stringify(charityJwt));
                 window.location.href = "/Charity%20Pages/CharityDashboard.html";
               } else if (role === "admin" && data.dashboard) {
+                // Store admin name for greeting
+                if (data.admin && data.admin.name) {
+                  localStorage.setItem("adminName", data.admin.name);
+                } else if (data.admin && data.admin.fullname) {
+                  localStorage.setItem("adminName", data.admin.fullname);
+                } else if (data.admin && data.admin.username) {
+                  localStorage.setItem("adminName", data.admin.username);
+                } else if (data.admin && data.admin.email) {
+                  localStorage.setItem("adminName", data.admin.email);
+                }
                 window.location.href = "/AdminPages/AdminDashboard.html";
               } else {
                 window.location.href = "/AdminPages/AdminDashboard.html";

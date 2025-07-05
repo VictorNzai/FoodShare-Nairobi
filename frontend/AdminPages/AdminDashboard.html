@@ -212,9 +212,75 @@
     </style>
   </head>
   <body>
-    <header>
+    <header
+      style="
+        position: sticky;
+        top: 0;
+        background: #fff;
+        z-index: 100;
+        box-shadow: 0 2px 8px 0 rgba(84, 209, 43, 0.04);
+      "
+    >
       <div class="logo">🍴 FoodShare</div>
+      <nav
+        id="admin-sticky-navbar"
+        style="display: flex; gap: 18px; align-items: center"
+      >
+        <button
+          class="action-btn"
+          style="background: #ebf2e9; color: #121a0f"
+          onclick="downloadReports()"
+        >
+          Download Reports
+        </button>
+        <!-- <button
+          class="action-btn"
+          style="background: #ebf2e9; color: #121a0f"
+          onclick="printDashboard()"
+        >
+          Print Dashboard
+        </button> -->
+        <!-- <button
+          class="action-btn"
+          style="background: #ebf2e9; color: #121a0f"
+          onclick="openHelpCenter()"
+        >
+          Help Center
+        </button> -->
+        <button class="action-btn reject" onclick="adminLogout()">
+          Logout
+        </button>
+      </nav>
     </header>
+    <script>
+      // --- Sticky Navbar Quick Actions ---
+      function downloadReports() {
+        // Simulate click to Reports section and auto-generate/download last report
+        showSection("reports-section");
+        setTimeout(() => {
+          const form = document.getElementById("reportForm");
+          if (form) form.requestSubmit();
+        }, 300);
+      }
+      function printDashboard() {
+        // Print only the dashboard section
+        const dashboard = document.getElementById("dashboard-section");
+        if (!dashboard) return window.print();
+        const printContents = dashboard.innerHTML;
+        const originalContents = document.body.innerHTML;
+        document.body.innerHTML = printContents;
+        window.print();
+        document.body.innerHTML = originalContents;
+        location.reload();
+      }
+      function openHelpCenter() {
+        window.open("https://foodshare.help/admin", "_blank");
+      }
+      function adminLogout() {
+        localStorage.removeItem("adminName");
+        window.location.href = "../Login.html";
+      }
+    </script>
     <div class="admin-flex">
       <!-- Sidebar -->
       <aside class="sidebar">
@@ -245,7 +311,7 @@
             onclick="showSection('reports-section')"
             >Reports</a
           >
-          <a href="#">Settings</a>
+          <!-- <a href="#">Settings</a> -->
           <a href="../Login.html">Logout</a>
         </nav>
       </aside>
@@ -261,8 +327,18 @@
         <main class="main-content">
           <!-- Dashboard Overview Section -->
           <div id="dashboard-section">
+            <div
+              id="admin-welcome-message"
+              style="
+                font-size: 1.3rem;
+                font-weight: 700;
+                color: #54d12b;
+                margin-bottom: 10px;
+              "
+            ></div>
             <h2>Admin Dashboard</h2>
             <div
+              id="admin-dashboard-stats"
               style="
                 display: flex;
                 flex-wrap: wrap;
@@ -414,6 +490,48 @@
               </div>
             </div>
 
+            <!-- Quick Actions -->
+            <div style="margin-bottom: 32px">
+              <div
+                style="
+                  font-weight: 700;
+                  color: #54d12b;
+                  margin-bottom: 10px;
+                  font-size: 1.1rem;
+                "
+              >
+                Quick Actions
+              </div>
+              <div style="display: flex; gap: 18px; flex-wrap: wrap">
+                <button
+                  class="action-btn approve"
+                  onclick="showSection('charity-verification-section')"
+                >
+                  Verify Institutions
+                </button>
+                <button
+                  class="action-btn approve"
+                  onclick="showSection('user-management-section')"
+                >
+                  Manage Users
+                </button>
+                <button
+                  class="action-btn"
+                  style="background: #ebf2e9; color: #121a0f"
+                  onclick="showSection('reports-section')"
+                >
+                  Generate Reports
+                </button>
+                <button
+                  class="action-btn"
+                  style="background: #ebf2e9; color: #121a0f"
+                  onclick="alert('Send announcement coming soon!')"
+                >
+                  Send Announcement
+                </button>
+              </div>
+            </div>
+
             <!-- Donation Trends and Pie Chart Side by Side -->
             <div
               style="
@@ -498,34 +616,6 @@
                   color: #639155;
                 "
               ></ul>
-            </div>
-            <div style="display: flex; gap: 18px; flex-wrap: wrap">
-              <button
-                class="action-btn approve"
-                onclick="showSection('charity-verification-section')"
-              >
-                Verify Institutions
-              </button>
-              <button
-                class="action-btn approve"
-                onclick="showSection('user-management-section')"
-              >
-                Manage Users
-              </button>
-              <button
-                class="action-btn"
-                style="background: #ebf2e9; color: #121a0f"
-                onclick="showSection('reports-section')"
-              >
-                Generate Reports
-              </button>
-              <button
-                class="action-btn"
-                style="background: #ebf2e9; color: #121a0f"
-                onclick="alert('Send announcement coming soon!')"
-              >
-                Send Announcement
-              </button>
             </div>
           </div>
           <!-- Reports Section -->
@@ -720,6 +810,14 @@
       <p>&copy; 2025 FoodShare. All rights reserved.</p>
     </footer>
     <script>
+      // --- Admin Welcome Name ---
+      (function setAdminWelcome() {
+        let adminName = localStorage.getItem("adminName");
+        if (adminName && adminName.trim() !== "") {
+          var welcomeDiv = document.getElementById("admin-welcome-message");
+          if (welcomeDiv) welcomeDiv.textContent = `Welcome, ${adminName}`;
+        }
+      })();
       // Show total donors in system
       async function showDonorCount() {
         try {
