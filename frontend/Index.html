@@ -582,20 +582,30 @@
               </h2>
             </div>
             <div class="hero-actions">
-              <a href="/Donate.html"
-                ><button class="btn btn-green">Donate Food</button></a
-              >
-              <a href="/BrowseCharities.html"
-                ><button class="btn btn-light">Find Charities</button></a
-              >
+              <a href="/Signup.html" onclick="return showRegisterAlert(event);">
+                <button class="btn btn-green">Donate Food</button>
+              </a>
+              <a href="/Signup.html" onclick="return showRegisterAlert(event);">
+                <button class="btn btn-light">Find Charities</button>
+              </a>
+              <script>
+
+                function showRegisterAlert(e) {
+                  alert(
+                    "You need to register an account before you can donate or find charities."
+                  );
+                  // Allow the link to continue to /Signup.html
+                  return true;
+                }
+              </script>
             </div>
           </div>
         </div>
       </section>
 
       <!-- How It Works Section -->
-      <section class="section">
-        <h1 class="section-title" id="how-it-works">
+      <section class="section"  id="how-it-works">
+        <h1 class="section-title">
           How FoodShare Kenya Works
         </h1>
         <p class="section-desc">
@@ -619,7 +629,7 @@
               </svg>
             </div>
             <div>
-              <div class="feature-title">For Donors</div>
+              <div class="feature-title" id="for-donors">For Donors</div>
               <div class="feature-desc">
                 Easily list surplus food items, schedule pickups, and track your
                 donations.
@@ -951,7 +961,7 @@
       <footer>
         <div class="footer-links">
           <a href="#">About Us</a>
-          <a href="#">Contact</a>
+          <!-- <a href="#">Contact</a> -->
           <a href="#">Privacy Policy</a>
           <a href="#">Terms of Service</a>
         </div>
