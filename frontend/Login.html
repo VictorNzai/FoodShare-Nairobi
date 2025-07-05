@@ -235,7 +235,9 @@
 
             if (data.success) {
               if (role === "donor") {
-                localStorage.setItem("donorName", data.donor.fullname);
+                // Store username for greeting/sidebar
+                let donorName = (data.donor && data.donor.username) ? data.donor.username : "Donor";
+                localStorage.setItem("donorName", donorName);
                 localStorage.setItem("donor", JSON.stringify(data.donor)); // Save full donor object
                 window.location.href = "/Food%20Donor%20Pages/FoodDonor.html";
               } else if (role === "charity") {
