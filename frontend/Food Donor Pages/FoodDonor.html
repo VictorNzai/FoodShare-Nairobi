@@ -88,7 +88,9 @@
         ></h2>
         <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
           <div
-            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start"
+            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start cursor-pointer hover:shadow-lg transition"
+            id="card-active-donations"
+            tabindex="0"
           >
             <p class="text-base font-medium text-[#54d12b] mb-1">
               Active Donations
@@ -97,11 +99,13 @@
               class="text-2xl font-extrabold text-[#121a0f]"
               id="stat-active-donations"
             >
-              --
+              0
             </p>
           </div>
           <div
-            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start"
+            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start cursor-pointer hover:shadow-lg transition"
+            id="card-food-donated"
+            tabindex="0"
           >
             <p class="text-base font-medium text-[#54d12b] mb-1">
               Total Food Donated
@@ -110,21 +114,22 @@
               class="text-2xl font-extrabold text-[#121a0f]"
               id="stat-food-donated"
             >
-              --
+              0
             </p>
           </div>
-
           <div
-            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start"
+            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start cursor-pointer hover:shadow-lg transition"
+            id="card-charities-helped"
+            tabindex="0"
           >
             <p class="text-base font-medium text-[#54d12b] mb-1">
-              People Served
+              Charities Helped
             </p>
             <p
               class="text-2xl font-extrabold text-[#121a0f]"
-              id="stat-people-served"
+              id="stat-charities-helped"
             >
-              --
+              0
             </p>
           </div>
         </div>
@@ -180,7 +185,16 @@
         <h3 class="text-[22px] font-bold tracking-tight mb-2">
           Donation History
         </h3>
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- Donation Analytics Pie Chart (Resized) -->
+        <div class="border border-[#d5e7d0] rounded-xl p-6 mb-6 flex flex-col items-center">
+          <p class="text-base font-medium mb-2">
+            Donations by Category (Pie Chart)
+          </p>
+          <div class="w-full flex justify-center">
+            <canvas id="donation-category-pie" style="max-width:420px;max-height:320px;width:100%;height:320px;"></canvas>
+          </div>
+        </div>
+        <!-- <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div class="border border-[#d5e7d0] rounded-xl p-6">
             <p class="text-base font-medium mb-2">
               Total Food Donated (Past 6 Months)
@@ -201,7 +215,7 @@
               class="w-full h-auto"
             />
           </div>
-        </div>
+        </div> -->
 
         <!-- Charity Requests Section -->
         <h3 class="text-[22px] font-bold tracking-tight mb-2 mt-10">
@@ -236,6 +250,7 @@
     </div>
 
     <!-- JS: Navbar, Stats, Table, Actions -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="CharityRequests.js"></script>
     <script>
       // Sidebar navigation logic (fixes broken links)
@@ -245,7 +260,7 @@
       };
       document.getElementById('nav-donations').onclick = function(e) {
         e.preventDefault();
-        alert('Donations page coming soon!');
+        window.location.href = './Donations.html';
       };
       document.getElementById('nav-charities').onclick = function(e) {
         e.preventDefault();
@@ -294,10 +309,44 @@
       }
       updateDonorUsernameUI();
 
-      // Stats placeholders (replace with backend fetch)
-      document.getElementById("stat-active-donations").textContent = "--";
-      document.getElementById("stat-food-donated").textContent = "--";
-      document.getElementById("stat-people-served").textContent = "--";
+
+      // --- Fetch and update dashboard stats ---
+      async function updateDashboardStats() {
+        // Set initial values to 0 for all stats
+        document.getElementById("stat-active-donations").textContent = 0;
+        document.getElementById("stat-food-donated").textContent = 0;
+        document.getElementById("stat-charities-helped").textContent = 0;
+        const donor = JSON.parse(localStorage.getItem('donor') || '{}');
+        if (!donor.id) return;
+        // Active Donations
+        try {
+          const res = await fetch(`/api/donor/stats/active-donations?donor_id=${donor.id}`);
+          const data = await res.json();
+          document.getElementById("stat-active-donations").textContent = data.count ?? '--';
+        } catch {}
+        // Food Donated (simple sum)
+        try {
+          const res = await fetch(`/api/donor/stats/food-sum?donor_id=${donor.id}`);
+          const data = await res.json();
+          document.getElementById("stat-food-donated").textContent = data.total_quantity ?? 0;
+        } catch {}
+        // Charities Helped
+        try {
+          const res = await fetch(`/api/donor/stats/charities-helped?donor_id=${donor.id}`);
+          const data = await res.json();
+          document.getElementById("stat-charities-helped").textContent = data.count ?? '--';
+        } catch {}
+      }
+      updateDashboardStats();
+      // --- Card click actions ---
+      document.getElementById('card-active-donations').onclick = function() {
+        window.location.href = './Donations.html';
+      };
+      document.getElementById('card-active-donations').onkeypress = function(e) { if (e.key === 'Enter') this.click(); };
+
+      // Remove modal for food donated breakdown (no longer needed)
+      document.getElementById('card-food-donated').onclick = null;
+      document.getElementById('card-food-donated').onkeypress = null;
 
       // Active Donations Table - Fetch and render active donations for this donor
       let allDonations = [];
@@ -435,6 +484,64 @@ document.getElementById('cancel-donation-btn').onclick = async function() {
       // Ensure fetchAndRenderDonations is called on page load
 fetchAndRenderDonations();
 document.getElementById('donation-status-filter').addEventListener('change', renderDonationsTable);
+
+    // --- Donation Analytics Pie Chart ---
+      async function renderDonationCategoryPieChart(canvasId = 'donation-category-pie') {
+        const donor = JSON.parse(localStorage.getItem('donor') || '{}');
+        if (!donor.id) return;
+        try {
+          const res = await fetch(`/api/donations/analytics/category-count?donor_id=${donor.id}`);
+          const data = await res.json();
+          const rows = data.data || [];
+          if (!rows.length) return;
+          const ctx = document.getElementById(canvasId).getContext('2d');
+          const categories = rows.map(r => r.category);
+          const counts = rows.map(r => r.count);
+          // Use the same color palette as Donations.html
+          const palette = [
+            "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#0099C6", "#DD4477", "#66AA00", "#B82E2E", "#316395",
+            "#994499", "#22AA99", "#AAAA11", "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#3B3EAC", "#B77322"
+          ];
+          const bgColors = categories.map((_, i) => palette[i % palette.length]);
+          if (!window.donationPieCharts) window.donationPieCharts = {};
+          if (window.donationPieCharts[canvasId]) window.donationPieCharts[canvasId].destroy();
+          window.donationPieCharts[canvasId] = new Chart(ctx, {
+            type: 'pie',
+            data: {
+              labels: categories,
+              datasets: [{
+                data: counts,
+                backgroundColor: bgColors,
+                borderColor: '#fff',
+                borderWidth: 2
+              }]
+            },
+            options: {
+              responsive: true,
+              plugins: {
+                legend: { position: 'bottom', labels: { boxWidth: 18, font: { size: 15 } } },
+                title: { display: true, text: 'Donations by Category', font: { size: 20 } },
+                tooltip: { enabled: true, callbacks: {
+                  label: function(context) {
+                    // Pie chart best practice: show label, value, and percent
+                    const label = context.label || '';
+                    const value = context.parsed || 0;
+                    const total = context.chart._metasets[0].total || counts.reduce((a,b)=>a+b,0);
+                    const percent = total ? ((value/total)*100).toFixed(1) : 0;
+                    return `${label}: ${value} (${percent}%)`;
+                  }
+                }}
+              },
+              animation: { animateRotate: true, animateScale: true },
+              cutout: 0,
+            }
+          });
+        } catch (e) {
+          // Optionally show error or fallback
+        }
+      }
+    // Render on page load
+    renderDonationCategoryPieChart();
     </script>
   </body>
 </html>
