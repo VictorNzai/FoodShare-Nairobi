@@ -327,9 +327,9 @@
         document.getElementById("stat-charities-helped").textContent = 0;
         const donor = JSON.parse(localStorage.getItem('donor') || '{}');
         if (!donor.id) return;
-        // Active Donations
+        // Total Donations (used for Active Donations card)
         try {
-          const res = await fetch(`/api/donor/stats/active-donations?donor_id=${donor.id}`);
+          const res = await fetch(`/api/donor/stats/total-donations?donor_id=${donor.id}`);
           const data = await res.json();
           document.getElementById("stat-active-donations").textContent = data.count ?? '--';
         } catch {}
@@ -339,12 +339,8 @@
           const data = await res.json();
           document.getElementById("stat-food-donated").textContent = data.total_quantity ?? 0;
         } catch {}
-        // Charities Helped
-        try {
-          const res = await fetch(`/api/donor/stats/charities-helped?donor_id=${donor.id}`);
-          const data = await res.json();
-          document.getElementById("stat-charities-helped").textContent = data.count ?? '--';
-        } catch {}
+        // Charities Helped (not available, set to 0 or hide)
+        document.getElementById("stat-charities-helped").textContent = 0;
       }
       updateDashboardStats();
       // --- Card click actions ---

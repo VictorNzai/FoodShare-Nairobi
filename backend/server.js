@@ -1,6 +1,6 @@
 const express = require('express');
 const cors = require('cors');
-const mysql = require('mysql2');
+const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
 const path = require('path');
@@ -49,11 +49,16 @@ const pool = mysql.createPool({
   connectionLimit: 10,
   queueLimit: 0
 });
-pool.getConnection((err, conn) => {
-  if (err) throw err;
-  console.log('Connected to foodshare_db');
-  conn.release();
-});
+(async () => {
+  try {
+    const conn = await pool.getConnection();
+    console.log('Connected to foodshare_db');
+    conn.release();
+  } catch (err) {
+    console.error('Failed to connect to foodshare_db:', err);
+    process.exit(1);
+  }
+})();
 
 
 // Charity Requests API (modular route) - require after pool is defined
@@ -81,7 +86,7 @@ const reportGenerator = require('./Routes/reportGenerator');
 app.use('/api/admin/reports', reportGenerator);
 
 // --- Admin Charity Verification Endpoints ---
-app.get('/api/admin/charity-verifications', (req, res) => {
+app.get('/api/admin/charity-verifications', async (req, res) => {
   let sql = 'SELECT * FROM charity_verifications';
   const params = [];
   if (req.query.status && req.query.status !== 'all') {
@@ -89,45 +94,43 @@ app.get('/api/admin/charity-verifications', (req, res) => {
     params.push(req.query.status);
   }
   sql += ' ORDER BY submitted_at DESC';
-  pool.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    const [results] = await pool.query(sql, params);
     res.json({ success: true, verifications: results });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
-app.post('/api/admin/charity-verifications/:id/approve', (req, res) => {
+app.post('/api/admin/charity-verifications/:id/approve', async (req, res) => {
   const id = req.params.id;
-  // First, approve the verification
-  const approveSql = 'UPDATE charity_verifications SET status = "approved" WHERE id = ?';
-  pool.query(approveSql, [id], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    // First, approve the verification
+    await pool.query('UPDATE charity_verifications SET status = "approved" WHERE id = ?', [id]);
     // Get the charity name from the verification row
-    const getCharitySql = 'SELECT charity_name FROM charity_verifications WHERE id = ?';
-    pool.query(getCharitySql, [id], (err2, results) => {
-      if (err2 || !results.length) return res.json({ success: true, message: 'Charity verification approved, but could not update charity verified status.' });
-      const charityName = results[0].charity_name;
-      // Update the charity table to set verified = 1
-      const updateCharitySql = 'UPDATE charity SET verified = 1 WHERE orgname = ?';
-      pool.query(updateCharitySql, [charityName], (err3) => {
-        if (err3) return res.json({ success: true, message: 'Charity verification approved, but failed to update charity verified status.' });
-        // Also update the charity_verifications table to set verified = 1 for this row
-        const updateVerificationSql = 'UPDATE charity_verifications SET verified = 1 WHERE id = ?';
-        pool.query(updateVerificationSql, [id], (err4) => {
-          if (err4) return res.json({ success: true, message: 'Charity and verification approved, but failed to update verification verified status.' });
-          res.json({ success: true, message: 'Charity verification approved and both tables marked as verified.' });
-        });
-      });
-    });
-  });
+    const [results] = await pool.query('SELECT charity_name FROM charity_verifications WHERE id = ?', [id]);
+    if (!results.length) {
+      return res.json({ success: true, message: 'Charity verification approved, but could not update charity verified status.' });
+    }
+    const charityName = results[0].charity_name;
+    // Update the charity table to set verified = 1
+    await pool.query('UPDATE charity SET verified = 1 WHERE orgname = ?', [charityName]);
+    // Also update the charity_verifications table to set verified = 1 for this row
+    await pool.query('UPDATE charity_verifications SET verified = 1 WHERE id = ?', [id]);
+    res.json({ success: true, message: 'Charity verification approved and both tables marked as verified.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
-app.post('/api/admin/charity-verifications/:id/reject', (req, res) => {
+app.post('/api/admin/charity-verifications/:id/reject', async (req, res) => {
   const id = req.params.id;
-  const sql = 'UPDATE charity_verifications SET status = "rejected" WHERE id = ?';
-  pool.query(sql, [id], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    await pool.query('UPDATE charity_verifications SET status = "rejected" WHERE id = ?', [id]);
     res.json({ success: true, message: 'Charity verification rejected.' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // Donor Signup
@@ -137,12 +140,10 @@ app.post('/signup/donor', async (req, res) => {
   try {
     const hashed = await bcrypt.hash(password, 10);
     const query = 'INSERT INTO donor (fullname, email, phone, password) VALUES (?, ?, ?, ?)';
-    pool.query(query, [fullname, email, phone, hashed], (err) => {
-      if (err) return res.status(500).json({ success: false, message: err.sqlMessage });
-      res.status(200).json({ success: true, message: 'Donor account created successfully' });
-    });
-  } catch {
-    res.status(500).json({ success: false, message: 'Server error' });
+    await pool.query(query, [fullname, email, phone, hashed]);
+    res.status(200).json({ success: true, message: 'Donor account created successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err?.sqlMessage || 'Server error' });
   }
 });
 
@@ -153,22 +154,19 @@ app.post('/signup/charity', async (req, res) => {
   try {
     const hashed = await bcrypt.hash(password, 10);
     const query = 'INSERT INTO charity (orgname, email, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
-    pool.query(query, [orgname, email, phone, reg, hashed], (err) => {
-      if (err) return res.status(500).json({ success: false, message: err.sqlMessage });
-      res.status(200).json({ success: true, message: 'Charity account created successfully' });
-    });
-  } catch {
-    res.status(500).json({ success: false, message: 'Server error' });
+    await pool.query(query, [orgname, email, phone, reg, hashed]);
+    res.status(200).json({ success: true, message: 'Charity account created successfully' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: err?.sqlMessage || 'Server error' });
   }
 });
 
 // Login (general)
-app.post('/auth/login', (req, res) => {
+app.post('/auth/login', async (req, res) => {
   const { email, password, role, accessKey } = req.body;
-  if (role === 'admin') {
-    const query = 'SELECT * FROM admins WHERE email = ?';
-    pool.query(query, [email], (err, results) => {
-      if (err) return res.status(500).json({ message: 'Server error' });
+  try {
+    if (role === 'admin') {
+      const [results] = await pool.query('SELECT * FROM admins WHERE email = ?', [email]);
       if (results.length === 0 || results[0].password !== password || results[0].access_key !== accessKey)
         return res.status(401).json({ message: 'Invalid credentials or access key' });
       if (results[0].status === 'banned') {
@@ -179,17 +177,15 @@ app.post('/auth/login', (req, res) => {
           canAppeal: true
         });
       }
-      res.json({
+      return res.json({
         success: true,
         message: 'Admin login successful',
         admin: { id: results[0].id, fullname: results[0].fullname, email: results[0].email },
         dashboard: '/AdminPages/AdminDashboard.html'
       });
-    });
-  } else if (role === 'donor') {
-    const query = 'SELECT * FROM donor WHERE email = ?';
-    pool.query(query, [email], async (err, results) => {
-      if (err || results.length === 0) return res.status(401).json({ message: 'Invalid email or password' });
+    } else if (role === 'donor') {
+      const [results] = await pool.query('SELECT * FROM donor WHERE email = ?', [email]);
+      if (results.length === 0) return res.status(401).json({ message: 'Invalid email or password' });
       const match = await bcrypt.compare(password, results[0].password);
       if (!match) return res.status(401).json({ message: 'Invalid email or password' });
       if (results[0].status === 'banned') {
@@ -200,17 +196,15 @@ app.post('/auth/login', (req, res) => {
           canAppeal: true
         });
       }
-      res.json({
+      return res.json({
         success: true,
         message: 'Donor login successful',
         donor: { id: results[0].id, fullname: results[0].fullname, email: results[0].email, phone: results[0].phone },
         dashboard: '/FoodDonor Pages/FoodDonor.html'
       });
-    });
-  } else if (role === 'charity') {
-    const query = 'SELECT * FROM charity WHERE email = ?';
-    pool.query(query, [email], async (err, results) => {
-      if (err || results.length === 0) return res.status(401).json({ message: 'Invalid email or password' });
+    } else if (role === 'charity') {
+      const [results] = await pool.query('SELECT * FROM charity WHERE email = ?', [email]);
+      if (results.length === 0) return res.status(401).json({ message: 'Invalid email or password' });
       const match = await bcrypt.compare(password, results[0].password);
       if (!match) return res.status(401).json({ message: 'Invalid email or password' });
       if (results[0].status === 'banned') {
@@ -221,7 +215,7 @@ app.post('/auth/login', (req, res) => {
           canAppeal: true
         });
       }
-      res.json({
+      return res.json({
         success: true,
         message: 'Charity login successful',
         charity: {
@@ -234,18 +228,20 @@ app.post('/auth/login', (req, res) => {
         },
         dashboard: '/Charity Pages/CharityDashboard.html'
       });
-    });
-  } else {
-    res.status(400).json({ message: 'Unknown role' });
+    } else {
+      return res.status(400).json({ message: 'Unknown role' });
+    }
+  } catch (err) {
+    res.status(500).json({ message: 'Server error' });
   }
 });
 
 // Donor Login (dedicated endpoint)
-app.post('/auth/login/donor', (req, res) => {
+app.post('/auth/login/donor', async (req, res) => {
   const { email, password } = req.body;
-  const query = 'SELECT * FROM donor WHERE email = ?';
-  pool.query(query, [email], async (err, results) => {
-    if (err || results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+  try {
+    const [results] = await pool.query('SELECT * FROM donor WHERE email = ?', [email]);
+    if (results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const match = await bcrypt.compare(password, results[0].password);
     if (!match) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     if (results[0].status === 'banned') {
@@ -258,15 +254,17 @@ app.post('/auth/login/donor', (req, res) => {
     }
     const donor = results[0];
     res.json({ success: true, message: 'Login successful', donor: { id: donor.id, fullname: donor.fullname, email: donor.email, phone: donor.phone } });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Charity Login (dedicated endpoint)
-app.post('/auth/login/charity', (req, res) => {
+app.post('/auth/login/charity', async (req, res) => {
   const { email, password } = req.body;
-  const query = 'SELECT * FROM charity WHERE email = ?';
-  pool.query(query, [email], async (err, results) => {
-    if (err || results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
+  try {
+    const [results] = await pool.query('SELECT * FROM charity WHERE email = ?', [email]);
+    if (results.length === 0) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     const match = await bcrypt.compare(password, results[0].password);
     if (!match) return res.status(401).json({ success: false, message: 'Invalid email or password' });
     if (results[0].status === 'banned') {
@@ -290,14 +288,16 @@ app.post('/auth/login/charity', (req, res) => {
         verified: charity.verified === 1 || charity.verified === true
       }
     });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Server error' });
+  }
 });
 
 // Submit Charity Verification
 app.post('/api/verify-charity', upload.fields([
   { name: 'idUpload', maxCount: 1 },
   { name: 'certUpload', maxCount: 1 }
-]), (req, res) => {
+]), async (req, res) => {
   const { charityName, address, contact, desc } = req.body;
   const idFile = req.files['idUpload']?.[0]?.filename;
   const certFile = req.files['certUpload']?.[0]?.filename;
@@ -306,15 +306,17 @@ app.post('/api/verify-charity', upload.fields([
   const sql = `INSERT INTO charity_verifications 
     (charity_name, address, contact, description, id_file, cert_file, status, submitted_at) 
     VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())`;
-  pool.query(sql, [charityName, address, contact, desc, idFile, certFile], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    await pool.query(sql, [charityName, address, contact, desc, idFile, certFile]);
     res.json({ success: true, message: 'Verification submitted.' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // --- Admin User Management Endpoints ---
 // List users (with optional type, search, status)
-app.get('/api/admin/users', (req, res) => {
+app.get('/api/admin/users', async (req, res) => {
   const { type = 'donor', search = '', status = '' } = req.query;
   let table = '';
   if (type === 'donor') table = 'donor';
@@ -349,14 +351,16 @@ app.get('/api/admin/users', (req, res) => {
   }
   if (where.length) sql += ' WHERE ' + where.join(' AND ');
   sql += ' ORDER BY id DESC';
-  pool.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    const [results] = await pool.query(sql, params);
     res.json({ success: true, users: results });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // Ban user (admin action)
-app.post('/api/admin/users/:type/:id/ban', (req, res) => {
+app.post('/api/admin/users/:type/:id/ban', async (req, res) => {
   const { type, id } = req.params;
   let table = '';
   if (type === 'donor') table = 'donor';
@@ -364,15 +368,17 @@ app.post('/api/admin/users/:type/:id/ban', (req, res) => {
   else if (type === 'admin') table = 'admins';
   else return res.status(400).json({ success: false, message: 'Invalid user type' });
   const sql = `UPDATE ${table} SET status = 'banned' WHERE id = ?`;
-  pool.query(sql, [id], (err, result) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    const [result] = await pool.query(sql, [id]);
     if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
     res.json({ success: true, message: 'User banned.' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // Unban user (admin action)
-app.post('/api/admin/users/:type/:id/unban', (req, res) => {
+app.post('/api/admin/users/:type/:id/unban', async (req, res) => {
   const { type, id } = req.params;
   let table = '';
   if (type === 'donor') table = 'donor';
@@ -380,45 +386,50 @@ app.post('/api/admin/users/:type/:id/unban', (req, res) => {
   else if (type === 'admin') table = 'admins';
   else return res.status(400).json({ success: false, message: 'Invalid user type' });
   const sql = `UPDATE ${table} SET status = 'active' WHERE id = ?`;
-  pool.query(sql, [id], (err, result) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    const [result] = await pool.query(sql, [id]);
     if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
     res.json({ success: true, message: 'User unbanned.' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // Promote user to admin (for donor/charity)
-app.post('/api/admin/users/:type/:id/promote', (req, res) => {
+app.post('/api/admin/users/:type/:id/promote', async (req, res) => {
   const { type, id } = req.params;
   let selectSql = '';
   if (type === 'donor') selectSql = 'SELECT * FROM donor WHERE id = ?';
   else if (type === 'charity') selectSql = 'SELECT * FROM charity WHERE id = ?';
   else return res.status(400).json({ success: false, message: 'Invalid user type' });
-  pool.query(selectSql, [id], (err, results) => {
-    if (err || results.length === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+  try {
+    const [results] = await pool.query(selectSql, [id]);
+    if (!results.length) return res.status(404).json({ success: false, message: 'User not found.' });
     const user = results[0];
     // Insert into admins table
     const insertSql = 'INSERT INTO admins (fullname, email, status, password) VALUES (?, ?, ?, ?)';
-    pool.query(insertSql, [user.fullname || user.orgname, user.email, 'active', user.password], (err2) => {
-      if (err2) return res.status(500).json({ success: false, message: 'Failed to promote user.' });
-      res.json({ success: true, message: 'User promoted to admin.' });
-    });
-  });
+    await pool.query(insertSql, [user.fullname || user.orgname, user.email, 'active', user.password]);
+    res.json({ success: true, message: 'User promoted to admin.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Failed to promote user.' });
+  }
 });
 
 // Demote admin (remove from admins table)
-app.post('/api/admin/users/admin/:id/demote', (req, res) => {
+app.post('/api/admin/users/admin/:id/demote', async (req, res) => {
   const { id } = req.params;
   const sql = 'DELETE FROM admins WHERE id = ?';
-  pool.query(sql, [id], (err, result) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    const [result] = await pool.query(sql, [id]);
     if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
     res.json({ success: true, message: 'Admin demoted/removed.' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // Delete user (admin action)
-app.delete('/api/admin/users/:type/:id', (req, res) => {
+app.delete('/api/admin/users/:type/:id', async (req, res) => {
   const { type, id } = req.params;
   let table = '';
   if (type === 'donor') table = 'donor';
@@ -426,15 +437,17 @@ app.delete('/api/admin/users/:type/:id', (req, res) => {
   else if (type === 'admin') table = 'admins';
   else return res.status(400).json({ success: false, message: 'Invalid user type' });
   const sql = `DELETE FROM ${table} WHERE id = ?`;
-  pool.query(sql, [id], (err, result) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error.' });
+  try {
+    const [result] = await pool.query(sql, [id]);
     if (result.affectedRows === 0) return res.status(404).json({ success: false, message: 'User not found.' });
     res.json({ success: true, message: 'User deleted.' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // View user details (admin action)
-app.get('/api/admin/users/:type/:id', (req, res) => {
+app.get('/api/admin/users/:type/:id', async (req, res) => {
   const { type, id } = req.params;
   let table = '';
   let selectSql = '';
@@ -450,127 +463,76 @@ app.get('/api/admin/users/:type/:id', (req, res) => {
   } else {
     return res.status(400).json({ success: false, message: 'Invalid user type' });
   }
-  pool.query(selectSql, [id], (err, results) => {
-    if (err || results.length === 0) return res.status(404).json({ success: false, message: 'User not found.' });
+  try {
+    const [results] = await pool.query(selectSql, [id]);
+    if (!results.length) return res.status(404).json({ success: false, message: 'User not found.' });
     res.json({ success: true, user: results[0] });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 // --- Admin Dashboard Data Endpoints ---
-app.get('/api/admin/dashboard-data', (req, res) => {
-  const data = {};
-  // Total users (donors + charities)
-  const totalUsersPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM donor UNION SELECT COUNT(*) as count FROM charity', (err, results) => {
-      if (err) return reject(err);
-      const total = results.reduce((sum, row) => sum + row.count, 0);
-      resolve(total);
+app.get('/api/admin/dashboard-data', async (req, res) => {
+  try {
+    // Total users (donors + charities)
+    const [donorCountRows] = await pool.query('SELECT COUNT(*) as count FROM donor');
+    const [charityCountRows] = await pool.query('SELECT COUNT(*) as count FROM charity');
+    const totalUsers = (donorCountRows[0]?.count || 0) + (charityCountRows[0]?.count || 0);
+    // Total donations (from donor side)
+    const [donationsRows] = await pool.query('SELECT COUNT(*) as count FROM donations');
+    // Total charity verifications
+    const [verificationsRows] = await pool.query('SELECT COUNT(*) as count FROM charity_verifications');
+    // Active charities
+    const [activeCharitiesRows] = await pool.query('SELECT COUNT(*) as count FROM charity WHERE status = "active"');
+    // Banned users (donors + charities)
+    const [bannedDonorRows] = await pool.query('SELECT COUNT(*) as count FROM donor WHERE status = "banned"');
+    const [bannedCharityRows] = await pool.query('SELECT COUNT(*) as count FROM charity WHERE status = "banned"');
+    const bannedUsers = (bannedDonorRows[0]?.count || 0) + (bannedCharityRows[0]?.count || 0);
+    // Completed donations (where donor has marked as complete)
+    const [completedDonationsRows] = await pool.query('SELECT COUNT(*) as count FROM donations WHERE status = "completed"');
+    // Pending charity verifications
+    const [pendingVerificationsRows] = await pool.query('SELECT COUNT(*) as count FROM charity_verifications WHERE status = "pending"');
+    // Resolved complaints
+    const [resolvedComplaintsRows] = await pool.query('SELECT COUNT(*) as count FROM complaints WHERE status = "resolved"');
+    // Rejected charity verifications
+    const [rejectedVerificationsRows] = await pool.query('SELECT COUNT(*) as count FROM charity_verifications WHERE status = "rejected"');
+    res.json({
+      success: true,
+      data: {
+        totalUsers,
+        totalDonations: donationsRows[0]?.count || 0,
+        totalVerifications: verificationsRows[0]?.count || 0,
+        activeCharities: activeCharitiesRows[0]?.count || 0,
+        bannedUsers,
+        completedDonations: completedDonationsRows[0]?.count || 0,
+        pendingVerifications: pendingVerificationsRows[0]?.count || 0,
+        resolvedComplaints: resolvedComplaintsRows[0]?.count || 0,
+        rejectedVerifications: rejectedVerificationsRows[0]?.count || 0
+      }
     });
-  });
-  // Total donations (from donor side)
-  const totalDonationsPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM donations', (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0]?.count || 0);
-    });
-  });
-  // Total charity verifications
-  const totalVerificationsPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM charity_verifications', (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0]?.count || 0);
-    });
-  });
-  // Active charities
-  const activeCharitiesPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM charity WHERE status = "active"', (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0]?.count || 0);
-    });
-  });
-  // Banned users (donors + charities)
-  const bannedUsersPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM donor WHERE status = "banned" UNION SELECT COUNT(*) as count FROM charity WHERE status = "banned"', (err, results) => {
-      if (err) return reject(err);
-      const totalBanned = results.reduce((sum, row) => sum + row.count, 0);
-      resolve(totalBanned);
-    });
-  });
-  // Completed donations (where donor has marked as complete)
-  const completedDonationsPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM donations WHERE status = "completed"', (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0]?.count || 0);
-    });
-  });
-  // Pending charity verifications
-  const pendingVerificationsPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM charity_verifications WHERE status = "pending"', (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0]?.count || 0);
-    });
-  });
-  // Resolved complaints
-  const resolvedComplaintsPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM complaints WHERE status = "resolved"', (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0]?.count || 0);
-    });
-  });
-  // Rejected charity verifications
-  const rejectedVerificationsPromise = new Promise((resolve, reject) => {
-    pool.query('SELECT COUNT(*) as count FROM charity_verifications WHERE status = "rejected"', (err, results) => {
-      if (err) return reject(err);
-      resolve(results[0]?.count || 0);
-    });
-  });
-  Promise.all([
-    totalUsersPromise,
-    totalDonationsPromise,
-    totalVerificationsPromise,
-    activeCharitiesPromise,
-    bannedUsersPromise,
-    completedDonationsPromise,
-    pendingVerificationsPromise,
-    resolvedComplaintsPromise,
-    rejectedVerificationsPromise
-  ])
-    .then(results => {
-      res.json({
-        success: true,
-        data: {
-          totalUsers: results[0],
-          totalDonations: results[1],
-          totalVerifications: results[2],
-          activeCharities: results[3],
-          bannedUsers: results[4],
-          completedDonations: results[5],
-          pendingVerifications: results[6],
-          resolvedComplaints: results[7],
-          rejectedVerifications: results[8]
-        }
-      });
-    })
-    .catch(err => {
-      console.error(err);
-      res.status(500).json({ success: false, message: 'Error fetching dashboard data' });
-    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Error fetching dashboard data' });
+  }
 });
 
 // --- Complaints Management Endpoints ---
 // Submit a complaint
-app.post('/api/complaints', (req, res) => {
+app.post('/api/complaints', async (req, res) => {
   const { userId, userType, description } = req.body;
   if (!userId || !userType || !description) return res.status(400).json({ success: false, message: 'Missing required fields' });
   const sql = 'INSERT INTO complaints (user_id, user_type, description, status, created_at) VALUES (?, ?, ?, "pending", NOW())';
-  pool.query(sql, [userId, userType, description], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    await pool.query(sql, [userId, userType, description]);
     res.json({ success: true, message: 'Complaint submitted successfully' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // List complaints (admin)
-app.get('/api/admin/complaints', (req, res) => {
+app.get('/api/admin/complaints', async (req, res) => {
   let sql = 'SELECT * FROM complaints';
   const params = [];
   if (req.query.status && req.query.status !== 'all') {
@@ -578,27 +540,30 @@ app.get('/api/admin/complaints', (req, res) => {
     params.push(req.query.status);
   }
   sql += ' ORDER BY created_at DESC';
-  pool.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    const [results] = await pool.query(sql, params);
     res.json({ success: true, complaints: results });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // Update complaint status (admin)
-app.post('/api/admin/complaints/:id/status', (req, res) => {
+app.post('/api/admin/complaints/:id/status', async (req, res) => {
   const id = req.params.id;
   const { status } = req.body;
   if (!status) return res.status(400).json({ success: false, message: 'Status is required' });
-  const sql = 'UPDATE complaints SET status = ? WHERE id = ?';
-  pool.query(sql, [status, id], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    await pool.query('UPDATE complaints SET status = ? WHERE id = ?', [status, id]);
     res.json({ success: true, message: 'Complaint status updated' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // --- Reports Endpoints ---
 // Generate reports (admin)
-app.post('/api/admin/reports', (req, res) => {
+app.post('/api/admin/reports', async (req, res) => {
   const { type, dateRange } = req.body;
   if (!type || !dateRange) return res.status(400).json({ success: false, message: 'Type and date range are required' });
   let sql = '';
@@ -624,75 +589,89 @@ app.post('/api/admin/reports', (req, res) => {
   } else {
     return res.status(400).json({ success: false, message: 'Invalid report type' });
   }
-  pool.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    const [results] = await pool.query(sql, params);
     res.json({ success: true, report: results });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // --- Settings Endpoints ---
 // Get settings
-app.get('/api/settings', (req, res) => {
-  pool.query('SELECT * FROM settings', (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+app.get('/api/settings', async (req, res) => {
+  try {
+    const [results] = await pool.query('SELECT * FROM settings');
     const settings = results.reduce((acc, row) => ({ ...acc, [row.key]: row.value }), {});
     res.json({ success: true, settings });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // Update settings
-app.post('/api/settings', (req, res) => {
+app.post('/api/settings', async (req, res) => {
   const updates = req.body;
   const sql = 'INSERT INTO settings (key, value) VALUES ? ON DUPLICATE KEY UPDATE value = VALUES(value)';
   const values = Object.entries(updates).map(([key, value]) => [key, value]);
-  pool.query(sql, [values], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    await pool.query(sql, [values]);
     res.json({ success: true, message: 'Settings updated' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // --- Notification Endpoints ---
 // Get notifications (for admin)
-app.get('/api/admin/notifications', (req, res) => {
-  pool.query('SELECT * FROM notifications ORDER BY created_at DESC', (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+app.get('/api/admin/notifications', async (req, res) => {
+  try {
+    const [results] = await pool.query('SELECT * FROM notifications ORDER BY created_at DESC');
     res.json({ success: true, notifications: results });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // Get notifications (for users)
-app.get('/api/notifications', (req, res) => {
+app.get('/api/notifications', async (req, res) => {
   const userId = req.query.userId;
   if (!userId) return res.status(400).json({ success: false, message: 'User ID is required' });
-  pool.query('SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC', [userId], (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    const [results] = await pool.query('SELECT * FROM notifications WHERE user_id = ? ORDER BY created_at DESC', [userId]);
     res.json({ success: true, notifications: results });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // Mark notification as read
-app.post('/api/notifications/:id/read', (req, res) => {
+app.post('/api/notifications/:id/read', async (req, res) => {
   const id = req.params.id;
-  pool.query('UPDATE notifications SET is_read = 1 WHERE id = ?', [id], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    await pool.query('UPDATE notifications SET is_read = 1 WHERE id = ?', [id]);
     res.json({ success: true, message: 'Notification marked as read' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // --- Appeal Endpoints ---
 // Submit an appeal
-app.post('/api/appeals', (req, res) => {
+app.post('/api/appeals', async (req, res) => {
   const { userId, userType, reason } = req.body;
   if (!userId || !userType || !reason) return res.status(400).json({ success: false, message: 'Missing required fields' });
   const sql = 'INSERT INTO appeals (user_id, user_type, reason, status, created_at) VALUES (?, ?, ?, "pending", NOW())';
-  pool.query(sql, [userId, userType, reason], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    await pool.query(sql, [userId, userType, reason]);
     res.json({ success: true, message: 'Appeal submitted successfully' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // List appeals (admin)
-app.get('/api/admin/appeals', (req, res) => {
+app.get('/api/admin/appeals', async (req, res) => {
   let sql = 'SELECT * FROM appeals';
   const params = [];
   if (req.query.status && req.query.status !== 'all') {
@@ -700,22 +679,25 @@ app.get('/api/admin/appeals', (req, res) => {
     params.push(req.query.status);
   }
   sql += ' ORDER BY created_at DESC';
-  pool.query(sql, params, (err, results) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    const [results] = await pool.query(sql, params);
     res.json({ success: true, appeals: results });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // Update appeal status (admin)
-app.post('/api/admin/appeals/:id/status', (req, res) => {
+app.post('/api/admin/appeals/:id/status', async (req, res) => {
   const id = req.params.id;
   const { status } = req.body;
   if (!status) return res.status(400).json({ success: false, message: 'Status is required' });
-  const sql = 'UPDATE appeals SET status = ? WHERE id = ?';
-  pool.query(sql, [status, id], (err) => {
-    if (err) return res.status(500).json({ success: false, message: 'Database error' });
+  try {
+    await pool.query('UPDATE appeals SET status = ? WHERE id = ?', [status, id]);
     res.json({ success: true, message: 'Appeal status updated' });
-  });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error' });
+  }
 });
 
 // --- Miscellaneous Endpoints ---
@@ -725,7 +707,7 @@ app.get('/api/health', (req, res) => {
 });
 
 // POST /api/foodneeds - Add a new food need
-app.post('/api/foodneeds', (req, res) => {
+app.post('/api/foodneeds', async (req, res) => {
   const { orgName, date, foodItem, quantity, pickupLocation, notes, status } = req.body;
   if (!orgName || !date || !foodItem || !quantity || !pickupLocation) {
     return res.status(400).json({ success: false, message: 'Missing required fields.' });
@@ -734,47 +716,50 @@ app.post('/api/foodneeds', (req, res) => {
     INSERT INTO food_needs (org_name, date, food_item, quantity, pickup_location, notes, status)
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
-  pool.query(sql, [orgName, date, foodItem, quantity, pickupLocation, notes || '', status || 'Pending'], (err, result) => {
-    if (err) {
-      console.error('DB error:', err);
-      return res.status(500).json({ success: false, message: 'Database error.' });
-    }
-    return res.json({ success: true, message: 'Food need submitted.' });
-  });
+  try {
+    await pool.query(sql, [orgName, date, foodItem, quantity, pickupLocation, notes || '', status || 'Pending']);
+    return res.json({ success: true, message: 'Food need submitted.' });
+  } catch (err) {
+    console.error('DB error:', err);
+    return res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 
 
 // GET /api/foodneeds?org=ORG_NAME - Get food needs for an org
-app.get('/api/foodneeds', (req, res) => {
+app.get('/api/foodneeds', async (req, res) => {
   const orgName = req.query.org;
   if (!orgName) {
     return res.status(400).json({ success: false, message: 'Missing org name.' });
   }
   const sql = "SELECT * FROM food_needs WHERE org_name = ? ORDER BY date DESC, id DESC";
-  pool.query(sql, [orgName], (err, results) => {
-    if (err) {
-      console.error('DB error:', err);
-      return res.status(500).json({ success: false, message: 'Database error.' });
-    }
+  try {
+    const [results] = await pool.query(sql, [orgName]);
     return res.json(results);
-  });
+  } catch (err) {
+    console.error('DB error:', err);
+    return res.status(500).json({ success: false, message: 'Database error.' });
+  }
 });
 // DELETE /api/foodneeds/:id - Delete a food need by ID
-app.delete('/api/foodneeds/:id', (req, res) => {
+app.delete('/api/foodneeds/:id', async (req, res) => {
   const id = req.params.id;
   if (!id) return res.status(400).json({ success: false, message: 'Missing food need ID' });
   const sql = 'DELETE FROM food_needs WHERE id = ?';
-  pool.query(sql, [id], (err, result) => {
-    if (err) {
-      console.error(err);
-      return res.status(500).json({ success: false, message: 'Failed to delete food need' });
-    }
+  try {
+    const [result] = await pool.query(sql, [id]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ success: false, message: 'Food need not found' });
     }
     res.json({ success: true, message: 'Food need deleted' });
-  });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ success: false, message: 'Failed to delete food need' });
+  }
 });
+const donorDashboardStatsRoutes = require('./Routes/donorDashboardStats');
+app.use('/api/donor', donorDashboardStatsRoutes(pool));
+
 // 404 handler
 app.use((req, res) => {
   res.status(404).json({ success: false, message: 'Not found' });
