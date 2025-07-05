@@ -299,7 +299,6 @@
                     <th>Pickup Location</th>
                     <th>Notes</th>
                     <th>Status</th>
-                    <th>Actions</th>
                   </tr>
                 </thead>
                 <tbody id="recent-activity-body">
@@ -336,10 +335,12 @@
         } catch {}
         if (!orgName) {
           tbody.innerHTML =
-            '<tr><td colspan="8">Please log in as a charity to view your activity.</td></tr>';
+            '<tr><td colspan="7">Please log in as a charity to view your activity.</td></tr>';
           return;
         }
+
         try {
+          // Fetch food needs
           const res = await fetch(
             "http://localhost:3000/api/foodneeds?org=" +
               encodeURIComponent(orgName),
@@ -349,6 +350,20 @@
           );
           if (!res.ok) throw new Error("Failed to fetch food needs");
           const foodNeeds = await res.json();
+
+          // Fetch completed donor offers for this org
+          let donorOffers = [];
+          try {
+            const offersRes = await fetch(
+              `/api/donor-offers?charity=${encodeURIComponent(orgName)}&status=Completed`,
+              { headers: jwt ? { Authorization: "Bearer " + jwt } : {} }
+            );
+            if (offersRes.ok) {
+              const offersData = await offersRes.json();
+              donorOffers = Array.isArray(offersData.offers) ? offersData.offers : [];
+            }
+          } catch {}
+
           // Update Active Requests stat
           const activeCount = foodNeeds.filter(
             (need) => need.status === "Pending"
@@ -370,7 +385,14 @@
                     let qty = parseFloat(String(need.quantity).replace(/[^\d.]/g, ""));
                     return sum + (isNaN(qty) ? 0 : qty);
                   }, 0);
-                value.textContent = totalKg + " kg";
+                // Add completed donor offers (in kg)
+                let donorKg = donorOffers
+                  .filter((offer) => String(offer.unit || '').toLowerCase().includes('kg'))
+                  .reduce((sum, offer) => {
+                    let qty = parseFloat(String(offer.quantity).replace(/[^\d.]/g, ""));
+                    return sum + (isNaN(qty) ? 0 : qty);
+                  }, 0);
+                value.textContent = (totalKg + donorKg) + " kg";
               } else if (label.textContent.includes("Beneficiaries Served")) {
                 // Count completed requests as beneficiaries served
                 let served = foodNeeds.filter(
@@ -380,37 +402,55 @@
               }
             }
           });
-          if (foodNeeds.length === 0) {
+
+          // Merge and sort recent activity: food needs and donor offers
+          let activityRows = [];
+          foodNeeds.forEach((need) => {
+            activityRows.push({
+              date: need.date ? String(need.date).slice(0, 10) : "",
+              type: "Request",
+              food_item: need.food_item,
+              quantity: need.quantity,
+              pickup_location: need.pickup_location,
+              notes: need.notes || "",
+              status: need.status,
+            });
+          });
+          donorOffers.forEach((offer) => {
+            activityRows.push({
+              date: offer.completed_at ? String(offer.completed_at).slice(0, 10) : (offer.updated_at ? String(offer.updated_at).slice(0, 10) : (offer.created_at ? String(offer.created_at).slice(0, 10) : "")),
+              type: "Donation",
+              food_item: offer.food_type || offer.food_item || "",
+              quantity: (offer.quantity || "") + (offer.unit ? " " + offer.unit : ""),
+              pickup_location: offer.pickup_address || offer.pickup_location || "",
+              notes: offer.notes || offer.message || "",
+              status: offer.status || "Completed",
+            });
+          });
+          // Sort by date descending
+          activityRows.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+
+          if (activityRows.length === 0) {
             tbody.innerHTML =
-              '<tr><td colspan="8">No food needs posted yet.</td></tr>';
+              '<tr><td colspan="7">No food needs or donations yet.</td></tr>';
           } else {
-            foodNeeds.forEach((need) => {
+            activityRows.forEach((row) => {
               const tr = document.createElement("tr");
-              // Format date to show only YYYY-MM-DD
-              let dateStr = need.date ? String(need.date).slice(0, 10) : "";
               tr.innerHTML = `
-                <td>${dateStr}</td>
-                <td>Request</td>
-                <td>${need.food_item}</td>
-                <td>${need.quantity}</td>
-                <td>${need.pickup_location}</td>
-                <td>${need.notes || ""}</td>
-                <td><span class="status">${need.status}</span></td>
-                <td><button class="view-details-btn" data-need='${JSON.stringify(need).replace(/'/g, "&#39;")}' style="background:#eaf3e7;color:#54d12b;border:none;padding:6px 16px;border-radius:999px;font-weight:700;cursor:pointer;">View details</button></td>
+                <td>${row.date}</td>
+                <td>${row.type}</td>
+                <td>${row.food_item}</td>
+                <td>${row.quantity}</td>
+                <td>${row.pickup_location}</td>
+                <td>${row.notes}</td>
+                <td><span class="status">${row.status}</span></td>
               `;
               tbody.appendChild(tr);
-            });
-            // Add event listeners for all view details buttons
-            tbody.querySelectorAll('.view-details-btn').forEach(btn => {
-              btn.onclick = function() {
-                const need = JSON.parse(this.getAttribute('data-need').replace(/&#39;/g, "'"));
-                showNeedDetailsModal(need);
-              };
             });
           }
         } catch (err) {
           tbody.innerHTML =
-            '<tr><td colspan="8">Error loading activity.</td></tr>';
+            '<tr><td colspan="7">Error loading activity.</td></tr>';
         }
         // Optionally, add static rows below if needed
       }
@@ -433,111 +473,6 @@
         // Implement reports view (Amt to Donation received)
         alert('Reports feature coming soon!');
       };
-
-      // Modal for food need details
-      function showNeedDetailsModal(need) {
-        let modal = document.getElementById('need-details-modal');
-        if (!modal) {
-          modal = document.createElement('div');
-          modal.id = 'need-details-modal';
-          document.body.appendChild(modal);
-        }
-        // Always set modal HTML and styles for popup overlay
-        modal.style.position = 'fixed';
-        modal.style.inset = '0';
-        modal.style.display = 'flex';
-        modal.style.alignItems = 'center';
-        modal.style.justifyContent = 'center';
-        modal.style.background = 'rgba(0,0,0,0.4)';
-        modal.style.zIndex = '9999';
-        modal.style.transition = 'opacity 0.2s';
-        modal.style.opacity = '1';
-        modal.innerHTML = `
-          <div style="background:#fff;max-width:420px;width:100%;border-radius:18px;box-shadow:0 4px 32px #0002;padding:32px 24px 16px 24px;position:relative;animation:modalPopIn 0.18s;display:flex;flex-direction:column;">
-            <button id="close-need-details-modal" style="position:absolute;top:16px;right:20px;font-size:24px;color:#aaa;background:none;border:none;cursor:pointer;">&times;</button>
-            <h3 style="font-size:22px;font-weight:800;color:#54d12b;margin-bottom:12px;">Food Need Details</h3>
-            <div id="need-details-content"></div>
-            <div id="need-details-footer" style="margin-top:24px;display:flex;gap:12px;justify-content:flex-end;"></div>
-          </div>
-        `;
-        // Fill in details
-        const content = modal.querySelector('#need-details-content');
-        content.innerHTML = `
-          <div><b>Food Item:</b> ${need.food_item}</div>
-          <div><b>Quantity:</b> ${need.quantity}</div>
-          <div><b>Unit:</b> ${need.unit || '-'}</div>
-          <div><b>Pickup Location:</b> ${need.pickup_location}</div>
-          <div><b>Date:</b> ${need.date ? String(need.date).slice(0,10) : '-'}</div>
-          <div><b>Status:</b> ${need.status}</div>
-          <div><b>Notes:</b> ${need.notes || '-'}</div>
-          <div><b>Contact Phone:</b> ${need.contact_phone || '-'}</div>
-          <div><b>Description:</b> ${need.description || '-'}</div>
-          <div><b>Created At:</b> ${need.created_at || '-'}</div>
-        `;
-        // Footer actions
-        const footer = modal.querySelector('#need-details-footer');
-        footer.innerHTML = '';
-        if (need.status === 'Scheduled') {
-          const arrivedBtn = document.createElement('button');
-          arrivedBtn.textContent = 'Arrived';
-          arrivedBtn.style = 'background:#54d12b;color:#fff;border:none;padding:8px 20px;border-radius:999px;font-weight:700;cursor:pointer;';
-          arrivedBtn.onclick = async function() {
-            arrivedBtn.disabled = true;
-            arrivedBtn.textContent = 'Updating...';
-            try {
-              let jwt = localStorage.getItem('jwt');
-              let headers = { 'Content-Type': 'application/json' };
-              if (jwt) headers['Authorization'] = 'Bearer ' + jwt;
-              const res = await fetch(`/api/food-needs/${need.id}/status`, {
-                method: 'PATCH',
-                headers,
-                body: JSON.stringify({ status: 'Completed' })
-              });
-              if (res.ok) {
-                arrivedBtn.textContent = 'Completed!';
-                // Update the status in the modal
-                content.querySelector('div:nth-child(6)').innerHTML = `<b>Status:</b> Completed`;
-                // Also update the status in the table row for instant feedback
-                const tableRows = document.querySelectorAll('#recent-activity-body tr');
-                tableRows.forEach(row => {
-                  if (row.innerHTML.includes(`data-need='${JSON.stringify(need).replace(/'/g, "&#39;")}'`)) {
-                    const statusSpan = row.querySelector('.status');
-                    if (statusSpan) statusSpan.textContent = 'Completed';
-                  }
-                });
-                setTimeout(() => { modal.classList.add('hidden'); modal.style.opacity = '0'; setTimeout(()=>{modal.style.display='none';},200); renderRecentActivity(); }, 900);
-              } else {
-                arrivedBtn.textContent = 'Failed';
-                arrivedBtn.disabled = false;
-              }
-            } catch {
-              arrivedBtn.textContent = 'Failed';
-              arrivedBtn.disabled = false;
-            }
-          };
-          footer.appendChild(arrivedBtn);
-          // Close button
-          const closeBtn = document.createElement('button');
-          closeBtn.textContent = 'Close';
-          closeBtn.style = 'background:#eaf3e7;color:#54d12b;border:none;padding:8px 20px;border-radius:999px;font-weight:700;cursor:pointer;';
-          closeBtn.onclick = function() { modal.classList.add('hidden'); modal.style.opacity = '0'; setTimeout(()=>{modal.style.display='none';},200); };
-          footer.appendChild(closeBtn);
-        } else if (need.status === 'Pending') {
-          const closeBtn = document.createElement('button');
-          closeBtn.textContent = 'Close';
-          closeBtn.style = 'background:#eaf3e7;color:#54d12b;border:none;padding:8px 20px;border-radius:999px;font-weight:700;cursor:pointer;';
-          closeBtn.onclick = function() { modal.classList.add('hidden'); modal.style.opacity = '0'; setTimeout(()=>{modal.style.display='none';},200); };
-          footer.appendChild(closeBtn);
-        }
-        modal.classList.remove('hidden');
-        // Close logic
-        modal.querySelector('#close-need-details-modal').onclick = function() {
-          modal.classList.add('hidden');
-          modal.style.opacity = '0';
-          setTimeout(()=>{modal.style.display='none';},200);
-        };
-        modal.onclick = function(e) { if (e.target === modal) { modal.classList.add('hidden'); modal.style.opacity = '0'; setTimeout(()=>{modal.style.display='none';},200);} };
-      }
     </script>
   </body>
 </html>

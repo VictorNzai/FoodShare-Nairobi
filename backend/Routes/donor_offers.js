@@ -2,6 +2,17 @@ const express = require('express');
 const router = express.Router();
 const db = require('../Database/db'); // Adjust path if needed
 
+// GET /api/donor-offers/all - List all donor offers (for admin/overview)
+router.get('/all', async (req, res) => {
+  try {
+    const [rows] = await db.query('SELECT * FROM donor_offers ORDER BY created_at DESC');
+    res.json({ success: true, offers: rows });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
 // GET /api/donor-offers?donor_id=XX - List all offers for a donor
 router.get('/', async (req, res) => {
   try {
@@ -73,17 +84,42 @@ router.get('/:charity_id', async (req, res) => {
   }
 });
 
-// PATCH /api/donor-offers/:offer_id - Charity accepts or denies an offer
-router.patch('/:offer_id', async (req, res) => {
+
+// POST /api/donor-offers/:offer_id/accept - Charity accepts an offer (set status to Scheduled)
+router.post('/:offer_id/accept', async (req, res) => {
   try {
     const { offer_id } = req.params;
-    const { status } = req.body;
-    if (!['accepted', 'denied'].includes(status)) {
-      return res.status(400).json({ success: false, message: 'Invalid status.' });
+    const sql = `UPDATE donor_offers SET status = 'Scheduled' WHERE id = ?`;
+    await db.query(sql, [offer_id]);
+    res.json({ success: true, message: 'Offer scheduled.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// POST /api/donor-offers/:offer_id/arrived - Mark offer as completed (status = Completed)
+router.post('/:offer_id/arrived', async (req, res) => {
+  try {
+    const { offer_id } = req.params;
+    const sql = `UPDATE donor_offers SET status = 'Completed' WHERE id = ?`;
+    await db.query(sql, [offer_id]);
+    res.json({ success: true, message: 'Offer marked as completed.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
+// GET /api/donor-offers/offer/:id - Get a single offer by its ID
+router.get('/offer/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    const [rows] = await db.query('SELECT * FROM donor_offers WHERE id = ?', [id]);
+    if (!rows.length) {
+      return res.status(404).json({ success: false, message: 'Offer not found.' });
     }
-    const sql = `UPDATE donor_offers SET status = ? WHERE id = ?`;
-    await db.query(sql, [status, offer_id]);
-    res.json({ success: true, message: `Offer ${status}.` });
+    res.json({ success: true, offer: rows[0] });
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: 'Server error.' });

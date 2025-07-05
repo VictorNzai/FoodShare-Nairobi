@@ -1,65 +1,490 @@
 <!-- Charity-side: BrowseDonorOffers.html -->
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>Browse Donor Offers</title>
-  <link rel="stylesheet" href="../styles.css">
-  <style>
-    body { font-family: Arial, sans-serif; }
-    .offer-list { max-width: 700px; margin: 2rem auto; }
-    .offer-card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #fafafa; }
-    .offer-actions { margin-top: 1rem; }
-    .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
-    .btn-accept { background: #4caf50; color: #fff; margin-right: 0.5rem; }
-    .btn-deny { background: #f44336; color: #fff; }
-    .status { font-weight: bold; }
-  </style>
-</head>
-<body>
-  <h2 style="text-align:center">Pending Donor Offers</h2>
-  <div class="offer-list" id="offerList">
-    <!-- Offers will be loaded here -->
-  </div>
-  <script>
-    // Replace with actual charityId from session/auth
-    const charityId = localStorage.getItem('charityId') || '1';
-
-    async function fetchOffers() {
-      const res = await fetch(`/api/donor-offers?charityId=${charityId}`);
-      const offers = await res.json();
-      renderOffers(offers);
-    }
-
-    function renderOffers(offers) {
-      const list = document.getElementById('offerList');
-      if (!offers.length) {
-        list.innerHTML = '<p>No pending offers at this time.</p>';
-        return;
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Browse Donor Offers - FoodShare</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        margin: 0;
+        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
+        background: #f9fcf8;
+        color: #111b0e;
       }
-      list.innerHTML = offers.map(offer => `
-        <div class="offer-card">
-          <div><b>Donor:</b> ${offer.donor_name || offer.donorId}</div>
-          <div><b>Food:</b> ${offer.food_type} (${offer.quantity})</div>
-          <div><b>Message:</b> ${offer.message || '—'}</div>
-          <div class="offer-actions">
-            <button class="btn btn-accept" onclick="acceptOffer(${offer.id})">Accept</button>
-            <button class="btn btn-deny" onclick="denyOffer(${offer.id})">Deny</button>
+      header {
+        background: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 20px 40px;
+        border-bottom: 1px solid #ddd;
+        position: relative;
+        z-index: 2;
+      }
+      .logo {
+        font-weight: bold;
+        font-size: 18px;
+        color: #54d12b;
+      }
+      nav a {
+        margin-left: 30px;
+        text-decoration: none;
+        color: #333;
+        font-size: 14px;
+      }
+      .sign-up-btn {
+        background-color: #54d12b;
+        color: white;
+        padding: 8px 18px;
+        border: none;
+        border-radius: 20px;
+        font-weight: bold;
+        cursor: pointer;
+        margin-left: 30px;
+      }
+      .flex {
+        display: flex;
+        min-height: 100vh;
+      }
+      /* Sidebar */
+      .sidebar {
+        width: 250px;
+        padding: 32px 24px;
+        border-right: 1px solid #eaf3e7;
+        background: #fff;
+        display: none;
+        position: fixed;
+        top: 70px;
+        left: 0;
+        height: calc(100vh - 70px);
+        z-index: 1;
+      }
+      @media (min-width: 1024px) {
+        .sidebar {
+          display: block;
+        }
+      }
+      .sidebar .logo {
+        font-size: 20px;
+        font-weight: 700;
+        margin-bottom: 32px;
+        color: #54d12b;
+      }
+      .sidebar nav {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .sidebar nav a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 20px;
+        border-radius: 999px;
+        background: none;
+        color: #222;
+        font-size: 15px;
+        font-weight: 500;
+        text-decoration: none;
+        transition: background 0.2s, color 0.2s;
+      }
+      .sidebar nav a.active,
+      .sidebar nav a:hover {
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
+      }
+      /* Main Content */
+      .main-content {
+        flex: 1;
+        padding: 32px 24px;
+        max-width: 1200px;
+        margin: 0 auto;
+        margin-left: 320px;
+        margin-top: 70px;
+      }
+      .main-content h2 {
+        font-size: 32px;
+        font-weight: 800;
+        margin-bottom: 24px;
+        letter-spacing: -1px;
+      }
+      .table-wrap {
+        overflow-x: auto;
+        border-radius: 12px;
+        border: 1px solid #d5e7d0;
+        background: #fff;
+        margin-bottom: 24px;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        min-width: 600px;
+      }
+      th, td {
+        padding: 14px;
+        text-align: left;
+        border-bottom: 1px solid #eaf3e7;
+      }
+      th {
+        background: #f5f5f5;
+        font-size: 15px;
+        font-weight: 700;
+        color: #222;
+      }
+      td {
+        font-size: 14px;
+        color: #222;
+      }
+      .status {
+        display: inline-block;
+        padding: 4px 16px;
+        border-radius: 999px;
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
+        font-size: 13px;
+      }
+      .back-link {
+        display: inline-block;
+        margin-top: 18px;
+        color: #54d12b;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+      }
+      .back-link:hover {
+        text-decoration: underline;
+      }
+      @media (max-width: 900px) {
+        .main-content {
+          padding: 16px 4vw;
+          margin-left: 0;
+          margin-top: 70px;
+        }
+        .sidebar {
+          display: none;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="logo" style="cursor: pointer" onclick="window.location.href='../../Index.html'">
+        🍴 FoodShare
+      </div>
+      <nav>
+        <a href="Profile.html">Profile</a>
+        <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
+      </nav>
+    </header>
+    <div class="flex">
+      <!-- Sidebar -->
+      <aside class="sidebar">
+        <div class="logo">FoodShare</div>
+        <nav>
+          <a href="CharityDashboard.html">Dashboard</a>
+          <a href="PostFoodNeed.html" id="sidebar-post-need">Post Food Need</a>
+          <a href="#" class="active" id="sidebar-browse-donor">Browse Donor Offers</a>
+          <a href="Requests.html">Requests</a>
+          <a href="Profile.html">Profile</a>
+        </nav>
+      </aside>
+      <!-- Main Content -->
+      <div style="flex: 1; display: flex; flex-direction: column; min-height: 100vh;">
+        <main class="main-content">
+          <h2>Donor Offers</h2>
+          <div class="table-wrap">
+            <table id="offers-table">
+              <thead>
+                <tr>
+                  <th>Date</th>
+                  <th>Donor</th>
+                  <th>Food Item</th>
+                  <th>Quantity</th>
+                  <th>Message</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="offers-body">
+                <!-- Dynamic rows will be inserted here -->
+              </tbody>
+            </table>
           </div>
+          <a href="CharityDashboard.html" class="back-link">&larr; Back to Dashboard</a>
+        </main>
+      </div>
+    </div>
+    <script>
+      function signOut() {
+        window.location.href = "../Login.html";
+      }
+      // Sidebar navigation
+      document.getElementById('sidebar-post-need').onclick = function(e) {
+        e.preventDefault();
+        window.location.href = 'PostFoodNeed.html';
+      };
+      document.getElementById('sidebar-browse-donor').onclick = function(e) {
+        e.preventDefault();
+        // Already on this page
+      };
+      // Show all donor offers (admin/overview mode)
+      async function renderOffers() {
+        const tbody = document.getElementById("offers-body");
+        tbody.innerHTML = "";
+        try {
+          // Fetch all donor offers
+          const res = await fetch(`/api/donor-offers/all`);
+          const data = await res.json();
+          const offers = data.offers || [];
+          if (!offers.length) {
+            tbody.innerHTML = '<tr><td colspan="7">No donor offers at this time.</td></tr>';
+            return;
+          }
+          offers.forEach((offer) => {
+            const tr = document.createElement("tr");
+            // Format date to show only YYYY-MM-DD
+            let dateStr = offer.created_at ? String(offer.created_at).slice(0, 10) : "";
+            tr.innerHTML = `
+              <td>${dateStr}</td>
+              <td>${offer.donor_name || offer.donorId || ''}</td>
+              <td>${offer.food_type || ''}</td>
+              <td>${offer.quantity || ''} ${offer.unit || ''}</td>
+              <td>${offer.notes || offer.message || ''}</td>
+              <td><span class="status">${offer.status || 'Pending'}</span></td>
+              <td>
+                <button class="view-details-btn" data-id="${offer.id}" style="background:#eaf3e7;color:#222;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;margin-right:8px;">View Details</button>
+                ${offer.status === 'Pending' ? `<button class="cancel-btn" data-id="${offer.id}" style="background:#ffdddd;color:#b30000;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;">Deny</button>` : ''}
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        } catch (err) {
+          tbody.innerHTML = '<tr><td colspan="7">Error loading donor offers.</td></tr>';
+        }
+      }
+
+      // Accept/Deny handlers
+      document.addEventListener('click', async function(e) {
+        if (e.target && e.target.classList.contains('accept-btn')) {
+          const id = e.target.getAttribute('data-id');
+          if (!id) return;
+          try {
+            await fetch(`/api/donor-offers/${id}/accept`, { method: 'POST' });
+            renderOffers();
+          } catch (err) {
+            alert('Error accepting offer.');
+          }
+        }
+        if (e.target && e.target.classList.contains('cancel-btn')) {
+          const id = e.target.getAttribute('data-id');
+          if (!id) return;
+          if (!confirm('Are you sure you want to deny this offer?')) return;
+          try {
+            await fetch(`/api/donor-offers/${id}/deny`, { method: 'POST' });
+            renderOffers();
+          } catch (err) {
+            alert('Error denying offer.');
+          }
+        }
+      });
+
+      // View Details handler (styled modal like Requests.html)
+      // Modal HTML
+      let detailsModal = document.createElement('div');
+      detailsModal.id = 'details-modal';
+      detailsModal.style.display = 'none';
+      detailsModal.style.position = 'fixed';
+      detailsModal.style.top = '0';
+      detailsModal.style.left = '0';
+      detailsModal.style.width = '100vw';
+      detailsModal.style.height = '100vh';
+      detailsModal.style.background = 'rgba(0,0,0,0.35)';
+      detailsModal.style.zIndex = '1000';
+      detailsModal.innerHTML = `
+        <div style="background:#fff;max-width:400px;margin:8vh auto 0 auto;padding:32px 28px 24px 28px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.12);position:relative;">
+          <button id="close-details-modal" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
+          <h3 style="margin-top:0;font-size:22px;font-weight:800;color:#54d12b;">Offer Details</h3>
+          <div id="modal-details-content" style="font-size:15px;color:#222;line-height:1.7;margin-top:18px;"></div>
+          <div id="modal-details-footer" style="margin-top:28px;display:flex;gap:12px;justify-content:flex-end;"></div>
         </div>
-      `).join('');
-    }
+      `;
+      document.body.appendChild(detailsModal);
 
-    async function acceptOffer(id) {
-      await fetch(`/api/donor-offers/${id}/accept`, { method: 'POST' });
-      fetchOffers();
-    }
-    async function denyOffer(id) {
-      await fetch(`/api/donor-offers/${id}/deny`, { method: 'POST' });
-      fetchOffers();
-    }
 
-    fetchOffers();
-  </script>
-</body>
+      // Helper: fetch offer by id
+      async function fetchOfferById(id) {
+        try {
+          const res = await fetch(`/api/donor-offers/offer/${id}`);
+          if (!res.ok) return null;
+          const data = await res.json();
+          return data.offer || null;
+        } catch {
+          return null;
+        }
+      }
+
+      document.addEventListener('click', async function(e) {
+        if (e.target && e.target.classList.contains('view-details-btn')) {
+          const id = e.target.getAttribute('data-id');
+          // Always fetch latest offer details and show loading state
+          const contentDiv = document.getElementById('modal-details-content');
+          const footer = document.getElementById('modal-details-footer');
+          contentDiv.innerHTML = '<em>Loading details...</em>';
+          footer.innerHTML = '';
+          detailsModal.style.display = 'block';
+          const offer = await fetchOfferById(id);
+          let html = '';
+          if (offer) {
+            html += `<b>Donor:</b> ${offer.donor_name || offer.donorId || ''}<br/>`;
+            html += `<b>Food Item:</b> ${offer.food_type || ''}<br/>`;
+            html += `<b>Quantity:</b> ${offer.quantity || ''} ${offer.unit || ''}<br/>`;
+            html += `<b>Message:</b> ${offer.notes || offer.message || ''}<br/>`;
+            html += `<b>Status:</b> <span class="status">${offer.status || 'Pending'}</span><br/>`;
+            if (offer.status === 'Scheduled') {
+              html += `<b>Pickup Address:</b> ${offer.pickup_address || 'N/A'}<br/>`;
+            }
+          } else {
+            html = '<span style="color:#b30000">Could not load offer details.</span>';
+          }
+          contentDiv.innerHTML = html;
+          // Add footer buttons
+          footer.innerHTML = '';
+          if (offer && offer.status === 'Pending') {
+            // Accept button
+            const acceptBtn = document.createElement('button');
+            acceptBtn.textContent = 'Accept';
+            acceptBtn.style = 'background:#54d12b;color:#fff;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;';
+            acceptBtn.onclick = async function() {
+              try {
+                await fetch(`/api/donor-offers/${id}/accept`, {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' }
+                });
+                // After accepting, re-fetch and update modal content to show Scheduled status and pickup address
+                const updated = await fetchOfferById(id);
+                let updatedHtml = '';
+                if (updated) {
+                  updatedHtml += `<b>Donor:</b> ${updated.donor_name || updated.donorId || ''}<br/>`;
+                  updatedHtml += `<b>Food Item:</b> ${updated.food_type || ''}<br/>`;
+                  updatedHtml += `<b>Quantity:</b> ${updated.quantity || ''} ${updated.unit || ''}<br/>`;
+                  updatedHtml += `<b>Message:</b> ${updated.notes || updated.message || ''}<br/>`;
+                  updatedHtml += `<b>Status:</b> <span class=\"status\">${updated.status || 'Scheduled'}</span><br/>`;
+                  if (updated.status === 'Scheduled') {
+                    updatedHtml += `<b>Pickup Address:</b> ${updated.pickup_address || 'N/A'}<br/>`;
+                  }
+                }
+                contentDiv.innerHTML = updatedHtml;
+                // Update footer: show Arrived and Close
+                footer.innerHTML = '';
+                if (updated && updated.status === 'Scheduled') {
+                  const arrivedBtn = document.createElement('button');
+                  arrivedBtn.textContent = 'Arrived';
+                  arrivedBtn.style = 'background:#54d12b;color:#fff;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;';
+                  arrivedBtn.onclick = async function() {
+                    try {
+                      await fetch(`/api/donor-offers/${id}/arrived`, { method: 'POST' });
+                      // Instantly update modal status to Completed
+                      contentDiv.innerHTML = contentDiv.innerHTML.replace(/Status:(.*?)<br\/>/, 'Status: <span class="status">Completed</span><br/>');
+                      detailsModal.style.display = 'none';
+                      showThankYouModal('Marked as completed!');
+                    } catch (err) {
+                      showThankYouModal('Error marking as completed.');
+                    }
+                  };
+                  footer.appendChild(arrivedBtn);
+                }
+                const closeBtn = document.createElement('button');
+                closeBtn.textContent = 'Close';
+                closeBtn.style = 'background:#eaf3e7;color:#54d12b;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;';
+                closeBtn.onclick = function() { detailsModal.style.display = 'none'; };
+                footer.appendChild(closeBtn);
+                // Optionally, store a flag in localStorage to signal dashboard to show donation
+                localStorage.setItem('showDonationActivity', 'true');
+              } catch (err) {
+                showThankYouModal('Error accepting offer.');
+                detailsModal.style.display = 'none';
+              }
+            };
+            footer.appendChild(acceptBtn);
+          }
+          if (offer && offer.status === 'Scheduled') {
+            // Arrived button
+            const arrivedBtn = document.createElement('button');
+            arrivedBtn.textContent = 'Arrived';
+            arrivedBtn.style = 'background:#54d12b;color:#fff;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;';
+            arrivedBtn.onclick = async function() {
+              try {
+                await fetch(`/api/donor-offers/${id}/arrived`, { method: 'POST' });
+                detailsModal.style.display = 'none';
+                showThankYouModal('Marked as arrived!');
+              } catch (err) {
+                showThankYouModal('Error marking as arrived.');
+              }
+            };
+            footer.appendChild(arrivedBtn);
+          }
+          // Always show Close button
+          const closeBtn = document.createElement('button');
+          closeBtn.textContent = 'Close';
+          closeBtn.style = 'background:#eaf3e7;color:#54d12b;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;';
+          closeBtn.onclick = function() { detailsModal.style.display = 'none'; };
+          footer.appendChild(closeBtn);
+        }
+        if (e.target && e.target.id === 'close-details-modal') {
+          detailsModal.style.display = 'none';
+        }
+        // Also close modal if clicking outside the modal box
+        if (e.target === detailsModal) {
+          detailsModal.style.display = 'none';
+        }
+      });
+
+      // Thank You Modal (unchanged)
+      function showThankYouModal(errorMsg) {
+        let thankModal = document.getElementById('thank-modal');
+        if (!thankModal) {
+          thankModal = document.createElement('div');
+          thankModal.id = 'thank-modal';
+          thankModal.style.position = 'fixed';
+          thankModal.style.top = '0';
+          thankModal.style.left = '0';
+          thankModal.style.width = '100vw';
+          thankModal.style.height = '100vh';
+          thankModal.style.background = 'rgba(0,0,0,0.35)';
+          thankModal.style.zIndex = '1001';
+          thankModal.innerHTML = `
+            <div style="background:#fff;max-width:400px;margin:12vh auto 0 auto;padding:36px 32px 28px 32px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.12);position:relative;display:flex;flex-direction:column;align-items:center;">
+              <h3 style="margin-top:0;font-size:22px;font-weight:800;color:#54d12b;">${errorMsg ? (errorMsg === 'Marked as arrived!' ? 'Arrived!' : 'Error') : 'Thank You!'}</h3>
+              <div style="font-size:16px;color:#222;line-height:1.7;margin:18px 0 24px 0;text-align:center;">
+                ${errorMsg ? errorMsg : 'Thank you for accepting this donation.'}
+              </div>
+              <button id="thank-modal-close" style="background:#54d12b;color:#fff;border:none;padding:8px 28px;border-radius:999px;font-weight:700;cursor:pointer;font-size:15px;">Continue</button>
+            </div>
+          `;
+          document.body.appendChild(thankModal);
+        } else {
+          thankModal.querySelector('h3').textContent = errorMsg ? (errorMsg === 'Marked as arrived!' ? 'Arrived!' : 'Error') : 'Thank You!';
+          thankModal.querySelector('div').textContent = errorMsg ? errorMsg : 'Thank you for accepting this donation.';
+        }
+        thankModal.style.display = 'block';
+        document.getElementById('thank-modal-close').onclick = function() {
+          thankModal.style.display = 'none';
+          renderOffers();
+        };
+        thankModal.onclick = function(e) {
+          if (e.target === thankModal) {
+            thankModal.style.display = 'none';
+            renderOffers();
+          }
+        };
+      }
+
+      renderOffers();
+    </script>
+  </body>
 </html>
