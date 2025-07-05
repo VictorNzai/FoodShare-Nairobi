@@ -159,12 +159,12 @@ app.post('/signup/donor', async (req, res) => {
 
 // Charity Signup
 app.post('/signup/charity', async (req, res) => {
-  const { orgname, email, phone, reg, password, confirmPassword } = req.body;
+  const { orgname, email, phone, reg, password, confirmPassword, institutionType } = req.body;
   if (password !== confirmPassword) return res.status(400).json({ success: false, message: 'Passwords do not match' });
   try {
     const hashed = await bcrypt.hash(password, 10);
-    const query = 'INSERT INTO charity (orgname, email, phone, reg, password) VALUES (?, ?, ?, ?, ?)';
-    await pool.query(query, [orgname, email, phone, reg, hashed]);
+    const query = 'INSERT INTO charity (orgname, email, phone, reg, password, institution_type) VALUES (?, ?, ?, ?, ?, ?)';
+    await pool.query(query, [orgname, email, phone, reg, hashed, institutionType]);
     res.status(200).json({ success: true, message: 'Charity account created successfully' });
   } catch (err) {
     res.status(500).json({ success: false, message: err?.sqlMessage || 'Server error' });

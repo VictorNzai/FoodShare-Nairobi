@@ -228,6 +228,29 @@
           required
         />
 
+        <label for="institutionType">Institution Type</label>
+        <select
+          id="institutionType"
+          required
+          style="
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 15px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            background-color: #eaf8e3;
+            font-size: 14px;
+          "
+        >
+          <option value="">Select institution type</option>
+          <option value="Children's Home">Children’s Home</option>
+          <option value="Community Kitchen">Community Kitchen</option>
+          <option value="Rehabilitation Center">Rehabilitation Center</option>
+          <option value="Orphanage">Orphanage</option>
+          <option value="Religious Institution">Religious Institution</option>
+          <option value="Refugee Shelter">Refugee Shelter</option>
+        </select>
+
         <label for="password2">Password</label>
         <input
           type="password"
@@ -324,11 +347,17 @@
           const email = document.getElementById("email2").value;
           const phone = document.getElementById("phone2").value;
           const reg = document.getElementById("reg").value;
+          const institutionType =
+            document.getElementById("institutionType").value;
           const password = document.getElementById("password2").value;
           const confirmPassword = document.getElementById("confirm2").value;
 
           if (password !== confirmPassword)
             return alert("⚠️ Passwords do not match");
+
+          if (!institutionType) {
+            return alert("⚠️ Please select an institution type.");
+          }
 
           try {
             const response = await fetch(
@@ -341,6 +370,7 @@
                   email,
                   phone,
                   reg,
+                  institutionType,
                   password,
                   confirmPassword,
                 }),
@@ -361,9 +391,9 @@
               email: email,
               phone: phone,
               reg: reg,
-              verified: false
+              verified: false,
             };
-            localStorage.setItem('jwt', JSON.stringify(charityJwt));
+            localStorage.setItem("jwt", JSON.stringify(charityJwt));
             // Redirect to CharityDashboard.html after successful signup
             window.location.href = "Charity Pages/CharityDashboard.html";
           } catch (err) {
