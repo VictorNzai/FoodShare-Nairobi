@@ -1,3 +1,0 @@
-// This file is a stub for the donor account/profile API route. It expects req.user to be set by authentication middleware.
-// You may need to adjust pool import if your DB connection is set up differently.
-// See DonorAccount.js for frontend usage.

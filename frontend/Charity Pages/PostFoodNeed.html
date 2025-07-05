@@ -4,226 +4,120 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <title>Post a New Food Need - FoodShare</title>
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet" />
     <style>
-      body {
-        background: #f4f6f8;
-        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
-        margin: 0;
-        padding: 0;
-        color: #111b0e;
-      }
-      header {
-        background: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        border-bottom: 1px solid #ddd;
-        position: relative;
-        z-index: 2;
-      }
-      .logo {
-        font-weight: bold;
-        font-size: 18px;
-        color: #54D12B;
-        text-align: center;
-        margin-bottom: 10px;
-      }
-      nav a {
-        margin-left: 30px;
-        text-decoration: none;
-        color: #333;
-        font-size: 14px;
-        font-weight: 500;
-      }
-      nav a:hover {
-        text-decoration: underline;
-      }
-      .sign-up-btn {
-        background-color: #54d12b;
-        color: white;
-        padding: 8px 18px;
-        border: none;
-        border-radius: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-left: 30px;
-      }
-      .flex {
-        display: flex;
-        min-height: 100vh;
-      }
-      /* Sidebar */
-      .sidebar {
-        width: 250px;
-        padding: 32px 24px;
-        border-right: 1px solid #eaf3e7;
-        background: #fff;
-        display: none;
-        position: fixed;
-        top: 70px;
-        left: 0;
-        height: calc(100vh - 70px);
-        z-index: 1;
-      }
-      @media (min-width: 1024px) {
-        .sidebar {
-          display: block;
-        }
-      }
-      .sidebar .logo {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 32px;
-        color: #54d12b;
-      }
-      .sidebar nav {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .sidebar nav a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 20px;
-        border-radius: 999px;
-        background: none;
-        color: #222;
-        font-size: 15px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background 0.2s, color 0.2s;
-      }
-      .sidebar nav a.active,
-      .sidebar nav a:hover {
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-      }
-      /* Main Content */
-      .main-content {
-        flex: 1;
-        padding: 32px 24px;
-        max-width: 600px;
-        margin: 0 auto;
-        margin-left: 320px;
-        margin-top: 70px;
-      }
-      h2 {
-        color: #54D12B;
-        margin-bottom: 30px;
-        text-align: center;
-        font-size: 28px;
-        font-weight: 800;
-      }
-      label {
-        display: block;
-        margin-bottom: 8px;
-        color: #333;
-        font-weight: bold;
-      }
-      input, textarea {
-        width: 100%;
-        padding: 10px;
-        margin-bottom: 22px;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        font-size: 15px;
-        box-sizing: border-box;
-      }
-      textarea {
-        min-height: 70px;
-        resize: vertical;
-      }
-      .submit-btn {
-        background: #54D12B;
-        color: #fff;
-        border: none;
-        border-radius: 20px;
-        padding: 12px 0;
-        width: 100%;
-        font-size: 16px;
-        font-weight: bold;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      .submit-btn:hover {
-        background: #43a81a;
-      }
-      .back-link {
-        display: block;
-        text-align: center;
-        margin-top: 18px;
-        color: #54D12B;
-        text-decoration: none;
-        font-size: 15px;
-      }
-      .back-link:hover {
-        text-decoration: underline;
-      }
-      @media (max-width: 900px) {
-        .main-content {
-          padding: 16px 4vw;
-          margin-left: 0;
-          margin-top: 70px;
-        }
-        .sidebar {
-          display: none;
-        }
-      }
+      body { font-family: "Manrope", "Noto Sans", Arial, sans-serif; }
     </style>
   </head>
-  <body>
-    <header>
-      <div class="logo" style="cursor: pointer" onclick="window.location.href='../../Index.html'">🍴 FoodShare</div>
+  <body class="bg-[#f9fcf8] text-[#111b0e]">
+    <header class="bg-white flex justify-between items-center px-10 py-5 border-b border-[#ddd] relative z-20">
+      <div class="logo font-extrabold text-xl text-[#54d12b] cursor-pointer" onclick="window.location.href='../../Index.html'">🍴 FoodShare</div>
       <nav>
-        <a href="Profile.html">Profile</a>
-        <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
+        <a href="Profile.html" class="ml-8 text-[#333] text-base font-medium">Profile</a>
+        <a href="#" class="sign-up-btn ml-8 bg-[#54d12b] text-white px-5 py-2 rounded-full font-bold" onclick="signOut()">Sign Out</a>
       </nav>
     </header>
-    <div class="flex">
-      <!-- Sidebar -->
+    <div class="flex min-h-screen">
+      <!-- Sidebar (identical to CharityDashboard.html) -->
       <aside class="sidebar">
         <div class="logo">FoodShare</div>
         <nav>
           <a href="CharityDashboard.html">Dashboard</a>
-          <a href="#" class="active">Post Food Need</a>
+          <a href="#" class="active" id="sidebar-post-need">Post Food Need</a>
           <a href="#" id="sidebar-browse-donor">Browse Donor Offers</a>
           <a href="Requests.html">Requests</a>
           <!-- <a href="#">Beneficiaries</a> -->
           <a href="Profile.html">Profile</a>
         </nav>
       </aside>
+      <style>
+        .sidebar {
+          width: 250px;
+          padding: 32px 24px;
+          border-right: 1px solid #eaf3e7;
+          background: #fff;
+          display: none;
+          position: fixed;
+          top: 70px;
+          left: 0;
+          height: calc(100vh - 70px);
+          z-index: 1;
+        }
+        @media (min-width: 1024px) {
+          .sidebar {
+            display: block;
+          }
+        }
+        .sidebar .logo {
+          font-size: 20px;
+          font-weight: 700;
+          margin-bottom: 32px;
+          color: #54d12b;
+        }
+        .sidebar nav {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+        }
+        .sidebar nav a {
+          display: flex;
+          align-items: center;
+          gap: 12px;
+          padding: 12px 20px;
+          border-radius: 999px;
+          background: none;
+          color: #222;
+          font-size: 15px;
+          font-weight: 500;
+          text-decoration: none;
+          transition: background 0.2s, color 0.2s;
+        }
+        .sidebar nav a.active,
+        .sidebar nav a:hover {
+          background: #eaf3e7;
+          color: #54d12b;
+          font-weight: 700;
+        }
+      </style>
       <!-- Main Content -->
-      <div class="main-content">
-        <h2>Post a New Food Need</h2>
-        <form id="foodNeedForm">
-          <label for="foodItem">Food Item</label>
-          <input type="text" id="foodItem" name="foodItem" required />
-
-          <label for="quantity">Quantity</label>
-          <div style="display: flex; gap: 10px; align-items: center;">
-            <input type="number" id="quantity" name="quantity" min="0" step="any" required style="flex:1;" />
-            <select id="unit" name="unit" required style="padding: 8px; border: 3px solid #ccc; border-radius: 5px; font-size: 15px; margin-top: -21px;">
-              <option value="kg">kg</option>
-              <option value="l">litre(s)</option>
-            </select>
+      <main class="flex-1 flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-lg bg-white rounded-xl shadow p-8 border border-[#eaf3e7] mt-10">
+          <h2 class="text-2xl font-bold mb-6 text-[#54d12b] text-center">Post a New Food Need</h2>
+          <form id="foodNeedForm" class="space-y-4">
+            <div>
+              <label for="foodItem" class="block font-medium mb-1">Food Item</label>
+              <input type="text" id="foodItem" name="foodItem" required class="w-full border rounded px-3 py-2" />
+            </div>
+            <div class="flex gap-2">
+              <div class="flex-1">
+                <label for="quantity" class="block font-medium mb-1">Quantity</label>
+                <input type="number" id="quantity" name="quantity" min="0" step="any" required class="w-full border rounded px-3 py-2" />
+              </div>
+              <div class="w-32">
+                <label for="unit" class="block font-medium mb-1">Unit</label>
+                <select id="unit" name="unit" required class="w-full border rounded px-3 py-2">
+                  <option value="kg">kg</option>
+                  <option value="l">litre(s)</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="pickupLocation" class="block font-medium mb-1">Pickup Location</label>
+              <input type="text" id="pickupLocation" name="pickupLocation" required class="w-full border rounded px-3 py-2" />
+            </div>
+            <div>
+              <label for="notes" class="block font-medium mb-1">Additional Notes</label>
+              <textarea id="notes" name="notes" placeholder="Any extra information..." class="w-full border rounded px-3 py-2 min-h-[70px] resize-y"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-[#53d22c] hover:bg-[#43b81a] text-white font-bold py-2 rounded-full mt-4">Submit Need</button>
+          </form>
+          <button id="another-need-btn" class="w-full bg-[#eaf3e7] text-[#222] font-bold py-2 rounded-full mt-4" style="display:none;">Post Another Need</button>
+          <div class="mt-6 text-center">
+            <a href="CharityDashboard.html" class="text-[#54d12b] hover:underline">&larr; Back to Dashboard</a>
           </div>
-
-          <label for="pickupLocation">Pickup Location</label>
-          <input type="text" id="pickupLocation" name="pickupLocation" required />
-
-          <label for="notes">Additional Notes</label>
-          <textarea id="notes" name="notes" placeholder="Any extra information..."></textarea>
-
-          <button type="submit" class="submit-btn">Submit Need</button>
-        </form>
-        <button id="another-need-btn" class="submit-btn" style="margin-top:10px; display:none; background:#eaf3e7; color:#222;">Post Another Need</button>
-        <a href="CharityDashboard.html" class="back-link">&larr; Back to Dashboard</a>
-      </div>
+        </div>
+      </main>
     </div>
     <script>
       function signOut() {

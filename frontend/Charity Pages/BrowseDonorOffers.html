@@ -1,0 +1,65 @@
+<!-- Charity-side: BrowseDonorOffers.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Browse Donor Offers</title>
+  <link rel="stylesheet" href="../styles.css">
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .offer-list { max-width: 700px; margin: 2rem auto; }
+    .offer-card { border: 1px solid #ccc; border-radius: 8px; padding: 1rem; margin-bottom: 1rem; background: #fafafa; }
+    .offer-actions { margin-top: 1rem; }
+    .btn { padding: 0.5rem 1rem; border: none; border-radius: 4px; cursor: pointer; }
+    .btn-accept { background: #4caf50; color: #fff; margin-right: 0.5rem; }
+    .btn-deny { background: #f44336; color: #fff; }
+    .status { font-weight: bold; }
+  </style>
+</head>
+<body>
+  <h2 style="text-align:center">Pending Donor Offers</h2>
+  <div class="offer-list" id="offerList">
+    <!-- Offers will be loaded here -->
+  </div>
+  <script>
+    // Replace with actual charityId from session/auth
+    const charityId = localStorage.getItem('charityId') || '1';
+
+    async function fetchOffers() {
+      const res = await fetch(`/api/donor-offers?charityId=${charityId}`);
+      const offers = await res.json();
+      renderOffers(offers);
+    }
+
+    function renderOffers(offers) {
+      const list = document.getElementById('offerList');
+      if (!offers.length) {
+        list.innerHTML = '<p>No pending offers at this time.</p>';
+        return;
+      }
+      list.innerHTML = offers.map(offer => `
+        <div class="offer-card">
+          <div><b>Donor:</b> ${offer.donor_name || offer.donorId}</div>
+          <div><b>Food:</b> ${offer.food_type} (${offer.quantity})</div>
+          <div><b>Message:</b> ${offer.message || '—'}</div>
+          <div class="offer-actions">
+            <button class="btn btn-accept" onclick="acceptOffer(${offer.id})">Accept</button>
+            <button class="btn btn-deny" onclick="denyOffer(${offer.id})">Deny</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    async function acceptOffer(id) {
+      await fetch(`/api/donor-offers/${id}/accept`, { method: 'POST' });
+      fetchOffers();
+    }
+    async function denyOffer(id) {
+      await fetch(`/api/donor-offers/${id}/deny`, { method: 'POST' });
+      fetchOffers();
+    }
+
+    fetchOffers();
+  </script>
+</body>
+</html>

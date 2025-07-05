@@ -15,134 +15,149 @@
       }
     </style>
   </head>
-  <body class="bg-[#f9fcf8] text-[#111b0e] min-h-screen flex flex-col">
-    <main class="flex-1 flex flex-col items-center justify-center p-6">
-      <div
-        class="w-full max-w-lg bg-white rounded-xl shadow p-8 border border-[#eaf3e7]"
-      >
-        <h2 class="text-2xl font-bold mb-6 text-[#54d12b]">
-          Make a Food Donation
-        </h2>
-        <form id="donationForm" class="space-y-4">
-          <div>
-            <label for="category" class="block font-medium mb-1"
-              >Food Category</label
-            >
-            <select
-              id="category"
-              name="category"
-              required
-              class="w-full border rounded px-3 py-2"
-            >
-              <option value="">Select a category</option>
-              <option value="Cereals">Cereals</option>
-              <option value="Vegetables">Vegetables</option>
-              <option value="Fruits">Fruits</option>
-              <option value="Dairy">Dairy</option>
-              <option value="Baked Goods">Baked Goods</option>
-              <option value="Canned Foods">Canned Foods</option>
-              <option value="Meat & Poultry">Meat & Poultry</option>
-              <option value="Other">Other</option>
-            </select>
+  <body class="bg-[#f9fcf8] text-[#111b0e]">
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-[#eaf3e7] py-8 px-6 sticky top-0 h-screen z-10">
+        <div class="mb-10 flex items-center gap-2">
+          <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
+          <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
+        </div>
+        <nav class="flex flex-col gap-2 text-base">
+          <a href="./FoodDonor.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-dashboard">Dashboard</a>
+          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-donations">Donations</a>
+          <a href="./BrowseCharities.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-charities">Charities</a>
+          <a href="./CharityRequestsPage.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-requests">Charity Requests</a>
+          <a href="./DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
+          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-help">Help</a>
+          <button id="logoutBtn" class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
+        </nav>
+        <div class="mt-auto flex items-center gap-3 pt-10">
+          <div class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]" id="donor-avatar" style="background-image: url('https://ui-avatars.com/api/?name=Donor');"></div>
+          <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name">Donor</span>
+        </div>
+      </aside>
+      <!-- Main Content -->
+      <main class="flex-1 flex flex-col items-center justify-center p-6">
+        <div class="w-full max-w-lg bg-white rounded-xl shadow p-8 border border-[#eaf3e7] mt-10">
+          <div id="donating-to-charity" class="mb-4 hidden">
+            <div class="text-sm text-gray-700 mb-1"><span class="font-semibold">Donating to:</span> <span id="donation-charity-name" class="font-bold text-[#54d12b]"></span></div>
           </div>
-          <div>
-            <label for="description" class="block font-medium mb-1"
-              >Food Description</label
-            >
-            <input
-              type="text"
-              id="description"
-              name="description"
-              required
-              class="w-full border rounded px-3 py-2"
-              placeholder="e.g. Brown rice, 2 loaves of bread"
-            />
-          </div>
-          <div class="flex gap-2">
-            <div class="flex-1">
-              <label for="quantity" class="block font-medium mb-1"
-                >Quantity</label
-              >
-              <input
-                type="number"
-                id="quantity"
-                name="quantity"
-                min="1"
-                required
-                class="w-full border rounded px-3 py-2"
-                placeholder="e.g. 5"
-              />
-            </div>
-            <div class="w-32">
-              <label for="unit" class="block font-medium mb-1">Unit</label>
-              <select
-                id="unit"
-                name="unit"
-                required
-                class="w-full border rounded px-3 py-2"
-              >
-                <option value="kg">kg</option>
-                <option value="g">g</option>
-                <option value="liters">liters</option>
-                <option value="pieces">pieces</option>
-                <option value="packs">packs</option>
-                <option value="other">other</option>
+          <h2 class="text-2xl font-bold mb-6 text-[#54d12b]">
+            Make a Food Donation
+          </h2>
+          <form id="donationForm" class="space-y-4">
+            <div>
+              <label for="category" class="block font-medium mb-1">Food Category</label>
+              <select id="category" name="category" required class="w-full border rounded px-3 py-2">
+                <option value="">Select a category</option>
+                <option value="Cereals">Cereals</option>
+                <option value="Vegetables">Vegetables</option>
+                <option value="Fruits">Fruits</option>
+                <option value="Dairy">Dairy</option>
+                <option value="Baked Goods">Baked Goods</option>
+                <option value="Canned Foods">Canned Foods</option>
+                <option value="Meat & Poultry">Meat & Poultry</option>
+                <option value="Other">Other</option>
               </select>
             </div>
+            <div>
+              <label for="description" class="block font-medium mb-1">Food Description</label>
+              <input type="text" id="description" name="description" required class="w-full border rounded px-3 py-2" placeholder="e.g. Brown rice, 2 loaves of bread" />
+            </div>
+            <div class="flex gap-2">
+              <div class="flex-1">
+                <label for="quantity" class="block font-medium mb-1">Quantity</label>
+                <input type="number" id="quantity" name="quantity" min="1" required class="w-full border rounded px-3 py-2" placeholder="e.g. 5" />
+              </div>
+              <div class="w-32">
+                <label for="unit" class="block font-medium mb-1">Unit</label>
+                <select id="unit" name="unit" required class="w-full border rounded px-3 py-2">
+                  <option value="kg">kg</option>
+                  <option value="g">g</option>
+                  <option value="liters">liters</option>
+                  <option value="pieces">pieces</option>
+                  <option value="packs">packs</option>
+                  <option value="other">other</option>
+                </select>
+              </div>
+            </div>
+            <div>
+              <label for="expiry" class="block font-medium mb-1">Expiry Date</label>
+              <input type="date" id="expiry" name="expiry" required class="w-full border rounded px-3 py-2" />
+            </div>
+            <div>
+              <label for="pickup_address" class="block font-medium mb-1">Pickup Address</label>
+              <input type="text" id="pickup_address" name="pickup_address" required class="w-full border rounded px-3 py-2" placeholder="e.g. 123 Main St, Nairobi" />
+            </div>
+            <div>
+              <label for="notes" class="block font-medium mb-1">Additional Notes (optional)</label>
+              <textarea id="notes" name="notes" class="w-full border rounded px-3 py-2" rows="2" placeholder="Any special instructions..."></textarea>
+            </div>
+            <button type="submit" class="w-full bg-[#53d22c] hover:bg-[#43b81a] text-white font-bold py-2 rounded-full mt-4">Submit Donation</button>
+          </form>
+          <div id="form-message" class="mt-4 text-center text-sm"></div>
+          <div class="mt-6 text-center">
+            <a href="./FoodDonor.html" class="text-[#54d12b] hover:underline">&larr; Back to Dashboard</a>
           </div>
-          <div>
-            <label for="expiry" class="block font-medium mb-1"
-              >Expiry Date</label
-            >
-            <input
-              type="date"
-              id="expiry"
-              name="expiry"
-              required
-              class="w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label for="pickup_address" class="block font-medium mb-1"
-              >Pickup Address</label
-            >
-            <input
-              type="text"
-              id="pickup_address"
-              name="pickup_address"
-              required
-              class="w-full border rounded px-3 py-2"
-              placeholder="e.g. 123 Main St, Nairobi"
-            />
-          </div>
-          <div>
-            <label for="notes" class="block font-medium mb-1"
-              >Additional Notes (optional)</label
-            >
-            <textarea
-              id="notes"
-              name="notes"
-              class="w-full border rounded px-3 py-2"
-              rows="2"
-              placeholder="Any special instructions..."
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            class="w-full bg-[#53d22c] hover:bg-[#43b81a] text-white font-bold py-2 rounded-full mt-4"
-          >
-            Submit Donation
-          </button>
-        </form>
-        <div id="form-message" class="mt-4 text-center text-sm"></div>
-        <div class="mt-6 text-center">
-          <a href="./FoodDonor.html" class="text-[#54d12b] hover:underline"
-            >&larr; Back to Dashboard</a
-          >
         </div>
-      </div>
-    </main>
+      </main>
+    </div>
     <script>
+      // Set donor FULL NAME in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage)
+      let donorObj = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return {}; } })() || {};
+      const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
+      document.getElementById("sidebar-donor-name").textContent = donorFullName;
+      document.getElementById("donor-avatar").style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
+      // Logout
+      document.getElementById("logoutBtn").onclick = () => {
+        localStorage.clear();
+        window.location.href = "../Login.html";
+      };
+      // Show exclamation if not verified
+      const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
+      const alertSpan = document.getElementById('sidebar-account-alert');
+      if (alertSpan) {
+        if (!donor.verified) {
+          alertSpan.style.display = 'inline-flex';
+          alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
+        } else {
+          alertSpan.style.display = 'none';
+        }
+      }
+      // Sidebar navigation
+      document.getElementById('sidebar-dashboard').onclick = function(e) {
+        e.preventDefault();
+        window.location.href = './FoodDonor.html';
+      };
+      document.getElementById('sidebar-donations').onclick = function(e) {
+        e.preventDefault();
+        alert('Donations page coming soon!');
+      };
+      document.getElementById('sidebar-charities').onclick = function(e) {
+        e.preventDefault();
+        window.location.href = './BrowseCharities.html';
+      };
+      document.getElementById('sidebar-requests').onclick = function(e) {
+        e.preventDefault();
+        window.location.href = './CharityRequestsPage.html';
+      };
+      document.getElementById('sidebar-account-link').onclick = function(e) {
+        e.preventDefault();
+        window.location.href = './DonorAccount.html';
+      };
+      document.getElementById('sidebar-help').onclick = function(e) {
+        e.preventDefault();
+        alert('Help page coming soon!');
+      };
+
+      // Show "Donating to" if charity selected
+      const donationCharity = JSON.parse(localStorage.getItem('donationCharity') || 'null');
+      if (donationCharity && donationCharity.orgname) {
+        document.getElementById('donating-to-charity').classList.remove('hidden');
+        document.getElementById('donation-charity-name').textContent = donationCharity.orgname;
+      }
+
       document.getElementById("donationForm").onsubmit = async function (e) {
         e.preventDefault();
         const donor = JSON.parse(localStorage.getItem("donor") || "{}");
@@ -151,26 +166,67 @@
             "You must be logged in as a donor to submit a donation.";
           return;
         }
-        const data = {
-          donor_id: donor.id,
-          category: this.category.value,
-          description: this.description.value,
-          quantity: this.quantity.value,
-          unit: this.unit.value,
-          expiry: this.expiry.value,
-          pickup_address: this.pickup_address.value,
-          notes: this.notes.value,
-        };
-        const res = await fetch("/api/donations", {
+        const offerMode = localStorage.getItem('donationOfferMode') === 'true';
+        const donationCharity = JSON.parse(localStorage.getItem('donationCharity') || 'null');
+        let data = {};
+        if (offerMode && donationCharity && donationCharity.charity_id) {
+          // Donor Offer Mode
+          data = {
+            donor_id: donor.id,
+            donor_name: donor.fullname || donor.name || '',
+            charity_id: donationCharity.charity_id || donationCharity.id,
+            charity_name: donationCharity.charity_name || donationCharity.orgname,
+            food_type: this.category.value,
+            quantity: `${this.quantity.value} ${this.unit.value}`,
+            message: this.notes.value,
+            description: this.description.value,
+            unit: this.unit.value,
+            expiry: this.expiry.value,
+            pickup_address: this.pickup_address.value
+          };
+        } else {
+          // Standard Donation
+          data = {
+            donor_id: donor.id,
+            category: this.category.value,
+            description: this.description.value,
+            quantity: this.quantity.value,
+            unit: this.unit.value,
+            expiry: this.expiry.value,
+            pickup_address: this.pickup_address.value,
+            notes: this.notes.value,
+          };
+          // Attach charity info if present (legacy)
+          if (donationCharity && donationCharity.orgname) {
+            data.charity_orgname = donationCharity.orgname;
+            data.charity_reg = donationCharity.reg;
+            data.charity_email = donationCharity.email;
+          }
+        }
+        let endpoint = "/api/donations";
+        if (offerMode && data.charity_id) {
+          endpoint = "/api/donor-offers";
+        }
+        const res = await fetch(endpoint, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(data),
         });
         const msg = document.getElementById("form-message");
         if (res.ok) {
-          msg.textContent = "Donation submitted successfully!";
+          let thankYouMsg = "Donation submitted successfully!";
+          if (offerMode && donationCharity && donationCharity.charity_name) {
+            thankYouMsg = `Thank you for your offer to <span class='font-bold text-[#54d12b]'>${donationCharity.charity_name}</span>!`;
+          } else if (donationCharity && donationCharity.orgname) {
+            thankYouMsg = `Thank you for donating to <span class='font-bold text-[#54d12b]'>${donationCharity.orgname}</span>!`;
+          }
+          msg.innerHTML = thankYouMsg;
           msg.className = "mt-4 text-center text-green-600";
           this.reset();
+          // Remove charity info and offer mode after successful donation/offer
+          localStorage.removeItem('donationCharity');
+          localStorage.removeItem('donationOfferMode');
+          document.getElementById('donating-to-charity').classList.add('hidden');
         } else {
           const err = await res.json();
           msg.textContent = err.message || "Failed to submit donation.";

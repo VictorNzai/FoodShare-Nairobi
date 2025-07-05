@@ -51,9 +51,6 @@
           <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
             >Account</a
           >
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Help</a
-          >
           <button
             id="logoutBtn"
             class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8"
@@ -69,9 +66,7 @@
               background-image: url('https://ui-avatars.com/api/?name=Donor');
             "
           ></div>
-          <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name"
-            >Donor</span
-          >
+          <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name"></span>
         </div>
       </aside>
       <!-- Main Content -->
@@ -91,14 +86,11 @@
       </main>
     </div>
     <script>
-      // Set donor name/avatar
-      const donorName = localStorage.getItem("donorName") || "Donor";
-      document.getElementById("sidebar-donor-name").textContent = donorName;
-      document.getElementById(
-        "donor-avatar"
-      ).style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(
-        donorName
-      )}')`;
+      // Set donor full name/avatar in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage, then 'Donor')
+      let donorObj = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return {}; } })() || {};
+      const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
+      document.getElementById("sidebar-donor-name").textContent = donorFullName;
+      document.getElementById("donor-avatar").style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
       document.getElementById("logoutBtn").onclick = () => {
         localStorage.clear();
         window.location.href = "../Login.html";
@@ -152,7 +144,34 @@
                 : ""
             }</div>
             <div class="flex gap-4 mt-4">
-              <button class="bg-[#53d22c] hover:bg-[#43b81a] text-white px-6 py-2 rounded-full text-base font-bold" onclick="alert('Pledge to fulfill coming soon!')">Pledge to Fulfill</button>
+              <button id="pledge-btn" class="bg-[#53d22c] hover:bg-[#43b81a] text-white px-6 py-2 rounded-full text-base font-bold">Pledge to Fulfill</button>
+            </div>
+            <!-- Pledge Form Modal -->
+            <div id="pledge-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
+              <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 relative">
+                <button id="close-pledge-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold">&times;</button>
+                <h3 class="text-xl font-bold mb-4 text-[#54d12b] text-center">Schedule a Ride!</h3>
+                <form id="pledge-form" class="space-y-4">
+                  <div>
+                    <label class="block font-medium mb-1">Pickup Location</label>
+                    <input type="text" name="pickup_location" required class="w-full border rounded px-3 py-2" placeholder="e.g. 123 Main St, Nairobi" />
+                  </div>
+                  <div>
+                    <label class="block font-medium mb-1">Date of Pickup</label>
+                    <input type="date" name="pickup_date" required class="w-full border rounded px-3 py-2" />
+                  </div>
+                  <div>
+                    <label class="block font-medium mb-1">Contact Phone</label>
+                    <input type="tel" name="contact_phone" required class="w-full border rounded px-3 py-2" placeholder="e.g. 0712 345678" />
+                  </div>
+                  <div>
+                    <label class="block font-medium mb-1">Additional Notes (optional)</label>
+                    <textarea name="notes" class="w-full border rounded px-3 py-2" rows="2" placeholder="Any special instructions..."></textarea>
+                  </div>
+                  <button type="submit" class="w-full bg-[#53d22c] hover:bg-[#43b81a] text-white font-bold py-2 rounded-full mt-2">Submit Pledge</button>
+                  <div id="pledge-message" class="mt-2 text-center text-sm"></div>
+                </form>
+              </div>
             </div>
           `;
           })
@@ -162,6 +181,58 @@
           });
       }
       fetchRequestDetails();
+
+      // Pledge to Fulfill modal logic
+      document.addEventListener('click', function(e) {
+        if (e.target && e.target.id === 'pledge-btn') {
+          document.getElementById('pledge-modal').classList.remove('hidden');
+        }
+        if (e.target && e.target.id === 'close-pledge-modal') {
+          document.getElementById('pledge-modal').classList.add('hidden');
+        }
+        if (e.target && e.target.id === 'pledge-modal') {
+          document.getElementById('pledge-modal').classList.add('hidden');
+        }
+      });
+      // Handle pledge form submit
+      document.addEventListener('submit', async function(e) {
+        if (e.target && e.target.id === 'pledge-form') {
+          e.preventDefault();
+          const form = e.target;
+          const data = {
+            pickup_location: form.pickup_location.value.trim(),
+            date: form.pickup_date.value,
+            contact_phone: form.contact_phone.value.trim(),
+            notes: form.notes.value.trim()
+          };
+          const id = getRequestId();
+          const msg = document.getElementById('pledge-message');
+          try {
+            const res = await fetch(`http://localhost:3000/api/food-needs/${id}/schedule-pledge`, {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(data)
+            });
+            if (res.ok) {
+              msg.textContent = 'Pledge submitted! Thank you for helping.';
+              msg.className = 'mt-2 text-center text-green-600';
+              setTimeout(() => {
+                document.getElementById('pledge-modal').classList.add('hidden');
+                form.reset();
+                msg.textContent = '';
+                fetchRequestDetails();
+              }, 1200);
+            } else {
+              const err = await res.json();
+              msg.textContent = err.message || 'Failed to submit pledge.';
+              msg.className = 'mt-2 text-center text-red-600';
+            }
+          } catch (err) {
+            msg.textContent = 'Failed to submit pledge.';
+            msg.className = 'mt-2 text-center text-red-600';
+          }
+        }
+      });
     </script>
   </body>
 </html>

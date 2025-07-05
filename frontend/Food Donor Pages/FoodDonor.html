@@ -59,7 +59,6 @@
         }
       });
     </script>
-          <a href="#" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-help">Help</a>
           <button id="logoutBtn" class="nav-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
         </nav>
         <div class="mt-auto flex items-center gap-3 pt-10">
@@ -136,12 +135,7 @@
           >
             Make a Donation
           </button>
-          <button
-            class="bg-[#eaf3e7] hover:bg-[#d5e7d0] text-[#121a0f] h-10 px-5 rounded-full text-sm font-bold"
-            id="btn-schedule-pickup"
-          >
-            Schedule a Pickup
-          </button>
+          <!-- Schedule a Pickup button removed -->
           <button
             class="bg-[#eaf3e7] hover:bg-[#d5e7d0] text-[#121a0f] h-10 px-5 rounded-full text-sm font-bold"
             id="btn-browse-charities"
@@ -255,7 +249,7 @@
       };
       document.getElementById('nav-charities').onclick = function(e) {
         e.preventDefault();
-        window.location.href = '../BrowseCharities.html';
+        window.location.href = './BrowseCharities.html';
       };
       document.getElementById('nav-requests').onclick = function(e) {
         e.preventDefault();
@@ -265,10 +259,7 @@
         e.preventDefault();
         window.location.href = './DonorAccount.html';
       };
-      document.getElementById('nav-help').onclick = function(e) {
-        e.preventDefault();
-        alert('Help page coming soon!');
-      };
+      // Help link removed
       document.getElementById('logoutBtn').onclick = function() {
         localStorage.clear();
         window.location.href = '../Login.html';
@@ -310,73 +301,101 @@
 
       // Active Donations Table - Fetch and render active donations for this donor
       let allDonations = [];
-let currentModalDonation = null;
-async function fetchAndRenderDonations() {
-  const donor = JSON.parse(localStorage.getItem('donor') || '{}');
-  if (!donor.id) {
-    console.log('No donor id found in localStorage:', donor);
-    return;
-  }
-  try {
-    const res = await fetch(`/api/donations?donor_id=${donor.id}`);
-    const data = await res.json();
-    console.log('Fetched donations:', data); // DEBUG LINE
-    allDonations = data.donations || [];
-    renderDonationsTable();
-  } catch (e) {
-    document.getElementById("activeDonationsBody").innerHTML = '<tr><td colspan="5" class="text-center py-4 text-red-600">Failed to load donations.</td></tr>';
-    console.error('Error fetching donations:', e);
-  }
-}
-function renderDonationsTable() {
-  const statusFilter = document.getElementById('donation-status-filter').value;
-  const tbody = document.getElementById("activeDonationsBody");
-  let filtered = allDonations;
-  if (statusFilter !== 'all') {
-    filtered = allDonations.filter(d => d.status === statusFilter);
-  }
-  tbody.innerHTML = "";
-  if (filtered.length) {
-    filtered.forEach((d) => {
-      tbody.innerHTML += `<tr class="border-t border-[#d5e7d0]">
-        <td class="px-4 py-2">#${d.id}</td>
-        <td class="px-4 py-2 text-[#5e974e]">${d.charity_name || '-'}</td>
-        <td class="px-4 py-2 text-[#5e974e]">${d.description} (${d.category}, ${d.quantity} ${d.unit})</td>
-        <td class="px-4 py-2"><span class="inline-block bg-[#eaf3e7] px-4 py-1 rounded-full">${d.status}</span></td>
-        <td class="px-4 py-2 text-[#5e974e] font-bold cursor-pointer" onclick="showDonationModal(${d.id})">View Details</td>
-      </tr>`;
-    });
-  } else {
-    tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4">No donations found for this status.</td></tr>';
-  }
-}
-window.showDonationModal = function(id) {
-  const d = allDonations.find(x => x.id === id);
-  if (!d) return;
-  currentModalDonation = d;
-  const modal = document.getElementById('donation-modal');
-  const content = document.getElementById('modal-content');
-  content.innerHTML = `
-    <div><span class='font-medium'>Donation ID:</span> #${d.id}</div>
-    <div><span class='font-medium'>Category:</span> ${d.category}</div>
-    <div><span class='font-medium'>Description:</span> ${d.description}</div>
-    <div><span class='font-medium'>Quantity:</span> ${d.quantity} ${d.unit}</div>
-    <div><span class='font-medium'>Expiry Date:</span> ${d.expiry}</div>
-    <div><span class='font-medium'>Pickup Address:</span> ${d.pickup_address}</div>
-    <div><span class='font-medium'>Notes:</span> ${d.notes || '-'}</div>
-    <div><span class='font-medium'>Status:</span> <span class='font-bold text-[#54d12b]'>${d.status}</span></div>
-    <div><span class='font-medium'>Charity:</span> ${d.charity_name || '-'}</div>
-    <div><span class='font-medium'>Created At:</span> ${d.created_at}</div>
-  `;
-  // Show cancel button only if Pending or Scheduled
-  const cancelBtn = document.getElementById('cancel-donation-btn');
-  if (d.status === 'Pending' || d.status === 'Scheduled') {
-    cancelBtn.classList.remove('hidden');
-  } else {
-    cancelBtn.classList.add('hidden');
-  }
-  modal.classList.remove('hidden');
-};
+      let currentModalDonation = null;
+      async function fetchAndRenderDonations() {
+        const donor = JSON.parse(localStorage.getItem('donor') || '{}');
+        if (!donor.id) {
+          console.log('No donor id found in localStorage:', donor);
+          return;
+        }
+        try {
+          // Fetch both donor_offers and food_donations
+          const [offersRes, donationsRes] = await Promise.all([
+            fetch(`/api/donor-offers?donor_id=${donor.id}`),
+            fetch(`/api/donations?donor_id=${donor.id}`)
+          ]);
+          const offersData = await offersRes.json();
+          const donationsData = await donationsRes.json();
+          // Normalize both arrays to a common format
+          const offers = (offersData.offers || []).map(o => ({
+            id: o.id,
+            charity_name: o.charity_name || '-',
+            food_type: o.food_type,
+            description: o.description,
+            quantity: o.quantity,
+            unit: o.unit,
+            expiry: o.expiry,
+            pickup_address: o.pickup_address,
+            notes: o.notes,
+            status: o.status || 'pending',
+            created_at: o.created_at,
+            type: 'offer'
+          }));
+          const donations = (donationsData.donations || []).map(d => ({
+            id: d.id,
+            charity_name: d.charity_orgname || '-',
+            food_type: d.category,
+            description: d.description,
+            quantity: d.quantity,
+            unit: d.unit,
+            expiry: d.expiry,
+            pickup_address: d.pickup_address,
+            notes: d.notes,
+            status: d.status || 'Scheduled',
+            created_at: d.created_at,
+            type: 'donation'
+          }));
+          allDonations = [...offers, ...donations].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+          renderDonationsTable();
+        } catch (e) {
+          document.getElementById("activeDonationsBody").innerHTML = '<tr><td colspan="7" class="text-center py-4 text-red-600">Failed to load donations.</td></tr>';
+          console.error('Error fetching donations:', e);
+        }
+      }
+      function renderDonationsTable() {
+        const statusFilter = document.getElementById('donation-status-filter').value;
+        const tbody = document.getElementById("activeDonationsBody");
+        let filtered = allDonations;
+        if (statusFilter !== 'all') {
+          filtered = allDonations.filter(d => d.status === statusFilter);
+        }
+        tbody.innerHTML = "";
+        if (filtered.length) {
+          filtered.forEach((d) => {
+            tbody.innerHTML += `<tr class="border-t border-[#d5e7d0]">
+              <td class="px-4 py-2">#${d.id}</td>
+              <td class="px-4 py-2 text-[#5e974e]">${d.charity_name || '-'}</td>
+              <td class="px-4 py-2 text-[#5e974e]">${d.food_type} - ${d.description} (${d.quantity} ${d.unit})</td>
+              <td class="px-4 py-2">${d.status}</td>
+              <td class="px-4 py-2 text-[#5e974e] font-bold cursor-pointer" onclick="showDonationModal(${d.id}, '${d.type}')">View Details</td>
+            </tr>`;
+          });
+        } else {
+          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">No donations found for this status.</td></tr>';
+        }
+      }
+      window.showDonationModal = function(id, type) {
+        const d = allDonations.find(x => x.id === id && x.type === type);
+        if (!d) return;
+        currentModalDonation = d;
+        const modal = document.getElementById('donation-modal');
+        const content = document.getElementById('modal-content');
+        content.innerHTML = `
+          <div><span class='font-medium'>${d.type === 'offer' ? 'Offer' : 'Donation'} ID:</span> #${d.id}</div>
+          <div><span class='font-medium'>Charity:</span> ${d.charity_name || '-'}</div>
+          <div><span class='font-medium'>Food Type:</span> ${d.food_type}</div>
+          <div><span class='font-medium'>Description:</span> ${d.description}</div>
+          <div><span class='font-medium'>Quantity:</span> ${d.quantity} ${d.unit}</div>
+          <div><span class='font-medium'>Expiry Date:</span> ${d.expiry}</div>
+          <div><span class='font-medium'>Pickup Address:</span> ${d.pickup_address}</div>
+          <div><span class='font-medium'>Notes:</span> ${d.notes || '-'}</div>
+          <div><span class='font-medium'>Status:</span> <span class='font-bold text-[#54d12b]'>${d.status}</span></div>
+          <div><span class='font-medium'>Created At:</span> ${d.created_at}</div>
+        `;
+        // Hide cancel button for now (implement if needed)
+        document.getElementById('cancel-donation-btn').classList.add('hidden');
+        modal.classList.remove('hidden');
+      };
 function closeDonationModal() {
   document.getElementById('donation-modal').classList.add('hidden');
   currentModalDonation = null;
@@ -409,10 +428,9 @@ document.getElementById('cancel-donation-btn').onclick = async function() {
       // Button actions (scaffold)
       document.getElementById("btn-make-donation").onclick = () =>
         window.location.href = "./MakeDonation.html";
-      document.getElementById("btn-schedule-pickup").onclick = () =>
-        alert("Schedule a Pickup coming soon!");
+      // Schedule a Pickup button removed
       document.getElementById("btn-browse-charities").onclick = () =>
-        (window.location.href = "../BrowseCharities.html");
+        (window.location.href = "./BrowseCharities.html");
 
       // Ensure fetchAndRenderDonations is called on page load
 fetchAndRenderDonations();

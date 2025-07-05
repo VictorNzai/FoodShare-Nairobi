@@ -90,7 +90,7 @@
       const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
       document.getElementById('sidebar-donor-name').textContent = donorFullName;
       document.getElementById('donor-avatar').style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
-      // Show exclamation if not verified
+      // Show exclamation if not verified, hide if verified
       const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
       const alertSpan = document.getElementById('sidebar-account-alert');
       if (alertSpan) {
@@ -138,31 +138,77 @@
     const donorFullName = donor.fullname || donor.name || 'Donor';
     document.getElementById('donorName').textContent = donorFullName;
     document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}&background=54d12b&color=fff&size=128`;
-    document.getElementById('verifyStatus').innerHTML = donor.verified
-      ? '<span class="verified inline-flex items-center gap-1 bg-[#eaf3e7] text-[#54d12b] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#54d12b\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M5 13l4 4L19 7\'/></svg>Verified</span>'
-      : '<span class="not-verified inline-flex items-center gap-1 bg-[#fff7ea] text-[#e67e22] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#e67e22\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M12 8v4m0 4h.01\'/></svg>Not Verified</span>';
+    // Show verified or not verified status in profile
+    if (donor.verified) {
+      document.getElementById('verifyStatus').innerHTML = '<span class="verified inline-flex items-center gap-1 bg-[#eaf3e7] text-[#54d12b] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#54d12b\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M5 13l4 4L19 7\'/></svg>Verified</span>';
+    } else {
+      document.getElementById('verifyStatus').innerHTML = '<span class="not-verified inline-flex items-center gap-1 bg-[#fff7ea] text-[#e67e22] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#e67e22\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M12 8v4m0 4h.01\'/></svg>Not Verified</span>';
+    }
     // Profile details
     let details = '';
     details += `<div class='mb-4 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Full Name:</span> <span class='text-lg'>${donorFullName}</span></div>`;
-    if (donor.email) details += `<div class='mb-4 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Email:</span> <span class='text-lg'>${donor.email}</span></div>`;
+    if (donor.email) {
+      details += `<div class='mb-4 flex items-center gap-2'>
+        <span class='font-semibold text-[#121a0f] text-lg'>Email:</span>
+        <span class='text-lg'>${donor.email}</span>
+        ${donor.verified ? '' : `<button id="verifyEmailBtn" class="ml-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#fff7ea] text-[#e67e22] border border-[#ffe0b2] hover:bg-[#ffe0b2] transition">Verify Email Address</button>
+        <input id="otpInput" type="text" maxlength="6" placeholder="Enter OTP" class="ml-2 px-2 py-1 rounded border border-[#ffe0b2] text-xs" style="display:none;width:90px;" />
+        <button id="submitOtpBtn" class="ml-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#eaf3e7] text-[#54d12b] border border-[#b2ffc2] hover:bg-[#b2ffc2] transition" style="display:none;">Submit OTP</button>`}
+      </div>`;
+    }
+    // Email verification button logic (send OTP)
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.id === 'verifyEmailBtn') {
+        fetch('http://localhost:3000/api/email/send-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: donor.email })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('An OTP has been sent to your email address. Please check your inbox.');
+            document.getElementById('otpInput').style.display = 'inline-block';
+            document.getElementById('submitOtpBtn').style.display = 'inline-block';
+          } else {
+            alert('Failed to send OTP: ' + (data.message || ''));
+          }
+        })
+        .catch(() => {
+          alert('Failed to send OTP.');
+        });
+      }
+      if (e.target && e.target.id === 'submitOtpBtn') {
+        const otp = document.getElementById('otpInput').value.trim();
+        if (!otp) {
+          alert('Please enter the OTP sent to your email.');
+          return;
+        }
+        fetch('http://localhost:3000/api/email/verify-otp', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: donor.email, otp })
+        })
+        .then(res => res.json())
+        .then(data => {
+          if (data.success) {
+            alert('Email verified successfully!');
+            donor.verified = true;
+            setDonor(donor);
+            window.location.reload();
+          } else {
+            alert('OTP verification failed: ' + (data.message || ''));
+          }
+        })
+        .catch(() => {
+          alert('Failed to verify OTP.');
+        });
+      }
+    });
     if (donor.phone) details += `<div class='mb-2 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Phone:</span> <span class='text-lg'>${donor.phone}</span></div>`;
     document.getElementById('profileDetails').innerHTML = details;
-    // Verification section (if not verified)
-    const verifySection = document.getElementById('verifySection');
-    if (!donor.verified) {
-      verifySection.innerHTML = `
-        <div class="profile-actions flex flex-col gap-2 mb-4"><button class="submit-btn w-full max-w-xs mx-auto" onclick="showVerifyForm()">Verify Account</button></div>
-        <form id="verifyForm" class="profile-verify-form bg-white rounded-xl shadow p-6 max-w-xl mx-auto" style="display:none;">
-          <label for="idUpload" class="block font-semibold mb-1">Upload National ID</label>
-          <input type="file" id="idUpload" name="idUpload" accept="image/*,.pdf" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
-          <label for="address" class="block font-semibold mb-1">Your Address</label>
-          <input type="text" id="address" name="address" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
-          <label for="phone" class="block font-semibold mb-1">Phone</label>
-          <input type="text" id="phone" name="phone" value="${donor.phone || ''}" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
-          <button type="submit" class="submit-btn w-full">Submit Verification</button>
-        </form>
-      `;
-    }
+    // Remove verification section for donors
+    document.getElementById('verifySection').innerHTML = '';
     function showEditForm() {
       document.getElementById('editForm').style.display = 'block';
     }

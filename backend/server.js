@@ -6,12 +6,9 @@ const bodyParser = require('body-parser');
 const path = require('path');
 const multer = require('multer');
 const fs = require('fs');
-
 const authRoutes = require('./Routes/auth'); // Adjust path if needed
-// Move require for charityRequestsRoutes after pool is defined
 
 const app = express();
-
 
 // Middleware
 app.use(cors());
@@ -20,9 +17,6 @@ app.use(express.urlencoded({ extended: true }));
 app.use('/auth', authRoutes);
 app.use(express.static(path.join(__dirname, '../frontend')));
 app.use('/uploads/charity-verifications', express.static(path.join(__dirname, 'uploads/charity-verifications')));
-
-// Charity Requests API (modular route) - require after pool is defined
-// (Moved to after pool definition below)
 
 // File Upload (Charity Verifications)
 const uploadDir = path.join(__dirname, './uploads/charity-verifications');
@@ -68,6 +62,10 @@ app.use('/api/donor', donorAccountRoutes(pool));
 const donationsRoutes = require('./Routes/donations');
 app.use('/api/donations', donationsRoutes);
 
+// Donor Offers API (modular route)
+const donorOffersRoutes = require('./Routes/donor_offers');
+app.use('/api/donor-offers', donorOffersRoutes);
+
 // Donation Analytics API (modular route)
 const donationAnalyticsRoutes = require('./Routes/donationAnalytics');
 app.use('/api/donations/analytics', donationAnalyticsRoutes);
@@ -79,6 +77,18 @@ app.use('/api/admin', adminDashboardRoutes);
 // Admin Reports API (CSV download)
 const reportGenerator = require('./Routes/reportGenerator');
 app.use('/api/admin/reports', reportGenerator);
+
+// Charities API (Browse Charities page)
+const charitiesRoutes = require('./Routes/charities');
+app.use('/api/charities', charitiesRoutes(pool));
+
+// Food Needs API (modular route)
+const foodNeedsRoutes = require('./Routes/food_needs');
+app.use('/api/food-needs', foodNeedsRoutes);
+
+// Email Verification API (for sending verification links)
+const emailVerificationRoutes = require('./Routes/emailVerification');
+app.use('/api/email', emailVerificationRoutes);
 
 // --- Admin Charity Verification Endpoints ---
 app.get('/api/admin/charity-verifications', (req, res) => {

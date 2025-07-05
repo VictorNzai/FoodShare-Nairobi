@@ -32,32 +32,13 @@
           <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
         </div>
         <nav class="flex flex-col gap-2 text-base">
-          <a
-            href="./FoodDonor.html"
-            class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Dashboard</a
-          >
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Donations</a
-          >
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Charities</a
-          >
-          <a
-            href="./CharityRequestsPage.html"
-            class="sidebar-link px-4 py-2 rounded-full font-medium active"
-            >Charity Requests</a
-          >
-          <a href="../Food Donor Pages/DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Help</a
-          >
-          <button
-            id="logoutBtn"
-            class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8"
-          >
-            Logout
-          </button>
+          <a href="./FoodDonor.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Dashboard</a>
+          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium">Donations</a>
+          <a href="./BrowseCharities.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Charities</a>
+          <a href="./CharityRequestsPage.html" class="sidebar-link px-4 py-2 rounded-full font-medium active">Charity Requests</a>
+          <a href="./DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
+          <!-- Help link removed -->
+          <button id="logoutBtn" class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
         </nav>
         <div class="mt-auto flex items-center gap-3 pt-10">
           <div
@@ -86,14 +67,11 @@
       </main>
     </div>
     <script>
-      // Set donor name/avatar
-      const donorName = localStorage.getItem("donorName") || "Donor";
-      document.getElementById("sidebar-donor-name").textContent = donorName;
-      document.getElementById(
-        "donor-avatar"
-      ).style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(
-        donorName
-      )}')`;
+      // Set donor FULL NAME in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage)
+      let donorObj = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return {}; } })() || {};
+      const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
+      document.getElementById("sidebar-donor-name").textContent = donorFullName;
+      document.getElementById("donor-avatar").style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
       // Logout
       document.getElementById("logoutBtn").onclick = () => {
         localStorage.clear();
