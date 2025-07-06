@@ -79,6 +79,10 @@ app.use('/api/donations/analytics', donationAnalyticsRoutes);
 const adminDashboardRoutes = require('./Routes/adminDashboard');
 app.use('/api/admin', adminDashboardRoutes);
 
+// Feedback API
+const feedbackRoutes = require('./Routes/feedback');
+app.use('/api/feedback', feedbackRoutes);
+
 // Admin Reports API (CSV download)
 const reportGenerator = require('./Routes/reportGenerator');
 app.use('/api/admin/reports', reportGenerator);
