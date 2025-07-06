@@ -244,8 +244,9 @@
                 localStorage.setItem("donor", JSON.stringify(data.donor)); // Save full donor object
                 window.location.href = "/Food%20Donor%20Pages/FoodDonor.html";
               } else if (role === "charity") {
-                // Store full charity info for profile/dashboard linkage
+                // Store full charity info for profile/dashboard linkage, including id
                 const charityJwt = {
+                  id: data.charity.id,
                   name: data.charity.orgname,
                   email: data.charity.email,
                   phone: data.charity.phone,
