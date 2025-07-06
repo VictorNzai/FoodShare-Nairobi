@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../db');
 
-// Submit feedback
+// Submit feedback (donor)
 router.post('/', async (req, res) => {
   try {
     const { donor_id, comment, rating, category } = req.body;
@@ -12,6 +12,24 @@ router.post('/', async (req, res) => {
     await db.query(
       'INSERT INTO feedback (donor_id, comment, rating, category) VALUES (?, ?, ?, ?)',
       [donor_id, comment, rating || null, category || null]
+    );
+    res.json({ success: true });
+  } catch (err) {
+    console.error('Error saving feedback:', err);
+    res.status(500).json({ error: 'Failed to save feedback' });
+  }
+});
+
+// Submit feedback (charity)
+router.post('/charity', async (req, res) => {
+  try {
+    const { charity_id, comment, rating, category } = req.body;
+    if (!charity_id || !comment) {
+      return res.status(400).json({ error: 'Missing charity_id or comment' });
+    }
+    await db.query(
+      'INSERT INTO feedback (charity_id, comment, rating, category) VALUES (?, ?, ?, ?)',
+      [charity_id, comment, rating || null, category || null]
     );
     res.json({ success: true });
   } catch (err) {

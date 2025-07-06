@@ -253,6 +253,7 @@
           <a href="Requests.html">Requests</a>
           <!-- <a href="#">Beneficiaries</a> -->
           <a href="Profile.html">Profile</a>
+          <a href="Feedback.html" id="sidebar-feedback">Feedback</a>
         </nav>
       </aside>
       <!-- Main Content -->
@@ -355,12 +356,16 @@
           let donorOffers = [];
           try {
             const offersRes = await fetch(
-              `/api/donor-offers?charity=${encodeURIComponent(orgName)}&status=Completed`,
+              `/api/donor-offers?charity=${encodeURIComponent(
+                orgName
+              )}&status=Completed`,
               { headers: jwt ? { Authorization: "Bearer " + jwt } : {} }
             );
             if (offersRes.ok) {
               const offersData = await offersRes.json();
-              donorOffers = Array.isArray(offersData.offers) ? offersData.offers : [];
+              donorOffers = Array.isArray(offersData.offers)
+                ? offersData.offers
+                : [];
             }
           } catch {}
 
@@ -380,19 +385,31 @@
               ) {
                 // Sum quantity for completed requests in kg
                 let totalKg = foodNeeds
-                  .filter((need) => need.status === "Completed" && String(need.quantity).toLowerCase().includes("kg"))
+                  .filter(
+                    (need) =>
+                      need.status === "Completed" &&
+                      String(need.quantity).toLowerCase().includes("kg")
+                  )
                   .reduce((sum, need) => {
-                    let qty = parseFloat(String(need.quantity).replace(/[^\d.]/g, ""));
+                    let qty = parseFloat(
+                      String(need.quantity).replace(/[^\d.]/g, "")
+                    );
                     return sum + (isNaN(qty) ? 0 : qty);
                   }, 0);
                 // Add completed donor offers (in kg)
                 let donorKg = donorOffers
-                  .filter((offer) => String(offer.unit || '').toLowerCase().includes('kg'))
+                  .filter((offer) =>
+                    String(offer.unit || "")
+                      .toLowerCase()
+                      .includes("kg")
+                  )
                   .reduce((sum, offer) => {
-                    let qty = parseFloat(String(offer.quantity).replace(/[^\d.]/g, ""));
+                    let qty = parseFloat(
+                      String(offer.quantity).replace(/[^\d.]/g, "")
+                    );
                     return sum + (isNaN(qty) ? 0 : qty);
                   }, 0);
-                value.textContent = (totalKg + donorKg) + " kg";
+                value.textContent = totalKg + donorKg + " kg";
               } else if (label.textContent.includes("Beneficiaries Served")) {
                 // Count completed requests as beneficiaries served
                 let served = foodNeeds.filter(
@@ -418,17 +435,27 @@
           });
           donorOffers.forEach((offer) => {
             activityRows.push({
-              date: offer.completed_at ? String(offer.completed_at).slice(0, 10) : (offer.updated_at ? String(offer.updated_at).slice(0, 10) : (offer.created_at ? String(offer.created_at).slice(0, 10) : "")),
+              date: offer.completed_at
+                ? String(offer.completed_at).slice(0, 10)
+                : offer.updated_at
+                ? String(offer.updated_at).slice(0, 10)
+                : offer.created_at
+                ? String(offer.created_at).slice(0, 10)
+                : "",
               type: "Donation",
               food_item: offer.food_type || offer.food_item || "",
-              quantity: (offer.quantity || "") + (offer.unit ? " " + offer.unit : ""),
-              pickup_location: offer.pickup_address || offer.pickup_location || "",
+              quantity:
+                (offer.quantity || "") + (offer.unit ? " " + offer.unit : ""),
+              pickup_location:
+                offer.pickup_address || offer.pickup_location || "",
               notes: offer.notes || offer.message || "",
               status: offer.status || "Completed",
             });
           });
           // Sort by date descending
-          activityRows.sort((a, b) => (b.date || "").localeCompare(a.date || ""));
+          activityRows.sort((a, b) =>
+            (b.date || "").localeCompare(a.date || "")
+          );
 
           if (activityRows.length === 0) {
             tbody.innerHTML =
@@ -457,21 +484,23 @@
       renderRecentActivity();
 
       // Sidebar actions for Post Need and Browse Donor Offers
-      document.getElementById('sidebar-post-need').onclick = function(e) {
+      document.getElementById("sidebar-post-need").onclick = function (e) {
         e.preventDefault();
-        window.location.href = 'PostFoodNeed.html';
+        window.location.href = "PostFoodNeed.html";
       };
-      document.getElementById('sidebar-browse-donor').onclick = function(e) {
+      document.getElementById("sidebar-browse-donor").onclick = function (e) {
         e.preventDefault();
-        window.location.href = 'BrowseDonorOffers.html';
+        window.location.href = "BrowseDonorOffers.html";
       };
-      document.getElementById('sidebar-requests').onclick = function() {
+      document.getElementById("sidebar-requests").onclick = function () {
         // Scroll to or focus on recent activity table
-        document.querySelector('.table-section').scrollIntoView({behavior: 'smooth'});
+        document
+          .querySelector(".table-section")
+          .scrollIntoView({ behavior: "smooth" });
       };
-      document.getElementById('sidebar-reports').onclick = function() {
+      document.getElementById("sidebar-reports").onclick = function () {
         // Implement reports view (Amt to Donation received)
-        alert('Reports feature coming soon!');
+        alert("Reports feature coming soon!");
       };
     </script>
   </body>
