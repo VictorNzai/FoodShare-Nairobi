@@ -5,7 +5,7 @@ const db = require('../Database/db');
 // POST: Schedule a ride (pledge) for a food need 
 router.post('/:id/schedule-pledge', async (req, res) => {
   console.log('Received pledge:', req.params, req.body);
-  const { pickup_location, date, contact_phone, notes } = req.body;
+  const { pickup_location, date, contact_phone, notes, donorName, donorEmail } = req.body;
   const { id } = req.params;
   if (!pickup_location || !date || !contact_phone) {
     return res.status(400).json({ message: 'Missing required fields.' });
@@ -13,7 +13,37 @@ router.post('/:id/schedule-pledge', async (req, res) => {
   const sql = `UPDATE food_needs SET pickup_location = ?, date = ?, contact_phone = ?, notes = ?, status = 'Scheduled' WHERE id = ?`;
   try {
     const [result] = await db.query(sql, [pickup_location, date, contact_phone, notes, id]);
-    console.log('DB update result:', result);
+    // Lookup charity email and name from food_needs (using org_name)
+    const [[foodNeed]] = await db.query('SELECT org_name FROM food_needs WHERE id = ?', [id]);
+    let charityEmail = null;
+    let charityName = foodNeed?.org_name || 'Charity';
+    let donorNameFinal = donorName;
+    let donorEmailFinal = donorEmail;
+    // If donor info not provided, try to get from food_needs (if you store donor info there)
+    if ((!donorNameFinal || !donorEmailFinal) && foodNeed) {
+      // Example: if you store donor_name and donor_email in food_needs
+      if (foodNeed.donor_name) donorNameFinal = foodNeed.donor_name;
+      if (foodNeed.donor_email) donorEmailFinal = foodNeed.donor_email;
+    }
+    if (charityName) {
+      const [[charityRow]] = await db.query('SELECT email FROM charity WHERE orgname = ?', [charityName]);
+      if (charityRow && charityRow.email) charityEmail = charityRow.email;
+    }
+    if (charityEmail) {
+      try {
+        const { sendFoodNeedPledgeEmail } = require('../Utils/foodNeedPledgeEmail');
+        await sendFoodNeedPledgeEmail(charityEmail, charityName, {
+          pickup_location,
+          date,
+          contact_phone,
+          notes,
+          donorName: donorNameFinal || '',
+          donorEmail: donorEmailFinal || ''
+        });
+      } catch (emailErr) {
+        console.error('Failed to send pledge email:', emailErr);
+      }
+    }
     res.json({ success: true });
   } catch (err) {
     console.error('DB error:', err);
