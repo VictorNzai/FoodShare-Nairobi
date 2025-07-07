@@ -24,10 +24,8 @@ async function sendFoodNeedPledgeEmail(toEmail, charityName, pledge) {
       <li><b>Date of Pickup:</b> ${pledge.date}</li>
       <li><b>Contact Phone:</b> ${pledge.contact_phone}</li>
       <li><b>Additional Notes:</b> ${pledge.notes || 'None'}</li>
-      <li><b>Donor Name:</b> ${pledge.donorName || 'N/A'}</li>
-      <li><b>Donor Email:</b> ${pledge.donorEmail || 'N/A'}</li>
     </ul>
-    <p>Please log in to your FoodShare profile to view the progress of your request and contact the donor if needed.</p>
+    <p>Please log in to your FoodShare profile to view the progress of your request.</p>
     <p>Thank you for using FoodShare Nairobi!</p>
     <p><i>This is an automated message from FoodShare Nairobi.</i></p>
   `;
