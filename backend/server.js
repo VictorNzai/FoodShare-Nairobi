@@ -771,6 +771,16 @@ app.delete('/api/foodneeds/:id', async (req, res) => {
     return res.status(500).json({ success: false, message: 'Failed to delete food need' });
   }
 });
+// Mark food need as completed (arrived)
+app.post('/api/foodneeds/:id/arrived', async (req, res) => {
+  const id = req.params.id;
+  try {
+    await pool.query('UPDATE food_needs SET status = "Completed" WHERE id = ?', [id]);
+    res.json({ success: true, message: 'Marked as completed.' });
+  } catch (err) {
+    res.status(500).json({ success: false, message: 'Database error.' });
+  }
+});
 const donorDashboardStatsRoutes = require('./Routes/donorDashboardStats');
 app.use('/api/donor', donorDashboardStatsRoutes(pool));
 
