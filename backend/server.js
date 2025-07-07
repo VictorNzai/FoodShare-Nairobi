@@ -754,6 +754,28 @@ app.post('/api/foodneeds', async (req, res) => {
   `;
   try {
     await pool.query(sql, [orgName, date, foodItem, quantity, pickupLocation, notes || '', status || 'Pending']);
+
+    // Lookup charity email by orgName
+    let charityEmail = null;
+    const [charityRows] = await pool.query('SELECT email FROM charity WHERE orgname = ?', [orgName]);
+    if (charityRows.length > 0) {
+      charityEmail = charityRows[0].email;
+    }
+    // Send confirmation email if email found
+    if (charityEmail) {
+      try {
+        const { sendFoodNeedConfirmationEmail } = require('./Utils/foodNeedConfirmationEmail');
+        await sendFoodNeedConfirmationEmail(charityEmail, orgName, {
+          foodItem,
+          quantity,
+          pickupLocation,
+          notes,
+          date
+        });
+      } catch (emailErr) {
+        console.error('Failed to send food need confirmation email:', emailErr);
+      }
+    }
     return res.json({ success: true, message: 'Food need submitted.' });
   } catch (err) {
     console.error('DB error:', err);
