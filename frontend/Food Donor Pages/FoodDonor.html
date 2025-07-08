@@ -331,8 +331,25 @@
           const data = await res.json();
           document.getElementById("stat-food-donated").textContent = data.total_quantity ?? 0;
         } catch {}
-        // Charities Helped (not available, set to 0 or hide)
-        document.getElementById("stat-charities-helped").textContent = 0;
+        // Charities Helped (count unique charities with completed donations/offers)
+        try {
+          const [offersRes, donationsRes] = await Promise.all([
+            fetch(`/api/donor-offers?donor_id=${donor.id}`),
+            fetch(`/api/donations?donor_id=${donor.id}`)
+          ]);
+          const offersData = await offersRes.json();
+          const donationsData = await donationsRes.json();
+          // Get all completed offers and donations
+          const completedOffers = (offersData.offers || []).filter(o => o.status === 'Completed');
+          const completedDonations = (donationsData.donations || []).filter(d => d.status === 'Completed');
+          // Collect unique charity names/IDs
+          const charitySet = new Set();
+          completedOffers.forEach(o => charitySet.add(o.charity_id || o.charity_name));
+          completedDonations.forEach(d => charitySet.add(d.charity_id || d.charity_orgname));
+          document.getElementById("stat-charities-helped").textContent = charitySet.size;
+        } catch {
+          document.getElementById("stat-charities-helped").textContent = 0;
+        }
       }
       updateDashboardStats();
       // --- Card click actions ---
@@ -473,7 +490,7 @@ document.getElementById('cancel-donation-btn').onclick = async function() {
 
       // Button actions (scaffold)
       document.getElementById("btn-make-donation").onclick = () =>
-        window.location.href = "./MakeDonation.html";
+        window.location.href = "./BrowseCharities.html";
       // Schedule a Pickup button removed
       document.getElementById("btn-browse-charities").onclick = () =>
         (window.location.href = "./BrowseCharities.html");

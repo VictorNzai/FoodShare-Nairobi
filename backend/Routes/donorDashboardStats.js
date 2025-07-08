@@ -30,13 +30,21 @@ router.get('/stats/total-donations', async (req, res) => {
 router.get('/stats/food-sum', async (req, res) => {
   const donorId = req.query.donor_id;
   if (!donorId) return res.status(400).json({ success: false, message: 'Missing donor_id' });
-  
   try {
-    const [rows] = await pool.query(
+    // Get sum from food_donations
+    const [donationRows] = await pool.query(
       'SELECT SUM(quantity) AS total_quantity FROM food_donations WHERE donor_id = ?',
       [donorId]
     );
-    res.json({ success: true, total_quantity: rows[0]?.total_quantity ?? 0 });
+    // Get sum from donor_offers
+    const [offerRows] = await pool.query(
+      'SELECT SUM(quantity) AS total_quantity FROM donor_offers WHERE donor_id = ?',
+      [donorId]
+    );
+    const donationSum = parseFloat(donationRows[0]?.total_quantity) || 0;
+    const offerSum = parseFloat(offerRows[0]?.total_quantity) || 0;
+    const total = donationSum + offerSum;
+    res.json({ success: true, total_quantity: total });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Database error' });
   }
