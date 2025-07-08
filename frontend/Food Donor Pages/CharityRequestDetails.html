@@ -13,12 +13,13 @@
       body {
         font-family: "Manrope", "Noto Sans", sans-serif;
       }
-      .sidebar-link.active,
-      .sidebar-link:hover {
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-      }
+      /* Use the same sidebar-link style as CharityRequestDetails.html */
+.sidebar-link.active,
+.sidebar-link:hover {
+  background: #eaf3e7;
+  color: #54d12b;
+  font-weight: 700;
+}
     </style>
   </head>
   <body class="bg-[#f9fcf8] text-[#111b0e]">
@@ -37,10 +38,14 @@
             class="sidebar-link px-4 py-2 rounded-full font-medium"
             >Dashboard</a
           >
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
+          <a
+            href="Donations.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
             >Donations</a
           >
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
+          <a
+            href="BrowseCharities.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
             >Charities</a
           >
           <a
@@ -48,7 +53,9 @@
             class="sidebar-link px-4 py-2 rounded-full font-medium"
             >Charity Requests</a
           >
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium"
+          <a
+            href="DonorAccount.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
             >Account</a
           >
           <button
@@ -233,6 +240,15 @@
           }
         }
       });
+
+      // Example: highlight the Donations link if on Donations.html
+if (window.location.pathname.endsWith('Donations.html')) {
+  document.querySelectorAll('.sidebar-link').forEach(link => {
+    if (link.getAttribute('href') === 'Donations.html') {
+      link.classList.add('active');
+    }
+  });
+}
     </script>
   </body>
 </html>

@@ -34,12 +34,14 @@
         <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
         <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
       </div>
+      <!-- Updated navigation with Feedback link -->
       <nav class="flex flex-col gap-2 text-base">
         <a href="FoodDonor.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Dashboard</a>
         <a href="#" id="sidebar-donations" class="sidebar-link px-4 py-2 rounded-full font-medium">Donations</a>
         <a href="#" id="sidebar-charities" class="sidebar-link px-4 py-2 rounded-full font-medium">Charities</a>
         <a href="CharityRequestsPage.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Charity Requests</a>
         <a href="DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium active flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
+        <a href="Feedback.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-feedback">Feedback</a>
         <button id="logoutBtn" class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
       </nav>
       <div class="mt-auto flex items-center gap-3 pt-10">
@@ -70,12 +72,17 @@
     var donations = document.getElementById('sidebar-donations');
     if (donations) donations.onclick = function(e) {
       e.preventDefault();
-      alert('Donations page coming soon!');
+      window.location.href = 'Donations.html';
     };
     var charities = document.getElementById('sidebar-charities');
     if (charities) charities.onclick = function(e) {
       e.preventDefault();
-      window.location.href = '../BrowseCharities.html';
+      window.location.href = 'BrowseCharities.html';
+    };
+    var feedback = document.getElementById('sidebar-feedback');
+    if (feedback) feedback.onclick = function(e) {
+      e.preventDefault();
+      window.location.href = 'Feedback.html';
     };
   });
 </script>
@@ -105,12 +112,17 @@
       var donations = document.getElementById('sidebar-donations');
       if (donations) donations.onclick = function(e) {
         e.preventDefault();
-        alert('Donations page coming soon!');
+        window.location.href = 'Donations.html';
       };
       var charities = document.getElementById('sidebar-charities');
       if (charities) charities.onclick = function(e) {
         e.preventDefault();
-        window.location.href = '../BrowseCharities.html';
+        window.location.href = 'BrowseCharities.html';
+      };
+      var feedback = document.getElementById('sidebar-feedback');
+      if (feedback) feedback.onclick = function(e) {
+        e.preventDefault();
+        window.location.href = 'Feedback.html';
       };
       // Logout
       document.getElementById('logoutBtn').onclick = function() {
