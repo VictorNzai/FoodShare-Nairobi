@@ -121,16 +121,38 @@ app.post('/api/admin/charity-verifications/:id/approve', async (req, res) => {
   try {
     // First, approve the verification
     await pool.query('UPDATE charity_verifications SET status = "approved" WHERE id = ?', [id]);
-    // Get the charity name from the verification row
-    const [results] = await pool.query('SELECT charity_name FROM charity_verifications WHERE id = ?', [id]);
+    // Get the charity name and email from the verification row
+    const [results] = await pool.query('SELECT charity_name, contact FROM charity_verifications WHERE id = ?', [id]);
     if (!results.length) {
       return res.json({ success: true, message: 'Charity verification approved, but could not update charity verified status.' });
     }
     const charityName = results[0].charity_name;
+    // Try to get the email from the charity table (contact in verifications may not be email)
+    let charityEmail = null;
+    const [charityRows] = await pool.query('SELECT email FROM charity WHERE orgname = ?', [charityName]);
+    if (charityRows.length > 0) {
+      charityEmail = charityRows[0].email;
+    } else {
+      // fallback: use contact field if it looks like an email
+      if (results[0].contact && results[0].contact.includes('@')) {
+        charityEmail = results[0].contact;
+      }
+    }
     // Update the charity table to set verified = 1
     await pool.query('UPDATE charity SET verified = 1 WHERE orgname = ?', [charityName]);
     // Also update the charity_verifications table to set verified = 1 for this row
     await pool.query('UPDATE charity_verifications SET verified = 1 WHERE id = ?', [id]);
+
+    // Send approval email if email found
+    if (charityEmail) {
+      try {
+        const { sendCharityApprovalEmail } = require('./Utils/charityApprovalEmail');
+        await sendCharityApprovalEmail(charityEmail, charityName);
+      } catch (emailErr) {
+        // Log but don't fail the approval if email fails
+        console.error('Failed to send approval email:', emailErr);
+      }
+    }
     res.json({ success: true, message: 'Charity verification approved and both tables marked as verified.' });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Database error.' });
@@ -732,6 +754,28 @@ app.post('/api/foodneeds', async (req, res) => {
   `;
   try {
     await pool.query(sql, [orgName, date, foodItem, quantity, pickupLocation, notes || '', status || 'Pending']);
+
+    // Lookup charity email by orgName
+    let charityEmail = null;
+    const [charityRows] = await pool.query('SELECT email FROM charity WHERE orgname = ?', [orgName]);
+    if (charityRows.length > 0) {
+      charityEmail = charityRows[0].email;
+    }
+    // Send confirmation email if email found
+    if (charityEmail) {
+      try {
+        const { sendFoodNeedConfirmationEmail } = require('./Utils/foodNeedConfirmationEmail');
+        await sendFoodNeedConfirmationEmail(charityEmail, orgName, {
+          foodItem,
+          quantity,
+          pickupLocation,
+          notes,
+          date
+        });
+      } catch (emailErr) {
+        console.error('Failed to send food need confirmation email:', emailErr);
+      }
+    }
     return res.json({ success: true, message: 'Food need submitted.' });
   } catch (err) {
     console.error('DB error:', err);
