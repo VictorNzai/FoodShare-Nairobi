@@ -277,7 +277,7 @@
               <div class="stat-value" id="total-donations-kg">1,200 kg</div>
             </div>
             <div class="stat-card">
-              <p>Beneficiaries Served</p>
+              <p>Total Benefactors</p>
               <div class="stat-value">350</div>
             </div>
           </div>
@@ -410,7 +410,7 @@
                     return sum + (isNaN(qty) ? 0 : qty);
                   }, 0);
                 value.textContent = totalKg + donorKg + " kg";
-              } else if (label.textContent.includes("Beneficiaries Served")) {
+              } else if (label.textContent.includes("Total Benefactors")) {
                 // Count completed requests as beneficiaries served
                 let served = foodNeeds.filter(
                   (need) => need.status === "Completed"
