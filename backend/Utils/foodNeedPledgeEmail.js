@@ -3,8 +3,8 @@ const nodemailer = require('nodemailer');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'vicbiznetworks@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'khwi oxlj pycg lsev' // Use env var in production
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASSWORD
   }
 });
 
@@ -30,7 +30,7 @@ async function sendFoodNeedPledgeEmail(toEmail, charityName, pledge) {
     <p><i>This is an automated message from FoodShare Nairobi.</i></p>
   `;
   await transporter.sendMail({
-    from: 'vicbiznetworks@gmail.com',
+    from: process.env.EMAIL_USER,
     to: toEmail,
     subject,
     html: body

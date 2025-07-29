@@ -7,17 +7,17 @@ const nodemailer = require('nodemailer');
  * @returns {Promise<void>}
  */
 async function sendCharityApprovalEmail(toEmail, charityName) {
-  // Configure transporter with vicbiznetworks@gmail.com
+  // Configure transporter using environment credentials
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'vicbiznetworks@gmail.com',
-      pass: 'khwi oxlj pycg lsev' // Use your Gmail app password
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
 
   const mailOptions = {
-    from: 'vicbiznetworks@gmail.com',
+    from: process.env.EMAIL_USER,
     to: toEmail,
     subject: 'Your Charity Has Been Approved - FoodShare Nairobi',
     html: `<p>Dear <b>${charityName}</b>,</p>

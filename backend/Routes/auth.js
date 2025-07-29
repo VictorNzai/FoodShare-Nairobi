@@ -10,11 +10,11 @@ const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
 //  Direct DB connection
 const db = mysql.createConnection({
-    host: '25.18.191.107',
-    user: 'Dexter',
-    password: 'F00dshare123',
-    database: 'foodshare_db',
-    port: 3306
+    host: process.env.DB_HOST,
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
+    port: process.env.DB_PORT || 3306
 });
 
 db.connect((err) => {
@@ -38,14 +38,14 @@ router.post('/forgot-password', (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'vicbiznetworks@gmail.com', // use your Gmail
-        pass: 'khwi oxlj pycg lsev'     // generated Gmail app password
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASSWORD
       }
     });
 
     const resetLink = `${baseUrl}/reset-password.html?token=${token}&role=${role}`;
     const mailOptions = {
-      from: 'vicbiznetworks@gmail.com',
+      from: process.env.EMAIL_USER,
       to: email,
       subject: 'Password Reset - FoodShare',
       html: `<p>You requested a password reset. 

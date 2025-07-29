@@ -11,13 +11,13 @@ async function sendFoodNeedConfirmationEmail(toEmail, orgName, foodNeed) {
   const transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'vicbiznetworks@gmail.com',
-      pass: 'khwi oxlj pycg lsev'
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
     }
   });
 
   const mailOptions = {
-    from: 'vicbiznetworks@gmail.com',
+    from: process.env.EMAIL_USER,
     to: toEmail,
     subject: 'Your Food Need Has Been Submitted - FoodShare Nairobi',
     html: `<p>Dear <b>${orgName}</b>,</p>
