@@ -16,10 +16,13 @@ router.post('/send-otp', async (req, res) => {
   // Send email (configure your SMTP)
   const transporter = nodemailer.createTransport({
     service: 'gmail',
-    auth: { user: 'dexter.kimathi@strathmore.edu', pass: 'lbmx knru grzy jmrb' }
+    auth: {
+      user: process.env.EMAIL_USER,
+      pass: process.env.EMAIL_PASSWORD
+    }
   });
   await transporter.sendMail({
-    from: 'FoodShare <dexter.kimathi@strathmore.edu>',
+    from: `FoodShare <${process.env.EMAIL_USER}>`,
     to: email,
     subject: 'Your FoodShare Email Verification OTP',
     html: `<p>Your OTP for FoodShare email verification is: <b>${otp}</b></p><p>This code is valid for 10 minutes.</p>`
