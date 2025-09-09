@@ -34,14 +34,28 @@ const upload = multer({ storage });
 
 // DB Connection - Use the centralized db.js configuration
 const pool = require('./db');
+
+// Enhanced database connection with retry logic
 (async () => {
-  try {
-    const conn = await pool.getConnection();
-    console.log('Connected to foodshare_db');
-    conn.release();
-  } catch (err) {
-    console.error('Failed to connect to foodshare_db:', err);
-    process.exit(1);
+  let retries = 3;
+  while (retries > 0) {
+    try {
+      const conn = await pool.getConnection();
+      console.log('✅ Connected to foodshare_db successfully');
+      conn.release();
+      break;
+    } catch (err) {
+      retries--;
+      console.error(`❌ Failed to connect to foodshare_db (${4-retries}/3 attempts):`, err.message);
+      
+      if (retries === 0) {
+        console.error('💥 All connection attempts failed. Exiting...');
+        process.exit(1);
+      }
+      
+      console.log(`⏳ Retrying in 5 seconds... (${retries} attempts remaining)`);
+      await new Promise(resolve => setTimeout(resolve, 5000));
+    }
   }
 })();
 
