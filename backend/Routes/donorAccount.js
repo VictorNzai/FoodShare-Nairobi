@@ -56,6 +56,11 @@ router.delete('/account', requireDonor, async (req, res) => {
     }
 });
 
+// Test route
+router.get('/', (req, res) => {
+  res.json({ success: true, message: 'Donor API is working.' });
+});
+
 module.exports = (passedPool) => {
   setPool(passedPool);
   return router;
