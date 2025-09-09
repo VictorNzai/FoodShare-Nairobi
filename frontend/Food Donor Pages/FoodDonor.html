@@ -464,63 +464,6 @@ document.getElementById('cancel-donation-btn').onclick = async function() {
 fetchAndRenderDonations();
 document.getElementById('donation-status-filter').addEventListener('change', renderDonationsTable);
 
-    // --- Donation Analytics Pie Chart ---
-      async function renderDonationCategoryPieChart(canvasId = 'donation-category-pie') {
-        const donor = JSON.parse(localStorage.getItem('donor') || '{}');
-        if (!donor.id) return;
-        try {
-          const res = await fetch(`/api/donations/analytics/category-count?donor_id=${donor.id}`);
-          const data = await res.json();
-          const rows = data.data || [];
-          if (!rows.length) return;
-          const ctx = document.getElementById(canvasId).getContext('2d');
-          const categories = rows.map(r => r.category);
-          const counts = rows.map(r => r.count);
-          // Use the same color palette as Donations.html
-          const palette = [
-            "#3366CC", "#DC3912", "#FF9900", "#109618", "#990099", "#0099C6", "#DD4477", "#66AA00", "#B82E2E", "#316395",
-            "#994499", "#22AA99", "#AAAA11", "#6633CC", "#E67300", "#8B0707", "#329262", "#5574A6", "#3B3EAC", "#B77322"
-          ];
-          const bgColors = categories.map((_, i) => palette[i % palette.length]);
-          if (!window.donationPieCharts) window.donationPieCharts = {};
-          if (window.donationPieCharts[canvasId]) window.donationPieCharts[canvasId].destroy();
-          window.donationPieCharts[canvasId] = new Chart(ctx, {
-            type: 'pie',
-            data: {
-              labels: categories,
-              datasets: [{
-                data: counts,
-                backgroundColor: bgColors,
-                borderColor: '#fff',
-                borderWidth: 2
-              }]
-            },
-            options: {
-              responsive: true,
-              plugins: {
-                legend: { position: 'bottom', labels: { boxWidth: 18, font: { size: 15 } } },
-                title: { display: true, text: 'Donations by Category', font: { size: 20 } },
-                tooltip: { enabled: true, callbacks: {
-                  label: function(context) {
-                    // Pie chart best practice: show label, value, and percent
-                    const label = context.label || '';
-                    const value = context.parsed || 0;
-                    const total = context.chart._metasets[0].total || counts.reduce((a,b)=>a+b,0);
-                    const percent = total ? ((value/total)*100).toFixed(1) : 0;
-                    return `${label}: ${value} (${percent}%)`;
-                  }
-                }}
-              },
-              animation: { animateRotate: true, animateScale: true },
-              cutout: 0,
-            }
-          });
-        } catch (e) {
-          // Optionally show error or fallback
-        }
-      }
-    // Render on page load
-    renderDonationCategoryPieChart();
     </script>
   </body>
 </html>
