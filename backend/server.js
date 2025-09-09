@@ -747,6 +747,10 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, message: 'API is healthy' });
 });
 
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'Food Share Nairobi API is running.' });
+});
+
 // POST /api/foodneeds - Add a new food need
 app.post('/api/foodneeds', async (req, res) => {
   const { orgName, date, foodItem, quantity, pickupLocation, notes, status } = req.body;
