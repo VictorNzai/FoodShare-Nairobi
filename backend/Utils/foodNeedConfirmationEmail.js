@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const { sendEmail } = require('./mailer');
 
 /**
  * Send confirmation email to a charity after submitting a food need.
@@ -8,16 +8,7 @@ const nodemailer = require('nodemailer');
  * @returns {Promise<void>}
  */
 async function sendFoodNeedConfirmationEmail(toEmail, orgName, foodNeed) {
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'vicbiznetworks@gmail.com',
-      pass: 'khwi oxlj pycg lsev'
-    }
-  });
-
-  const mailOptions = {
-    from: 'vicbiznetworks@gmail.com',
+  await sendEmail({
     to: toEmail,
     subject: 'Your Food Need Has Been Submitted - FoodShare Nairobi',
     html: `<p>Dear <b>${orgName}</b>,</p>
@@ -30,10 +21,9 @@ async function sendFoodNeedConfirmationEmail(toEmail, orgName, foodNeed) {
              <li><b>Date Submitted:</b> ${foodNeed.date}</li>
              ${foodNeed.notes ? `<li><b>Notes:</b> ${foodNeed.notes}</li>` : ''}
            </ul>
-           <br><p>Thank you for using FoodShare Nairobi!</p>`
-  };
-
-  await transporter.sendMail(mailOptions);
+           <br><p>Thank you for using FoodShare Nairobi!</p>`,
+    provider: process.env.EMAIL_PROVIDER_CONFIRMATION || undefined
+  });
 }
 
 module.exports = { sendFoodNeedConfirmationEmail };

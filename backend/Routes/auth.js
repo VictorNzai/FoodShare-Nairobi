@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const mysql = require('mysql2');
+require('dotenv').config();
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
 const nodemailer = require('nodemailer');
@@ -10,11 +11,11 @@ const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
 
 //  Direct DB connection
 const db = mysql.createConnection({
-    host: '25.18.191.107',
-    user: 'Dexter',
-    password: 'F00dshare123',
-    database: 'foodshare_db',
-    port: 3306
+    host: process.env.DATABASE_HOST || '25.18.191.107',
+    user: process.env.DATABASE_USER || 'Dexter',
+    password: process.env.DATABASE_PASSWORD || 'F00dshare123',
+    database: process.env.DATABASE_NAME || 'foodshare_db',
+    port: Number(process.env.DATABASE_PORT) || 3306
 });
 
 db.connect((err) => {
@@ -38,14 +39,14 @@ router.post('/forgot-password', (req, res) => {
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
-        user: 'vicbiznetworks@gmail.com', // use your Gmail
-        pass: 'khwi oxlj pycg lsev'     // generated Gmail app password
+        user: process.env.EMAIL_USER || 'vicbiznetworks@gmail.com',
+        pass: process.env.EMAIL_PASSWORD || 'khwi oxlj pycg lsev'
       }
     });
 
     const resetLink = `${baseUrl}/reset-password.html?token=${token}&role=${role}`;
     const mailOptions = {
-      from: 'vicbiznetworks@gmail.com',
+      from: process.env.EMAIL_USER || 'vicbiznetworks@gmail.com',
       to: email,
       subject: 'Password Reset - FoodShare',
       html: `<p>You requested a password reset. 

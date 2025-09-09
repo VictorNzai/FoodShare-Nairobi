@@ -1,12 +1,4 @@
-const nodemailer = require('nodemailer');
-
-const transporter = nodemailer.createTransport({
-  service: 'gmail',
-  auth: {
-    user: 'vicbiznetworks@gmail.com',
-    pass: process.env.EMAIL_PASSWORD || 'khwi oxlj pycg lsev' // Use env var in production
-  }
-});
+const { sendEmail } = require('./mailer');
 
 /**
  * Send an email to the charity when a donor pledges to fulfill a food need.
@@ -29,11 +21,11 @@ async function sendFoodNeedPledgeEmail(toEmail, charityName, pledge) {
     <p>Thank you for using FoodShare Nairobi!</p>
     <p><i>This is an automated message from FoodShare Nairobi.</i></p>
   `;
-  await transporter.sendMail({
-    from: 'vicbiznetworks@gmail.com',
+  await sendEmail({
     to: toEmail,
     subject,
-    html: body
+    html: body,
+    provider: process.env.EMAIL_PROVIDER_PLEDGE || undefined
   });
 }
 

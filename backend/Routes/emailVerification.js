@@ -1,7 +1,8 @@
 const express = require('express');
 const router = express.Router();
-const nodemailer = require('nodemailer');
 const crypto = require('crypto');
+const { sendEmail } = require('../Utils/mailer');
+require('dotenv').config();
 
 // In-memory store for OTPs (for demo; use DB/Redis in production)
 const otps = {};
@@ -13,16 +14,11 @@ router.post('/send-otp', async (req, res) => {
   // Generate 6-digit OTP
   const otp = Math.floor(100000 + Math.random() * 900000).toString();
   otps[email] = { otp, expires: Date.now() + 10 * 60 * 1000 }; // 10 min expiry
-  // Send email (configure your SMTP)
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: { user: 'dexter.kimathi@strathmore.edu', pass: 'lbmx knru grzy jmrb' }
-  });
-  await transporter.sendMail({
-    from: 'FoodShare <dexter.kimathi@strathmore.edu>',
+  await sendEmail({
     to: email,
     subject: 'Your FoodShare Email Verification OTP',
-    html: `<p>Your OTP for FoodShare email verification is: <b>${otp}</b></p><p>This code is valid for 10 minutes.</p>`
+    html: `<p>Your OTP for FoodShare email verification is: <b>${otp}</b></p><p>This code is valid for 10 minutes.</p>`,
+    provider: process.env.EMAIL_PROVIDER_OTP || 'provider2'
   });
   res.json({ success: true, message: 'OTP sent to your email.' });
 });

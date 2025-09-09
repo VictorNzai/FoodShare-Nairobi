@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+const { sendEmail } = require('./mailer');
 
 /**
  * Send approval email to a charity after admin approval.
@@ -8,26 +8,16 @@ const nodemailer = require('nodemailer');
  */
 async function sendCharityApprovalEmail(toEmail, charityName) {
   // Configure transporter with vicbiznetworks@gmail.com
-  const transporter = nodemailer.createTransport({
-    service: 'gmail',
-    auth: {
-      user: 'vicbiznetworks@gmail.com',
-      pass: 'khwi oxlj pycg lsev' // Use your Gmail app password
-    }
-  });
-
-  const mailOptions = {
-    from: 'vicbiznetworks@gmail.com',
+  await sendEmail({
     to: toEmail,
     subject: 'Your Charity Has Been Approved - FoodShare Nairobi',
     html: `<p>Dear <b>${charityName}</b>,</p>
            <p>Congratulations! Your information has been reviewed and <b>approved</b> by our admin team.</p>
            <p>You now have access to more features, including posting food donations and connecting with donors.</p>
            <p>Thank you for joining FoodShare Nairobi and making a difference in our community!</p>
-           <br><p>Best regards,<br>FoodShare Nairobi Team</p>`
-  };
-
-  await transporter.sendMail(mailOptions);
+           <br><p>Best regards,<br>FoodShare Nairobi Team</p>`,
+    provider: process.env.EMAIL_PROVIDER_APPROVAL || undefined
+  });
 }
 
 module.exports = { sendCharityApprovalEmail };

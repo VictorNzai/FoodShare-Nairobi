@@ -1,4 +1,5 @@
 const express = require('express');
+require('dotenv').config();
 const cors = require('cors');
 const mysql = require('mysql2/promise');
 const bcrypt = require('bcrypt');
@@ -33,12 +34,14 @@ const storage = multer.diskStorage({
 const upload = multer({ storage });
 
 // DB Connection
+const sslOptions = (process.env.DATABASE_SSL === 'true') ? { rejectUnauthorized: process.env.DATABASE_SSL_REJECT_UNAUTHORIZED !== 'false' } : undefined;
 const pool = mysql.createPool({
-  host: '25.18.191.107',
-  user: 'Dexter',
-  password: 'F00dshare123',
-  database: 'foodshare_db',
-  port: 3306,
+  host: process.env.DATABASE_HOST || '25.18.191.107',
+  user: process.env.DATABASE_USER || 'Dexter',
+  password: process.env.DATABASE_PASSWORD || 'F00dshare123',
+  database: process.env.DATABASE_NAME || 'foodshare_db',
+  port: Number(process.env.DATABASE_PORT) || 3306,
+  ssl: sslOptions,
   waitForConnections: true,
   connectionLimit: 10,
   queueLimit: 0
