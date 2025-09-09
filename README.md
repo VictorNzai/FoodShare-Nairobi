@@ -38,8 +38,8 @@ FoodShare-Nairobi/
    - Update the connection details in `backend/server.js` and `backend/Routes/auth.js` if your MySQL credentials differ.
 3. **Environment variables**
    - `BASE_URL` – public URL for your server, used in password reset emails (defaults to `http://localhost:3000`).
-   - MySQL credentials – edit `backend/server.js` if necessary (host, user, password, database, port).
-   - Gmail credentials – `backend/Routes/auth.js` uses Gmail via `nodemailer` for password reset emails; update the `user` and `pass` fields with your account.
+   - Database (MySQL): `DATABASE_HOST`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`, `DATABASE_PORT`.
+   - Email (Gmail): `EMAIL_USER`, `EMAIL_PASSWORD`.
 4. **Run the backend**
    ```bash
    node backend/server.js
@@ -64,3 +64,30 @@ FoodShare-Nairobi/
 
 After configuring the database and environment variables, run `node backend/server.js`. You can then register as a donor or charity on the signup page and log in to see the respective dashboard pages. Screenshots or additional walkthroughs can be added here if desired.
 
+## Deploying to Render
+
+1. Push this repository to GitHub/GitLab.
+2. In Render, create a new Web Service and connect the repo.
+3. Environment: Node. Build command: (leave empty; Render runs `npm install`). Start command: `npm start`.
+4. Add Environment Variables:
+   - `BASE_URL` = your Render URL (e.g., https://foodshare.onrender.com)
+   - `DATABASE_HOST`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`, `DATABASE_PORT`
+   - `EMAIL_USER`, `EMAIL_PASSWORD` (Gmail app password)
+5. Database: use a managed MySQL provider (PlanetScale, Aiven, RDS) and fill the env vars accordingly. Render’s PostgreSQL is not compatible without code changes.
+6. File uploads: `backend/uploads/charity-verifications` is stored on the instance disk which resets on deploys. For persistence, attach a Render Persistent Disk to store `backend/uploads`.
+7. Health check: optional endpoint `GET /api/health` returns a JSON ok. Configure Render health checks to this path if desired.
+
+### Local development with dotenv
+
+Create a `.env` file in the project root:
+
+```
+DATABASE_HOST=127.0.0.1
+DATABASE_USER=your_user
+DATABASE_PASSWORD=your_password
+DATABASE_NAME=foodshare_db
+DATABASE_PORT=3306
+BASE_URL=http://localhost:3000
+EMAIL_USER=your_gmail@gmail.com
+EMAIL_PASSWORD=your_gmail_app_password
+```
