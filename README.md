@@ -9,7 +9,6 @@ FoodShare-Nairobi/
 ├── backend/           # Express server, routes and database schema
 │   ├── Database/      # SQL scripts and (optional) connection helpers
 │   ├── Routes/        # API route handlers
-│   ├── app.js         # (empty placeholder)
 │   └── server.js      # main Express server
 ├── frontend/          # HTML pages served by the backend
 ├── node_modules/      # packages installed from package.json
