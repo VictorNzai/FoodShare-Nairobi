@@ -17,8 +17,8 @@ FoodShare-Nairobi/
 └── ...
 ```
 
-- **backend** contains the Express server (`server.js`) and authentication routes (`Routes/auth.js`). A sample database schema is provided in `backend/Database/Database Schema/Users.sql`.
-- **frontend** holds all the HTML pages (login, signup, dashboards, etc.). When the backend server runs, these pages are served as static files.
+- **backend** contains the Express server (`server.js`) and authentication routes (`Routes/auth.js`). A sample database schema is provided in `backend/Database/Database Schema/Users.sql`. Hosted separately on Render via https://foodshare-nairobi-1.onrender.com/
+- **frontend** holds all the HTML pages (login, signup, dashboards, etc.). When the backend server runs, these pages are served as static files. Now Hosted on Netlify via https://foodsharenairobi.netlify.app/
 - **node_modules** is created when you run `npm install` and stores all packages defined in `package.json`.
 
 ## Prerequisites
