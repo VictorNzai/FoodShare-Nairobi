@@ -42,9 +42,9 @@ FoodShare-Nairobi/
    - Email (Gmail): `EMAIL_USER`, `EMAIL_PASSWORD`.
 4. **Run the backend**
    ```bash
-   node backend/server.js
+   npm start
    ```
-   The server starts on `http://localhost:3000` and serves the files in the `frontend` folder.
+   This runs `node backend/server.js` and starts the server on `http://localhost:3000`, serving the `frontend` folder. For automatic restarts during development, use `npm run dev`.
 5. **Access the frontend**
    Open your browser and navigate to `http://localhost:3000/` or directly to pages such as `http://localhost:3000/Login.html` or `Signup.html`.
 
@@ -62,7 +62,7 @@ FoodShare-Nairobi/
 
 ## Example usage
 
-After configuring the database and environment variables, run `node backend/server.js`. You can then register as a donor or charity on the signup page and log in to see the respective dashboard pages. Screenshots or additional walkthroughs can be added here if desired.
+After configuring the database and environment variables, run `npm start` (which executes `node backend/server.js`). You can then register as a donor or charity on the signup page and log in to see the respective dashboard pages. Screenshots or additional walkthroughs can be added here if desired.
 
 ## Deploying to Render
 
