@@ -100,7 +100,7 @@
           return;
         }
         try {
-          const res = await fetch("/api/feedback", {
+          const res = await fetch("https://foodshare-nairobi-1.onrender.com/api/feedback", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({

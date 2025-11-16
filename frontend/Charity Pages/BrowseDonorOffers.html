@@ -238,7 +238,7 @@
         tbody.innerHTML = "";
         try {
           // Fetch all donor offers
-          const res = await fetch(`/api/donor-offers/all`);
+          const res = await fetch(`https://foodshare-nairobi-1.onrender.com/api/donor-offers/all`);
           const data = await res.json();
           const offers = data.offers || [];
           if (!offers.length) {

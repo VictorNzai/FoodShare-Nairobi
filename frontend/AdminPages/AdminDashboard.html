@@ -1435,7 +1435,7 @@
 
           try {
             // Fetch feedback, then user/charity names, then render
-            const feedbackRes = await fetch("/api/feedback");
+            const feedbackRes = await fetch("https://foodshare-nairobi-1.onrender.com/api/feedback");
             const feedbackData = await feedbackRes.json();
             allFeedback = feedbackData.feedback || [];
             await fetchUserAndCharityNames();
@@ -1508,7 +1508,7 @@
         if (!window.Chart) return;
         try {
           // Use the new admin endpoint for all donations
-          const res = await fetch("/api/admin/donations/category-count");
+          const res = await fetch("https://foodshare-nairobi-1.onrender.com/api/admin/donations/category-count");
           const result = await res.json();
           console.log("Pie chart data:", result.data);
           const data = result.data;

@@ -171,8 +171,8 @@
       try {
         // Fetch both donor_offers and food_donations
         const [offersRes, donationsRes] = await Promise.all([
-          fetch(`/api/donor-offers?donor_id=${donor.id}`),
-          fetch(`/api/donations?donor_id=${donor.id}`)
+          fetch(`https://foodshare-nairobi-1.onrender.com/api/donor-offers?donor_id=${donor.id}`),
+          fetch(`https://foodshare-nairobi-1.onrender.com/api/donations?donor_id=${donor.id}`)
         ]);
         const offersData = await offersRes.json();
         const donationsData = await donationsRes.json();

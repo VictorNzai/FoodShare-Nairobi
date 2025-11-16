@@ -356,7 +356,7 @@
           let donorOffers = [];
           try {
             const offersRes = await fetch(
-              `/api/donor-offers?charity=${encodeURIComponent(
+              `https://foodshare-nairobi-1.onrender.com/api/donor-offers?charity=${encodeURIComponent(
                 orgName
               )}&status=Completed`,
               { headers: jwt ? { Authorization: "Bearer " + jwt } : {} }

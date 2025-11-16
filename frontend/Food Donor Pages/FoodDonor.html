@@ -286,21 +286,21 @@
         if (!donor.id) return;
         // Total Donations (used for Active Donations card)
         try {
-          const res = await fetch(`/api/donor/stats/total-donations?donor_id=${donor.id}`);
+          const res = await fetch(`https://foodshare-nairobi-1.onrender.com/api/donor/stats/total-donations?donor_id=${donor.id}`);
           const data = await res.json();
           document.getElementById("stat-active-donations").textContent = data.count ?? '--';
         } catch {}
         // Food Donated (simple sum)
         try {
-          const res = await fetch(`/api/donor/stats/food-sum?donor_id=${donor.id}`);
+          const res = await fetch(`https://foodshare-nairobi-1.onrender.com/api/donor/stats/food-sum?donor_id=${donor.id}`);
           const data = await res.json();
           document.getElementById("stat-food-donated").textContent = data.total_quantity ?? 0;
         } catch {}
         // Charities Helped (count unique charities with completed donations/offers)
         try {
           const [offersRes, donationsRes] = await Promise.all([
-            fetch(`/api/donor-offers?donor_id=${donor.id}`),
-            fetch(`/api/donations?donor_id=${donor.id}`)
+            fetch(`https://foodshare-nairobi-1.onrender.com/api/donor-offers?donor_id=${donor.id}`),
+            fetch(`https://foodshare-nairobi-1.onrender.com/api/donations?donor_id=${donor.id}`)
           ]);
           const offersData = await offersRes.json();
           const donationsData = await donationsRes.json();
@@ -339,8 +339,8 @@
         try {
           // Fetch both donor_offers and food_donations
           const [offersRes, donationsRes] = await Promise.all([
-            fetch(`/api/donor-offers?donor_id=${donor.id}`),
-            fetch(`/api/donations?donor_id=${donor.id}`)
+            fetch(`https://foodshare-nairobi-1.onrender.com/api/donor-offers?donor_id=${donor.id}`),
+            fetch(`https://foodshare-nairobi-1.onrender.com/api/donations?donor_id=${donor.id}`)
           ]);
           const offersData = await offersRes.json();
           const donationsData = await donationsRes.json();
