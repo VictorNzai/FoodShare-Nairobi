@@ -211,6 +211,42 @@
         font-weight: 700;
         font-size: 13px;
       }
+      /* Hamburger Menu Button */
+      .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        z-index: 1001;
+      }
+
+      .hamburger-btn span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background: #54d12b;
+        margin: 5px 0;
+        transition: 0.3s;
+        border-radius: 3px;
+      }
+
+      /* Mobile Sidebar Overlay */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
       /* Responsive */
       @media (max-width: 900px) {
         .main-content {
@@ -218,24 +254,239 @@
           margin-left: 0;
           margin-top: 70px;
         }
-        .sidebar {
-          display: none;
+
+        .hamburger-btn {
+          display: block;
         }
+
+        .sidebar {
+          display: block;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease-in-out;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+
         .stats {
           flex-direction: column;
           gap: 16px;
         }
       }
+
+      /* Enhanced responsive styles for tablets and mobile */
+      @media (max-width: 768px) {
+        header {
+          padding: 15px 20px;
+          flex-wrap: wrap;
+        }
+
+        .logo {
+          font-size: 16px;
+        }
+
+        nav {
+          display: flex;
+          gap: 15px;
+        }
+
+        nav a {
+          margin-left: 0;
+          font-size: 13px;
+        }
+
+        .sign-up-btn {
+          padding: 6px 14px;
+          font-size: 13px;
+          margin-left: 0;
+        }
+
+        .main-content {
+          padding: 16px;
+          margin-left: 0;
+        }
+
+        .main-content h2 {
+          font-size: 26px;
+          margin-bottom: 20px;
+        }
+
+        .stat-card {
+          padding: 24px 20px;
+          min-width: 180px;
+        }
+
+        .stat-card p {
+          font-size: 14px;
+        }
+
+        .stat-card .stat-value {
+          font-size: 24px;
+        }
+
+        .actions {
+          gap: 12px;
+        }
+
+        .action-btn {
+          padding: 10px 24px;
+          font-size: 14px;
+          flex: 1 1 auto;
+          min-width: 150px;
+        }
+
+        .table-section h3 {
+          font-size: 20px;
+        }
+
+        table {
+          font-size: 13px;
+          min-width: 500px;
+        }
+
+        th,
+        td {
+          padding: 12px 10px;
+        }
+
+        th {
+          font-size: 13px;
+        }
+
+        td {
+          font-size: 12px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          padding: 10px 15px;
+        }
+
+        .logo {
+          font-size: 14px;
+        }
+
+        nav {
+          flex-wrap: wrap;
+          gap: 10px;
+          width: 100%;
+          margin-top: 8px;
+        }
+
+        nav a {
+          font-size: 12px;
+        }
+
+        .sign-up-btn {
+          padding: 5px 12px;
+          font-size: 12px;
+        }
+
+        .main-content {
+          padding: 12px;
+          margin-top: 80px;
+        }
+
+        .main-content h2 {
+          font-size: 22px;
+          margin-bottom: 16px;
+          letter-spacing: -0.5px;
+        }
+
+        .stats {
+          gap: 12px;
+        }
+
+        .stat-card {
+          padding: 20px 16px;
+          min-width: 100%;
+          border-radius: 12px;
+        }
+
+        .stat-card p {
+          font-size: 13px;
+        }
+
+        .stat-card .stat-value {
+          font-size: 22px;
+          margin-top: 6px;
+        }
+
+        .actions {
+          gap: 10px;
+          flex-direction: column;
+        }
+
+        .action-btn {
+          padding: 10px 20px;
+          font-size: 13px;
+          width: 100%;
+          min-width: 100%;
+        }
+
+        .table-section {
+          margin-bottom: 24px;
+        }
+
+        .table-section h3 {
+          font-size: 18px;
+          margin-bottom: 10px;
+        }
+
+        .table-wrap {
+          border-radius: 12px;
+        }
+
+        table {
+          font-size: 11px;
+          min-width: 450px;
+        }
+
+        th,
+        td {
+          padding: 10px 8px;
+        }
+
+        th {
+          font-size: 11px;
+        }
+
+        td {
+          font-size: 10px;
+        }
+
+        .status {
+          padding: 3px 12px;
+          font-size: 10px;
+        }
+      }
     </style>
   </head>
   <body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <header>
-      <div
-        class="logo"
-        style="cursor: pointer"
-        onclick="window.location.href='../../Index.html'"
-      >
-        🍴 FoodShare
+      <div style="display: flex; align-items: center; gap: 15px">
+        <button
+          class="hamburger-btn"
+          id="hamburgerBtn"
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div
+          class="logo"
+          style="cursor: pointer"
+          onclick="window.location.href='../../Index.html'"
+        >
+          🍴 FoodShare
+        </div>
       </div>
       <nav>
         <a href="Profile.html">Profile</a>
@@ -312,9 +563,55 @@
       </div>
     </div>
     <script>
+      // ============================================
+      // BASE URL CONFIGURATION (Auto-detect local vs production)
+      // ============================================
+      const API_BASE_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:3000" // Local development
+          : "${API_BASE_URL}"; // Production
+
+      console.log("🌐 Using API Base URL:", API_BASE_URL);
+      // ============================================
+
       function signOut() {
         window.location.href = "../Login.html";
       }
+
+      // --- Mobile Menu Toggle ---
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        function toggleMenu() {
+          sidebar.classList.toggle("active");
+          overlay.classList.toggle("active");
+          document.body.style.overflow = sidebar.classList.contains("active")
+            ? "hidden"
+            : "";
+        }
+
+        if (hamburgerBtn) {
+          hamburgerBtn.addEventListener("click", toggleMenu);
+        }
+
+        if (overlay) {
+          overlay.addEventListener("click", toggleMenu);
+        }
+
+        // Close menu when clicking a sidebar link
+        const sidebarLinks = sidebar.querySelectorAll("nav a");
+        sidebarLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            if (window.innerWidth <= 900) {
+              toggleMenu();
+            }
+          });
+        });
+      });
+
       // Set greeting from localStorage if available
       let charityName = "Charity Org";
       try {
@@ -341,10 +638,19 @@
         }
 
         try {
+          // Get charity data from localStorage
+          let charityId = null;
+          try {
+            const charity = JSON.parse(localStorage.getItem("charity"));
+            if (charity && charity.id) {
+              charityId = charity.id;
+              orgName = charity.orgname;
+            }
+          } catch {}
+
           // Fetch food needs
           const res = await fetch(
-            "https://foodshare-nairobi-1.onrender.com/api/foodneeds?org=" +
-              encodeURIComponent(orgName),
+            `${API_BASE_URL}/api/foodneeds?org=${encodeURIComponent(orgName)}`,
             {
               headers: jwt ? { Authorization: "Bearer " + jwt } : {},
             }
@@ -352,22 +658,27 @@
           if (!res.ok) throw new Error("Failed to fetch food needs");
           const foodNeeds = await res.json();
 
-          // Fetch completed donor offers for this org
+          // Fetch completed donor offers for this charity
           let donorOffers = [];
-          try {
-            const offersRes = await fetch(
-              `https://foodshare-nairobi-1.onrender.com/api/donor-offers?charity=${encodeURIComponent(
-                orgName
-              )}&status=Completed`,
-              { headers: jwt ? { Authorization: "Bearer " + jwt } : {} }
-            );
-            if (offersRes.ok) {
-              const offersData = await offersRes.json();
-              donorOffers = Array.isArray(offersData.offers)
-                ? offersData.offers
-                : [];
+          if (charityId) {
+            try {
+              const offersRes = await fetch(
+                `${API_BASE_URL}/api/donor-offers/${charityId}`,
+                { headers: jwt ? { Authorization: "Bearer " + jwt } : {} }
+              );
+              if (offersRes.ok) {
+                const offersData = await offersRes.json();
+                // Filter only completed offers
+                donorOffers = Array.isArray(offersData.offers)
+                  ? offersData.offers.filter(
+                      (offer) => offer.status === "Completed"
+                    )
+                  : [];
+              }
+            } catch (err) {
+              console.error("Error fetching donor offers:", err);
             }
-          } catch {}
+          }
 
           // Update Active Requests stat
           const activeCount = foodNeeds.filter(
@@ -492,16 +803,26 @@
         e.preventDefault();
         window.location.href = "BrowseDonorOffers.html";
       };
-      document.getElementById("sidebar-requests").onclick = function () {
-        // Scroll to or focus on recent activity table
-        document
-          .querySelector(".table-section")
-          .scrollIntoView({ behavior: "smooth" });
-      };
-      document.getElementById("sidebar-reports").onclick = function () {
-        // Implement reports view (Amt to Donation received)
-        alert("Reports feature coming soon!");
-      };
+
+      // Only add onclick if elements exist
+      const sidebarRequests = document.getElementById("sidebar-requests");
+      if (sidebarRequests) {
+        sidebarRequests.onclick = function () {
+          // Scroll to or focus on recent activity table
+          const tableSection = document.querySelector(".table-section");
+          if (tableSection) {
+            tableSection.scrollIntoView({ behavior: "smooth" });
+          }
+        };
+      }
+
+      const sidebarReports = document.getElementById("sidebar-reports");
+      if (sidebarReports) {
+        sidebarReports.onclick = function () {
+          // Implement reports view (Amt to Donation received)
+          alert("Reports feature coming soon!");
+        };
+      }
     </script>
   </body>
 </html>

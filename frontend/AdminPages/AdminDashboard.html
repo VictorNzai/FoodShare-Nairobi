@@ -199,19 +199,231 @@
         color: #888;
         font-size: 13px;
       }
+      /* Hamburger Menu Button */
+      .hamburger-btn {
+        display: none;
+        background: none;
+        border: none;
+        cursor: pointer;
+        padding: 8px;
+        z-index: 1001;
+      }
+
+      .hamburger-btn span {
+        display: block;
+        width: 25px;
+        height: 3px;
+        background: #54d12b;
+        margin: 5px 0;
+        transition: 0.3s;
+        border-radius: 3px;
+      }
+
+      /* Mobile Sidebar Overlay */
+      .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        z-index: 999;
+      }
+
+      .sidebar-overlay.active {
+        display: block;
+      }
+
       @media (max-width: 900px) {
         .main-content {
           padding: 16px 4vw;
           margin-left: 0;
           margin-top: 70px;
         }
+
+        .hamburger-btn {
+          display: block;
+        }
+
         .sidebar {
-          display: none;
+          display: block;
+          transform: translateX(-100%);
+          transition: transform 0.3s ease-in-out;
+          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar.active {
+          transform: translateX(0);
+        }
+      }
+
+      /* Enhanced responsive styles for tablets and mobile */
+      @media (max-width: 768px) {
+        header {
+          padding: 15px 20px;
+          flex-wrap: wrap;
+        }
+
+        .logo {
+          font-size: 18px;
+        }
+
+        #admin-sticky-navbar {
+          flex-wrap: wrap;
+          gap: 10px !important;
+          justify-content: flex-end;
+          width: 100%;
+          margin-top: 10px;
+        }
+
+        .action-btn {
+          padding: 6px 16px;
+          font-size: 13px;
+          margin-right: 4px;
+        }
+
+        .main-content {
+          padding: 16px;
+          margin-left: 0;
+        }
+
+        .main-content h2 {
+          font-size: 24px;
+          margin-bottom: 16px;
+        }
+
+        .table-wrap {
+          margin-bottom: 16px;
+        }
+
+        table {
+          font-size: 13px;
+          min-width: 600px;
+        }
+
+        th,
+        td {
+          padding: 12px 8px;
+        }
+
+        th {
+          font-size: 13px;
+        }
+
+        td {
+          font-size: 12px;
+        }
+
+        .action-btn {
+          padding: 6px 14px;
+          font-size: 12px;
+        }
+
+        .filter-bar {
+          text-align: left;
+          margin-bottom: 16px;
+        }
+
+        .filter-bar select {
+          display: block;
+          margin-left: 0;
+          margin-top: 8px;
+          width: 100%;
+          max-width: 250px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        header {
+          padding: 10px 15px;
+        }
+
+        .logo {
+          font-size: 16px;
+          width: 100%;
+          text-align: center;
+          margin-bottom: 10px;
+        }
+
+        #admin-sticky-navbar {
+          width: 100%;
+          justify-content: center;
+          gap: 8px !important;
+        }
+
+        .action-btn {
+          padding: 6px 12px;
+          font-size: 11px;
+          margin-right: 0;
+        }
+
+        .main-content {
+          padding: 12px;
+          margin-top: 80px;
+        }
+
+        .main-content h2 {
+          font-size: 20px;
+          margin-bottom: 12px;
+          letter-spacing: -0.5px;
+        }
+
+        table {
+          font-size: 11px;
+          min-width: 500px;
+        }
+
+        th,
+        td {
+          padding: 8px 6px;
+        }
+
+        th {
+          font-size: 11px;
+        }
+
+        td {
+          font-size: 10px;
+        }
+
+        .action-btn {
+          padding: 4px 10px;
+          font-size: 10px;
+        }
+
+        .status {
+          padding: 2px 10px;
+          font-size: 10px;
+        }
+
+        .filter-bar {
+          margin-bottom: 12px;
+        }
+
+        .filter-bar label {
+          display: block;
+          margin-bottom: 6px;
+          font-size: 13px;
+        }
+
+        .filter-bar select {
+          width: 100%;
+          max-width: 100%;
+          font-size: 13px;
+        }
+
+        footer {
+          margin-top: 20px;
+          font-size: 11px;
         }
       }
     </style>
   </head>
   <body>
+    <!-- Mobile Sidebar Overlay -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
     <header
       style="
         position: sticky;
@@ -221,7 +433,18 @@
         box-shadow: 0 2px 8px 0 rgba(84, 209, 43, 0.04);
       "
     >
-      <div class="logo">🍴 FoodShare</div>
+      <div style="display: flex; align-items: center; gap: 15px">
+        <button
+          class="hamburger-btn"
+          id="hamburgerBtn"
+          aria-label="Toggle menu"
+        >
+          <span></span>
+          <span></span>
+          <span></span>
+        </button>
+        <div class="logo">🍴 FoodShare</div>
+      </div>
       <nav
         id="admin-sticky-navbar"
         style="display: flex; gap: 18px; align-items: center"
@@ -280,6 +503,39 @@
         localStorage.removeItem("adminName");
         window.location.href = "../Login.html";
       }
+
+      // --- Mobile Menu Toggle ---
+      document.addEventListener("DOMContentLoaded", function () {
+        const hamburgerBtn = document.getElementById("hamburgerBtn");
+        const sidebar = document.querySelector(".sidebar");
+        const overlay = document.getElementById("sidebarOverlay");
+
+        function toggleMenu() {
+          sidebar.classList.toggle("active");
+          overlay.classList.toggle("active");
+          document.body.style.overflow = sidebar.classList.contains("active")
+            ? "hidden"
+            : "";
+        }
+
+        if (hamburgerBtn) {
+          hamburgerBtn.addEventListener("click", toggleMenu);
+        }
+
+        if (overlay) {
+          overlay.addEventListener("click", toggleMenu);
+        }
+
+        // Close menu when clicking a sidebar link
+        const sidebarLinks = sidebar.querySelectorAll("nav a");
+        sidebarLinks.forEach((link) => {
+          link.addEventListener("click", function () {
+            if (window.innerWidth <= 900) {
+              toggleMenu();
+            }
+          });
+        });
+      });
     </script>
     <div class="admin-flex">
       <!-- Sidebar -->
@@ -874,6 +1130,18 @@
       <p>&copy; 2025 FoodShare. All rights reserved.</p>
     </footer>
     <script>
+      // ============================================
+      // BASE URL CONFIGURATION (Auto-detect local vs production)
+      // ============================================
+      const API_BASE_URL =
+        window.location.hostname === "localhost" ||
+        window.location.hostname === "127.0.0.1"
+          ? "http://localhost:3000" // Local development
+          : "https://foodshare-nairobi-1.onrender.com"; // Production
+
+      console.log("🌐 Using API Base URL:", API_BASE_URL);
+      // ============================================
+
       // --- Admin Welcome Name ---
       (function setAdminWelcome() {
         let adminName = localStorage.getItem("adminName");
@@ -885,9 +1153,7 @@
       // Show total donors in system
       async function showDonorCount() {
         try {
-          const res = await fetch(
-            "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=donor"
-          );
+          const res = await fetch(`${API_BASE_URL}/api/admin/users?type=donor`);
           const data = await res.json();
           if (data.success) {
             alert(`Total Donors: ${data.users.length}`);
@@ -903,7 +1169,7 @@
       async function showCharityCount() {
         try {
           const res = await fetch(
-            "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=charity"
+            `${API_BASE_URL}/api/admin/users?type=charity`
           );
           const data = await res.json();
           if (data.success) {
@@ -1013,7 +1279,7 @@
       async function fetchUsers() {
         const search = document.getElementById("userSearch").value;
         const status = document.getElementById("userStatusFilter").value;
-        let url = `https://foodshare-nairobi-1.onrender.com/api/admin/users?type=${currentUserType}`;
+        let url = `${API_BASE_URL}/api/admin/users?type=${currentUserType}`;
         if (search) url += `&search=${encodeURIComponent(search)}`;
         if (status && status !== "all") url += `&status=${status}`;
         try {
@@ -1062,7 +1328,7 @@
           // Promote user to admin
           async function promoteUser(type, id) {
             if (!confirm("Promote this user to admin?")) return;
-            const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}/promote`;
+            const url = `${API_BASE_URL}/api/admin/users/${type}/${id}/promote`;
             const res = await fetch(url, { method: "POST" });
             const data = await res.json();
             if (data.success) fetchUsers();
@@ -1072,7 +1338,7 @@
           // Demote admin
           async function demoteUser(id) {
             if (!confirm("Demote/remove this admin?")) return;
-            const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/admin/${id}/demote`;
+            const url = `${API_BASE_URL}/api/admin/users/admin/${id}/demote`;
             const res = await fetch(url, { method: "POST" });
             const data = await res.json();
             if (data.success) fetchUsers();
@@ -1087,7 +1353,7 @@
       // Ban user
       async function banUser(type, id) {
         if (!confirm("Ban this user?")) return;
-        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}/ban`;
+        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}/ban`;
         const res = await fetch(url, { method: "POST" });
         const data = await res.json();
         if (data.success) fetchUsers();
@@ -1096,7 +1362,7 @@
       // Unban user
       async function unbanUser(type, id) {
         if (!confirm("Unban this user?")) return;
-        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}/unban`;
+        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}/unban`;
         const res = await fetch(url, { method: "POST" });
         const data = await res.json();
         if (data.success) fetchUsers();
@@ -1106,7 +1372,7 @@
       async function deleteUser(type, id) {
         if (!confirm("Permanently delete this user? This cannot be undone."))
           return;
-        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}`;
+        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}`;
         const res = await fetch(url, { method: "DELETE" });
         const data = await res.json();
         if (data.success) fetchUsers();
@@ -1114,7 +1380,7 @@
       }
       // View user details
       async function viewUserDetails(type, id) {
-        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}`;
+        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}`;
         const res = await fetch(url);
         const data = await res.json();
         if (data.success) {
@@ -1132,13 +1398,12 @@
       // Charity Verification logic
       async function fetchVerifications() {
         const status = document.getElementById("statusFilter").value;
-        let url =
-          "https://foodshare-nairobi-1.onrender.com/api/admin/charity-verifications";
+        let url = `${API_BASE_URL}/api/admin/charity-verifications`;
         if (status && status !== "all") {
           url += `?status=${status}`;
         }
         try {
-          const res = await fetch(url, { credentials: "include" });
+          const res = await fetch(url); // credentials removed until backend deployed
           const data = await res.json();
           const table = document
             .getElementById("verificationsTable")
@@ -1193,10 +1458,10 @@
             ? "Approve this verification?"
             : "Reject this verification?";
         if (!confirm(confirmMsg)) return;
-        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/charity-verifications/${id}/${action}`;
+        const url = `${API_BASE_URL}/api/admin/charity-verifications/${id}/${action}`;
         const res = await fetch(url, {
           method: "POST",
-          credentials: "include",
+          // credentials removed until backend deployed
         });
         const data = await res.json();
         if (data.success) {
@@ -1213,7 +1478,7 @@
         try {
           // Example endpoints
           const statsRes = await fetch(
-            "https://foodshare-nairobi-1.onrender.com/api/admin/dashboard-stats"
+            `${API_BASE_URL}/api/admin/dashboard-stats`
           );
           const stats = await statsRes.json();
           document.getElementById("stat-food").textContent =
@@ -1221,7 +1486,7 @@
           // Fetch and set live donor and charity counts
           try {
             const donorRes = await fetch(
-              "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=donor"
+              `${API_BASE_URL}/api/admin/users?type=donor`
             );
             const donorData = await donorRes.json();
             document.getElementById("stat-donors").textContent =
@@ -1231,7 +1496,7 @@
           }
           try {
             const charityRes = await fetch(
-              "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=charity"
+              `${API_BASE_URL}/api/admin/users?type=charity`
             );
             const charityData = await charityRes.json();
             document.getElementById("stat-charities").textContent =
@@ -1435,7 +1700,7 @@
 
           try {
             // Fetch feedback, then user/charity names, then render
-            const feedbackRes = await fetch("https://foodshare-nairobi-1.onrender.com/api/feedback");
+            const feedbackRes = await fetch(`${API_BASE_URL}/api/feedback`);
             const feedbackData = await feedbackRes.json();
             allFeedback = feedbackData.feedback || [];
             await fetchUserAndCharityNames();
@@ -1508,7 +1773,9 @@
         if (!window.Chart) return;
         try {
           // Use the new admin endpoint for all donations
-          const res = await fetch("https://foodshare-nairobi-1.onrender.com/api/admin/donations/category-count");
+          const res = await fetch(
+            `${API_BASE_URL}/api/admin/donations/category-count`
+          );
           const result = await res.json();
           console.log("Pie chart data:", result.data);
           const data = result.data;

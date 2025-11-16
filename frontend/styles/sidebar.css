@@ -37,26 +37,60 @@
     background: #4a5568;
 }
 
+/* Enhanced responsive styles for tablets and mobile */
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+    .sidebar-header {
+        padding: 1.5rem 1rem 1rem 1.2rem;
+        font-size: 1.3rem;
+    }
+    .sidebar-nav a {
+        padding: 0.9rem 1.2rem;
+        font-size: 0.95rem;
+    }
+    .main-content {
+        margin-left: 200px;
+        padding: 1.5rem;
+    }
+}
+
 @media (max-width: 800px) {
     .sidebar {
         width: 60px;
+        overflow-x: hidden;
+    }
+    .sidebar-header {
+        font-size: 0.9rem;
+        padding: 1rem 0.5rem;
+        text-align: center;
     }
     .sidebar-header h2 {
         font-size: 1rem;
     }
     .sidebar-nav a {
         padding: 1rem 0.5rem;
-        font-size: 0.95rem;
+        font-size: 0.85rem;
+        text-align: center;
+    }
+    .main-content {
+        margin-left: 60px;
+        padding: 1rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .sidebar {
+        display: none;
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 0.75rem;
     }
 }
 
 .main-content {
     margin-left: 220px;
     padding: 2rem 2rem 2rem 2rem;
-}
-@media (max-width: 800px) {
-    .main-content {
-        margin-left: 60px;
-        padding: 1rem;
-    }
 }
