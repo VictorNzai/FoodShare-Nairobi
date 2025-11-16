@@ -886,7 +886,7 @@
       async function showDonorCount() {
         try {
           const res = await fetch(
-            "http://localhost:3000/api/admin/users?type=donor"
+            "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=donor"
           );
           const data = await res.json();
           if (data.success) {
@@ -903,7 +903,7 @@
       async function showCharityCount() {
         try {
           const res = await fetch(
-            "http://localhost:3000/api/admin/users?type=charity"
+            "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=charity"
           );
           const data = await res.json();
           if (data.success) {
@@ -1013,7 +1013,7 @@
       async function fetchUsers() {
         const search = document.getElementById("userSearch").value;
         const status = document.getElementById("userStatusFilter").value;
-        let url = `http://localhost:3000/api/admin/users?type=${currentUserType}`;
+        let url = `https://foodshare-nairobi-1.onrender.com/api/admin/users?type=${currentUserType}`;
         if (search) url += `&search=${encodeURIComponent(search)}`;
         if (status && status !== "all") url += `&status=${status}`;
         try {
@@ -1062,7 +1062,7 @@
           // Promote user to admin
           async function promoteUser(type, id) {
             if (!confirm("Promote this user to admin?")) return;
-            const url = `http://localhost:3000/api/admin/users/${type}/${id}/promote`;
+            const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}/promote`;
             const res = await fetch(url, { method: "POST" });
             const data = await res.json();
             if (data.success) fetchUsers();
@@ -1072,7 +1072,7 @@
           // Demote admin
           async function demoteUser(id) {
             if (!confirm("Demote/remove this admin?")) return;
-            const url = `http://localhost:3000/api/admin/users/admin/${id}/demote`;
+            const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/admin/${id}/demote`;
             const res = await fetch(url, { method: "POST" });
             const data = await res.json();
             if (data.success) fetchUsers();
@@ -1087,7 +1087,7 @@
       // Ban user
       async function banUser(type, id) {
         if (!confirm("Ban this user?")) return;
-        const url = `http://localhost:3000/api/admin/users/${type}/${id}/ban`;
+        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}/ban`;
         const res = await fetch(url, { method: "POST" });
         const data = await res.json();
         if (data.success) fetchUsers();
@@ -1096,7 +1096,7 @@
       // Unban user
       async function unbanUser(type, id) {
         if (!confirm("Unban this user?")) return;
-        const url = `http://localhost:3000/api/admin/users/${type}/${id}/unban`;
+        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}/unban`;
         const res = await fetch(url, { method: "POST" });
         const data = await res.json();
         if (data.success) fetchUsers();
@@ -1106,7 +1106,7 @@
       async function deleteUser(type, id) {
         if (!confirm("Permanently delete this user? This cannot be undone."))
           return;
-        const url = `http://localhost:3000/api/admin/users/${type}/${id}`;
+        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}`;
         const res = await fetch(url, { method: "DELETE" });
         const data = await res.json();
         if (data.success) fetchUsers();
@@ -1114,7 +1114,7 @@
       }
       // View user details
       async function viewUserDetails(type, id) {
-        const url = `http://localhost:3000/api/admin/users/${type}/${id}`;
+        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/users/${type}/${id}`;
         const res = await fetch(url);
         const data = await res.json();
         if (data.success) {
@@ -1132,7 +1132,8 @@
       // Charity Verification logic
       async function fetchVerifications() {
         const status = document.getElementById("statusFilter").value;
-        let url = "http://localhost:3000/api/admin/charity-verifications";
+        let url =
+          "https://foodshare-nairobi-1.onrender.com/api/admin/charity-verifications";
         if (status && status !== "all") {
           url += `?status=${status}`;
         }
@@ -1192,7 +1193,7 @@
             ? "Approve this verification?"
             : "Reject this verification?";
         if (!confirm(confirmMsg)) return;
-        const url = `http://localhost:3000/api/admin/charity-verifications/${id}/${action}`;
+        const url = `https://foodshare-nairobi-1.onrender.com/api/admin/charity-verifications/${id}/${action}`;
         const res = await fetch(url, {
           method: "POST",
           credentials: "include",
@@ -1212,7 +1213,7 @@
         try {
           // Example endpoints
           const statsRes = await fetch(
-            "http://localhost:3000/api/admin/dashboard-stats"
+            "https://foodshare-nairobi-1.onrender.com/api/admin/dashboard-stats"
           );
           const stats = await statsRes.json();
           document.getElementById("stat-food").textContent =
@@ -1220,7 +1221,7 @@
           // Fetch and set live donor and charity counts
           try {
             const donorRes = await fetch(
-              "http://localhost:3000/api/admin/users?type=donor"
+              "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=donor"
             );
             const donorData = await donorRes.json();
             document.getElementById("stat-donors").textContent =
@@ -1230,7 +1231,7 @@
           }
           try {
             const charityRes = await fetch(
-              "http://localhost:3000/api/admin/users?type=charity"
+              "https://foodshare-nairobi-1.onrender.com/api/admin/users?type=charity"
             );
             const charityData = await charityRes.json();
             document.getElementById("stat-charities").textContent =

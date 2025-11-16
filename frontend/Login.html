@@ -216,11 +216,13 @@
           let body = { email, password };
 
           if (role === "donor") {
-            endpoint = "http://localhost:3000/auth/login/donor";
+            endpoint =
+              "https://foodshare-nairobi-1.onrender.com/auth/login/donor";
           } else if (role === "charity") {
-            endpoint = "http://localhost:3000/auth/login/charity";
+            endpoint =
+              "https://foodshare-nairobi-1.onrender.com/auth/login/charity";
           } else if (role === "admin") {
-            endpoint = "http://localhost:3000/auth/login";
+            endpoint = "https://foodshare-nairobi-1.onrender.com/auth/login";
             body = { email, password, role, accessKey };
           }
 

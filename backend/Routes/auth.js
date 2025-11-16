@@ -7,7 +7,7 @@ const crypto = require('crypto');
 const nodemailer = require('nodemailer');
 
 // Base URL for password reset links
-const baseUrl = process.env.BASE_URL || 'http://localhost:3000';
+const baseUrl = process.env.BASE_URL || 'https://foodshare-nairobi-1.onrender.com';
 
 //Forgot Password Route
 router.post('/forgot-password', async (req, res) => {

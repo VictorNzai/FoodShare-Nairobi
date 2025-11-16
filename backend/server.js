@@ -37,6 +37,15 @@ const pool = require('./db');
 
 // Enhanced database connection with retry logic
 (async () => {
+  // Check if we're using mock database
+  const useMockDatabase = process.env.USE_MOCK_DB === 'true' && 
+                         process.env.NODE_ENV === 'test';
+  
+  if (useMockDatabase) {
+    console.log('🧪 Using mock database - skipping connection retry logic');
+    return;
+  }
+  
   let retries = 3;
   while (retries > 0) {
     try {

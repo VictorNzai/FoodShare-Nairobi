@@ -14,12 +14,12 @@
         font-family: "Manrope", "Noto Sans", sans-serif;
       }
       /* Use the same sidebar-link style as CharityRequestDetails.html */
-.sidebar-link.active,
-.sidebar-link:hover {
-  background: #eaf3e7;
-  color: #54d12b;
-  font-weight: 700;
-}
+      .sidebar-link.active,
+      .sidebar-link:hover {
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
+      }
     </style>
   </head>
   <body class="bg-[#f9fcf8] text-[#111b0e]">
@@ -73,7 +73,10 @@
               background-image: url('https://ui-avatars.com/api/?name=Donor');
             "
           ></div>
-          <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name"></span>
+          <span
+            class="font-semibold text-[#121a0f]"
+            id="sidebar-donor-name"
+          ></span>
         </div>
       </aside>
       <!-- Main Content -->
@@ -94,10 +97,25 @@
     </div>
     <script>
       // Set donor full name/avatar in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage, then 'Donor')
-      let donorObj = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return {}; } })() || {};
-      const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
+      let donorObj =
+        (function () {
+          try {
+            return JSON.parse(localStorage.getItem("donor"));
+          } catch {
+            return {};
+          }
+        })() || {};
+      const donorFullName =
+        donorObj.fullname ||
+        donorObj.name ||
+        localStorage.getItem("donorName") ||
+        "Donor";
       document.getElementById("sidebar-donor-name").textContent = donorFullName;
-      document.getElementById("donor-avatar").style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
+      document.getElementById(
+        "donor-avatar"
+      ).style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(
+        donorFullName
+      )}')`;
       document.getElementById("logoutBtn").onclick = () => {
         localStorage.clear();
         window.location.href = "../Login.html";
@@ -118,7 +136,9 @@
         }
         detailsDiv.innerHTML =
           '<div class="text-gray-500">Loading details...</div>';
-        fetch(`http://localhost:3000/api/charity-requests/${id}`)
+        fetch(
+          `https://foodshare-nairobi-1.onrender.com/api/charity-requests/${id}`
+        )
           .then((res) => res.json())
           .then((data) => {
             if (!data.success || !data.request) {
@@ -190,65 +210,68 @@
       fetchRequestDetails();
 
       // Pledge to Fulfill modal logic
-      document.addEventListener('click', function(e) {
-        if (e.target && e.target.id === 'pledge-btn') {
-          document.getElementById('pledge-modal').classList.remove('hidden');
+      document.addEventListener("click", function (e) {
+        if (e.target && e.target.id === "pledge-btn") {
+          document.getElementById("pledge-modal").classList.remove("hidden");
         }
-        if (e.target && e.target.id === 'close-pledge-modal') {
-          document.getElementById('pledge-modal').classList.add('hidden');
+        if (e.target && e.target.id === "close-pledge-modal") {
+          document.getElementById("pledge-modal").classList.add("hidden");
         }
-        if (e.target && e.target.id === 'pledge-modal') {
-          document.getElementById('pledge-modal').classList.add('hidden');
+        if (e.target && e.target.id === "pledge-modal") {
+          document.getElementById("pledge-modal").classList.add("hidden");
         }
       });
       // Handle pledge form submit
-      document.addEventListener('submit', async function(e) {
-        if (e.target && e.target.id === 'pledge-form') {
+      document.addEventListener("submit", async function (e) {
+        if (e.target && e.target.id === "pledge-form") {
           e.preventDefault();
           const form = e.target;
           const data = {
             pickup_location: form.pickup_location.value.trim(),
             date: form.pickup_date.value,
             contact_phone: form.contact_phone.value.trim(),
-            notes: form.notes.value.trim()
+            notes: form.notes.value.trim(),
           };
           const id = getRequestId();
-          const msg = document.getElementById('pledge-message');
+          const msg = document.getElementById("pledge-message");
           try {
-            const res = await fetch(`http://localhost:3000/api/food-needs/${id}/schedule-pledge`, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(data)
-            });
+            const res = await fetch(
+              `https://foodshare-nairobi-1.onrender.com/api/food-needs/${id}/schedule-pledge`,
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(data),
+              }
+            );
             if (res.ok) {
-              msg.textContent = 'Pledge submitted! Thank you for helping.';
-              msg.className = 'mt-2 text-center text-green-600';
+              msg.textContent = "Pledge submitted! Thank you for helping.";
+              msg.className = "mt-2 text-center text-green-600";
               setTimeout(() => {
-                document.getElementById('pledge-modal').classList.add('hidden');
+                document.getElementById("pledge-modal").classList.add("hidden");
                 form.reset();
-                msg.textContent = '';
+                msg.textContent = "";
                 fetchRequestDetails();
               }, 1200);
             } else {
               const err = await res.json();
-              msg.textContent = err.message || 'Failed to submit pledge.';
-              msg.className = 'mt-2 text-center text-red-600';
+              msg.textContent = err.message || "Failed to submit pledge.";
+              msg.className = "mt-2 text-center text-red-600";
             }
           } catch (err) {
-            msg.textContent = 'Failed to submit pledge.';
-            msg.className = 'mt-2 text-center text-red-600';
+            msg.textContent = "Failed to submit pledge.";
+            msg.className = "mt-2 text-center text-red-600";
           }
         }
       });
 
       // Example: highlight the Donations link if on Donations.html
-if (window.location.pathname.endsWith('Donations.html')) {
-  document.querySelectorAll('.sidebar-link').forEach(link => {
-    if (link.getAttribute('href') === 'Donations.html') {
-      link.classList.add('active');
-    }
-  });
-}
+      if (window.location.pathname.endsWith("Donations.html")) {
+        document.querySelectorAll(".sidebar-link").forEach((link) => {
+          if (link.getAttribute("href") === "Donations.html") {
+            link.classList.add("active");
+          }
+        });
+      }
     </script>
   </body>
 </html>

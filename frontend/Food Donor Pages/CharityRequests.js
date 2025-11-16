@@ -8,7 +8,7 @@ function fetchCharityRequests() {
   const section = document.getElementById('charity-requests-section');
   if (!section) return;
   section.innerHTML = '<div class="text-gray-500">Loading requests...</div>';
-  fetch('http://localhost:3000/api/charity-requests')
+  fetch('https://foodshare-nairobi-1.onrender.com/api/charity-requests')
     .then(res => res.json())
     .then(data => {
       if (!data.success || !data.requests.length) {

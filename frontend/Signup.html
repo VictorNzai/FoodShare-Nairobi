@@ -307,17 +307,20 @@
             return alert("⚠️ Passwords do not match");
 
           try {
-            const response = await fetch("http://localhost:3000/signup/donor", {
-              method: "POST",
-              headers: { "Content-Type": "application/json" },
-              body: JSON.stringify({
-                fullname,
-                email,
-                phone,
-                password,
-                confirmPassword,
-              }),
-            });
+            const response = await fetch(
+              "https://foodshare-nairobi-1.onrender.com/signup/donor",
+              {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({
+                  fullname,
+                  email,
+                  phone,
+                  password,
+                  confirmPassword,
+                }),
+              }
+            );
 
             const result = await response.json();
 
@@ -358,7 +361,7 @@
 
           try {
             const response = await fetch(
-              "http://localhost:3000/signup/charity",
+              "https://foodshare-nairobi-1.onrender.com/signup/charity",
               {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },

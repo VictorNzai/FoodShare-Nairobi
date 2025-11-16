@@ -343,7 +343,7 @@
         try {
           // Fetch food needs
           const res = await fetch(
-            "http://localhost:3000/api/foodneeds?org=" +
+            "https://foodshare-nairobi-1.onrender.com/api/foodneeds?org=" +
               encodeURIComponent(orgName),
             {
               headers: jwt ? { Authorization: "Bearer " + jwt } : {},

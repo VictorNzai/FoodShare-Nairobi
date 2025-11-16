@@ -37,16 +37,16 @@ FoodShare-Nairobi/
    - Start MySQL and run the SQL script `backend/Database/Database Schema/Users.sql` to create the required tables.
    - Update the connection details in `backend/server.js` and `backend/Routes/auth.js` if your MySQL credentials differ.
 3. **Environment variables**
-   - `BASE_URL` – public URL for your server, used in password reset emails (defaults to `http://localhost:3000`).
+   - `BASE_URL` – public URL for your server, used in password reset emails (defaults to `https://foodshare-nairobi-1.onrender.com`).
    - Database (MySQL): `DATABASE_HOST`, `DATABASE_USER`, `DATABASE_PASSWORD`, `DATABASE_NAME`, `DATABASE_PORT`.
    - Email (Gmail): `EMAIL_USER`, `EMAIL_PASSWORD`.
 4. **Run the backend**
    ```bash
    node backend/server.js
    ```
-   The server starts on `http://localhost:3000` and serves the files in the `frontend` folder.
+   The server starts on `https://foodshare-nairobi-1.onrender.com` and serves the files in the `frontend` folder.
 5. **Access the frontend**
-   Open your browser and navigate to `http://localhost:3000/` or directly to pages such as `http://localhost:3000/Login.html` or `Signup.html`.
+   Open your browser and navigate to `https://foodshare-nairobi-1.onrender.com/` or directly to pages such as `https://foodshare-nairobi-1.onrender.com/Login.html` or `Signup.html`.
 
 ## Dependencies
 
@@ -87,7 +87,7 @@ DATABASE_USER=your_user
 DATABASE_PASSWORD=your_password
 DATABASE_NAME=foodshare_db
 DATABASE_PORT=3306
-BASE_URL=http://localhost:3000
+BASE_URL=https://foodshare-nairobi-1.onrender.com
 EMAIL_USER=your_gmail@gmail.com
 EMAIL_PASSWORD=your_gmail_app_password
 ```

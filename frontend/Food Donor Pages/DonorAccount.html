@@ -1,286 +1,453 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Donor Profile - FoodShare</title>
-  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet"/>
-  <style>
-    body { font-family: 'Manrope', 'Noto Sans', Arial, sans-serif; }
-    .sidebar-link.active,
-    .sidebar-link:hover {
-      background: #eaf3e7;
-      color: #54d12b;
-      font-weight: 700;
-    }
-  </style>
-</head>
-<body>
-  <header class="bg-white shadow-sm border-b border-[#eaf3e7] px-6 py-4 flex items-center justify-between sticky top-0 z-20">
-    <div class="flex items-center gap-2 cursor-pointer select-none" onclick="window.location.href='../../Index.html'">
-      <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
-      <span class="font-extrabold text-xl text-[#54d12b] tracking-tight">FoodShare</span>
-    </div>
-    <nav class="flex items-center gap-2">
-      <a href="DonorAccount.html" class="px-5 py-2 rounded-full font-semibold text-[#121a0f] hover:bg-[#eaf3e7] hover:text-[#54d12b] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#54d12b] focus:ring-offset-2 bg-[#eaf3e7] text-[#54d12b]">Profile</a>
-      <button onclick="signOut()" class="ml-2 px-5 py-2 rounded-full font-semibold bg-[#54d12b] text-white hover:bg-[#43a81a] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#54d12b] focus:ring-offset-2">Sign Out</button>
-    </nav>
-  </header>
-  <div class="flex min-h-screen">
-    <!-- Sidebar -->
-    <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-[#eaf3e7] py-8 px-6 sticky top-0 h-screen z-10">
-      <div class="mb-10 flex items-center gap-2">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Donor Profile - FoodShare</title>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
+      }
+      .sidebar-link.active,
+      .sidebar-link:hover {
+        background: #eaf3e7;
+        color: #54d12b;
+        font-weight: 700;
+      }
+    </style>
+  </head>
+  <body>
+    <header
+      class="bg-white shadow-sm border-b border-[#eaf3e7] px-6 py-4 flex items-center justify-between sticky top-0 z-20"
+    >
+      <div
+        class="flex items-center gap-2 cursor-pointer select-none"
+        onclick="window.location.href='../../Index.html'"
+      >
         <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
-        <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
+        <span class="font-extrabold text-xl text-[#54d12b] tracking-tight"
+          >FoodShare</span
+        >
       </div>
-      <!-- Updated navigation with Feedback link -->
-      <nav class="flex flex-col gap-2 text-base">
-        <a href="FoodDonor.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Dashboard</a>
-        <a href="#" id="sidebar-donations" class="sidebar-link px-4 py-2 rounded-full font-medium">Donations</a>
-        <a href="#" id="sidebar-charities" class="sidebar-link px-4 py-2 rounded-full font-medium">Charities</a>
-        <a href="CharityRequestsPage.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Charity Requests</a>
-        <a href="DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium active flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
-        <a href="Feedback.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-feedback">Feedback</a>
-        <button id="logoutBtn" class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
+      <nav class="flex items-center gap-2">
+        <a
+          href="DonorAccount.html"
+          class="px-5 py-2 rounded-full font-semibold text-[#121a0f] hover:bg-[#eaf3e7] hover:text-[#54d12b] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#54d12b] focus:ring-offset-2 bg-[#eaf3e7] text-[#54d12b]"
+          >Profile</a
+        >
+        <button
+          onclick="signOut()"
+          class="ml-2 px-5 py-2 rounded-full font-semibold bg-[#54d12b] text-white hover:bg-[#43a81a] transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-[#54d12b] focus:ring-offset-2"
+        >
+          Sign Out
+        </button>
       </nav>
-      <div class="mt-auto flex items-center gap-3 pt-10">
-        <div class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]" id="donor-avatar" style="background-image: url('https://ui-avatars.com/api/?name=Donor');"></div>
-        <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name">Donor</span>
-      </div>
-    </aside>
-    <!-- Main Content -->
-    <div style="flex:1;display:flex;flex-direction:column;min-height:100vh;">
-      <main class="main-content">
-        <div class="container max-w-2xl mx-auto px-4 py-8">
-          <div class="profile-header relative flex flex-col items-start bg-white rounded-2xl shadow-lg overflow-hidden mb-8">
-            <div class="profile-banner w-full h-40 bg-gradient-to-r from-[#54d12b] to-[#a8e063] absolute top-0 left-0"></div>
-            <img src="https://ui-avatars.com/api/?name=Donor&background=54d12b&color=fff&size=128" id="profileAvatar" class="profile-avatar w-40 h-40 rounded-full border-4 border-white object-cover shadow-lg mt-24 ml-8 z-10 bg-[#eee]" alt="Avatar" />
-            <div class="profile-info mt-8 ml-8 z-20 relative">
-              <h2 id="donorName" class="text-3xl font-extrabold text-[#222] mb-1"></h2>
-              <span id="verifyStatus" class="text-base"></span>
-            </div>
-          </div>
-          <div class="profile-details bg-white rounded-xl shadow p-6 mb-6 text-lg text-[#444] leading-relaxed" id="profileDetails"></div>
-          <div class="profile-actions flex flex-col gap-4 mb-6" id="profileActions"></div>
-          <div id="verifySection"></div>
+    </header>
+    <div class="flex min-h-screen">
+      <!-- Sidebar -->
+      <aside
+        class="hidden lg:flex flex-col w-64 bg-white border-r border-[#eaf3e7] py-8 px-6 sticky top-0 h-screen z-10"
+      >
+        <div class="mb-10 flex items-center gap-2">
+          <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
+          <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
         </div>
-        <a href="FoodDonor.html" class="back-link block text-center text-[#54d12b] hover:underline text-base font-medium mt-4">← Back to Dashboard</a>
-<script>
-  // Sidebar actions
-  document.addEventListener('DOMContentLoaded', function() {
-    var donations = document.getElementById('sidebar-donations');
-    if (donations) donations.onclick = function(e) {
-      e.preventDefault();
-      window.location.href = 'Donations.html';
-    };
-    var charities = document.getElementById('sidebar-charities');
-    if (charities) charities.onclick = function(e) {
-      e.preventDefault();
-      window.location.href = 'BrowseCharities.html';
-    };
-    var feedback = document.getElementById('sidebar-feedback');
-    if (feedback) feedback.onclick = function(e) {
-      e.preventDefault();
-      window.location.href = 'Feedback.html';
-    };
-  });
-</script>
-      </main>
+        <!-- Updated navigation with Feedback link -->
+        <nav class="flex flex-col gap-2 text-base">
+          <a
+            href="FoodDonor.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            >Dashboard</a
+          >
+          <a
+            href="#"
+            id="sidebar-donations"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            >Donations</a
+          >
+          <a
+            href="#"
+            id="sidebar-charities"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            >Charities</a
+          >
+          <a
+            href="CharityRequestsPage.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            >Charity Requests</a
+          >
+          <a
+            href="DonorAccount.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium active flex items-center gap-2"
+            id="sidebar-account-link"
+            >Account<span
+              id="sidebar-account-alert"
+              style="display: none"
+            ></span
+          ></a>
+          <a
+            href="Feedback.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            id="sidebar-feedback"
+            >Feedback</a
+          >
+          <button
+            id="logoutBtn"
+            class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8"
+          >
+            Logout
+          </button>
+        </nav>
+        <div class="mt-auto flex items-center gap-3 pt-10">
+          <div
+            class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]"
+            id="donor-avatar"
+            style="
+              background-image: url('https://ui-avatars.com/api/?name=Donor');
+            "
+          ></div>
+          <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name"
+            >Donor</span
+          >
+        </div>
+      </aside>
+      <!-- Main Content -->
+      <div
+        style="
+          flex: 1;
+          display: flex;
+          flex-direction: column;
+          min-height: 100vh;
+        "
+      >
+        <main class="main-content">
+          <div class="container max-w-2xl mx-auto px-4 py-8">
+            <div
+              class="profile-header relative flex flex-col items-start bg-white rounded-2xl shadow-lg overflow-hidden mb-8"
+            >
+              <div
+                class="profile-banner w-full h-40 bg-gradient-to-r from-[#54d12b] to-[#a8e063] absolute top-0 left-0"
+              ></div>
+              <img
+                src="https://ui-avatars.com/api/?name=Donor&background=54d12b&color=fff&size=128"
+                id="profileAvatar"
+                class="profile-avatar w-40 h-40 rounded-full border-4 border-white object-cover shadow-lg mt-24 ml-8 z-10 bg-[#eee]"
+                alt="Avatar"
+              />
+              <div class="profile-info mt-8 ml-8 z-20 relative">
+                <h2
+                  id="donorName"
+                  class="text-3xl font-extrabold text-[#222] mb-1"
+                ></h2>
+                <span id="verifyStatus" class="text-base"></span>
+              </div>
+            </div>
+            <div
+              class="profile-details bg-white rounded-xl shadow p-6 mb-6 text-lg text-[#444] leading-relaxed"
+              id="profileDetails"
+            ></div>
+            <div
+              class="profile-actions flex flex-col gap-4 mb-6"
+              id="profileActions"
+            ></div>
+            <div id="verifySection"></div>
+          </div>
+          <a
+            href="FoodDonor.html"
+            class="back-link block text-center text-[#54d12b] hover:underline text-base font-medium mt-4"
+            >← Back to Dashboard</a
+          >
+          <script>
+            // Sidebar actions
+            document.addEventListener("DOMContentLoaded", function () {
+              var donations = document.getElementById("sidebar-donations");
+              if (donations)
+                donations.onclick = function (e) {
+                  e.preventDefault();
+                  window.location.href = "Donations.html";
+                };
+              var charities = document.getElementById("sidebar-charities");
+              if (charities)
+                charities.onclick = function (e) {
+                  e.preventDefault();
+                  window.location.href = "BrowseCharities.html";
+                };
+              var feedback = document.getElementById("sidebar-feedback");
+              if (feedback)
+                feedback.onclick = function (e) {
+                  e.preventDefault();
+                  window.location.href = "Feedback.html";
+                };
+            });
+          </script>
+        </main>
+      </div>
     </div>
-  </div>
-  <script>
-    // Sidebar actions, avatar logic, and account alert
-    document.addEventListener('DOMContentLoaded', function() {
-      // Set donor FULL NAME in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage)
-      let donorObj = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return {}; } })() || {};
-      const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
-      document.getElementById('sidebar-donor-name').textContent = donorFullName;
-      document.getElementById('donor-avatar').style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
-      // Show exclamation if not verified, hide if verified
-      const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
-      const alertSpan = document.getElementById('sidebar-account-alert');
-      if (alertSpan) {
-        if (!donor.verified) {
-          alertSpan.style.display = 'inline-flex';
-          alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
-        } else {
-          alertSpan.style.display = 'none';
+    <script>
+      // Sidebar actions, avatar logic, and account alert
+      document.addEventListener("DOMContentLoaded", function () {
+        // Set donor FULL NAME in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage)
+        let donorObj =
+          (function () {
+            try {
+              return JSON.parse(localStorage.getItem("donor"));
+            } catch {
+              return {};
+            }
+          })() || {};
+        const donorFullName =
+          donorObj.fullname ||
+          donorObj.name ||
+          localStorage.getItem("donorName") ||
+          "Donor";
+        document.getElementById("sidebar-donor-name").textContent =
+          donorFullName;
+        document.getElementById(
+          "donor-avatar"
+        ).style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(
+          donorFullName
+        )}')`;
+        // Show exclamation if not verified, hide if verified
+        const donor =
+          (function () {
+            try {
+              return JSON.parse(localStorage.getItem("donor"));
+            } catch {
+              return null;
+            }
+          })() || {};
+        const alertSpan = document.getElementById("sidebar-account-alert");
+        if (alertSpan) {
+          if (!donor.verified) {
+            alertSpan.style.display = "inline-flex";
+            alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
+          } else {
+            alertSpan.style.display = "none";
+          }
+        }
+        // Sidebar navigation
+        var donations = document.getElementById("sidebar-donations");
+        if (donations)
+          donations.onclick = function (e) {
+            e.preventDefault();
+            window.location.href = "Donations.html";
+          };
+        var charities = document.getElementById("sidebar-charities");
+        if (charities)
+          charities.onclick = function (e) {
+            e.preventDefault();
+            window.location.href = "BrowseCharities.html";
+          };
+        var feedback = document.getElementById("sidebar-feedback");
+        if (feedback)
+          feedback.onclick = function (e) {
+            e.preventDefault();
+            window.location.href = "Feedback.html";
+          };
+        // Logout
+        document.getElementById("logoutBtn").onclick = function () {
+          localStorage.clear();
+          window.location.href = "../Login.html";
+        };
+      });
+      // Profile logic (Charity Profile style)
+      function signOut() {
+        window.location.href = "../Login.html";
+      }
+      // Simulate donor info in localStorage: {name, email, phone, verified}
+      function getDonor() {
+        let donor = localStorage.getItem("donor");
+        if (!donor) return null;
+        try {
+          return JSON.parse(donor);
+        } catch {
+          return null;
         }
       }
-      // Sidebar navigation
-      var donations = document.getElementById('sidebar-donations');
-      if (donations) donations.onclick = function(e) {
-        e.preventDefault();
-        window.location.href = 'Donations.html';
+      function setDonor(donor) {
+        localStorage.setItem("donor", JSON.stringify(donor));
+      }
+      // Display name, avatar, and status
+      // Always show the donor's FULL NAME in the profile (header and details)
+      const donor = getDonor() || {
+        name: localStorage.getItem("donorName") || "Donor",
+        username: "",
+        fullname: "",
+        email: "",
+        phone: "",
+        verified: false,
       };
-      var charities = document.getElementById('sidebar-charities');
-      if (charities) charities.onclick = function(e) {
-        e.preventDefault();
-        window.location.href = 'BrowseCharities.html';
-      };
-      var feedback = document.getElementById('sidebar-feedback');
-      if (feedback) feedback.onclick = function(e) {
-        e.preventDefault();
-        window.location.href = 'Feedback.html';
-      };
-      // Logout
-      document.getElementById('logoutBtn').onclick = function() {
-        localStorage.clear();
-        window.location.href = '../Login.html';
-      };
-    });
-    // Profile logic (Charity Profile style)
-    function signOut() {
-      window.location.href = "../Login.html";
-    }
-    // Simulate donor info in localStorage: {name, email, phone, verified}
-    function getDonor() {
-      let donor = localStorage.getItem('donor');
-      if (!donor) return null;
-      try { return JSON.parse(donor); } catch { return null; }
-    }
-    function setDonor(donor) {
-      localStorage.setItem('donor', JSON.stringify(donor));
-    }
-    // Display name, avatar, and status
-    // Always show the donor's FULL NAME in the profile (header and details)
-    const donor = getDonor() || { name: localStorage.getItem('donorName') || 'Donor', username: '', fullname: '', email: '', phone: '', verified: false };
-    // Prefer donor.fullname if present, else donor.name, else fallback
-    const donorFullName = donor.fullname || donor.name || 'Donor';
-    document.getElementById('donorName').textContent = donorFullName;
-    document.getElementById('profileAvatar').src = `https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}&background=54d12b&color=fff&size=128`;
-    // Show verified or not verified status in profile
-    if (donor.verified) {
-      document.getElementById('verifyStatus').innerHTML = '<span class="verified inline-flex items-center gap-1 bg-[#eaf3e7] text-[#54d12b] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#54d12b\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M5 13l4 4L19 7\'/></svg>Verified</span>';
-    } else {
-      document.getElementById('verifyStatus').innerHTML = '<span class="not-verified inline-flex items-center gap-1 bg-[#fff7ea] text-[#e67e22] font-bold px-3 py-1 rounded-full ml-2 text-sm"><svg class=\'w-4 h-4\' fill=\'none\' stroke=\'#e67e22\' stroke-width=\'2\' viewBox=\'0 0 24 24\'><circle cx=\'12\' cy=\'12\' r=\'10\'/><path stroke-linecap=\'round\' stroke-linejoin=\'round\' d=\'M12 8v4m0 4h.01\'/></svg>Not Verified</span>';
-    }
-    // Profile details
-    let details = '';
-    details += `<div class='mb-4 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Full Name:</span> <span class='text-lg'>${donorFullName}</span></div>`;
-    if (donor.email) {
-      details += `<div class='mb-4 flex items-center gap-2'>
+      // Prefer donor.fullname if present, else donor.name, else fallback
+      const donorFullName = donor.fullname || donor.name || "Donor";
+      document.getElementById("donorName").textContent = donorFullName;
+      document.getElementById(
+        "profileAvatar"
+      ).src = `https://ui-avatars.com/api/?name=${encodeURIComponent(
+        donorFullName
+      )}&background=54d12b&color=fff&size=128`;
+      // Show verified or not verified status in profile
+      if (donor.verified) {
+        document.getElementById("verifyStatus").innerHTML =
+          "<span class=\"verified inline-flex items-center gap-1 bg-[#eaf3e7] text-[#54d12b] font-bold px-3 py-1 rounded-full ml-2 text-sm\"><svg class='w-4 h-4' fill='none' stroke='#54d12b' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M5 13l4 4L19 7'/></svg>Verified</span>";
+      } else {
+        document.getElementById("verifyStatus").innerHTML =
+          "<span class=\"not-verified inline-flex items-center gap-1 bg-[#fff7ea] text-[#e67e22] font-bold px-3 py-1 rounded-full ml-2 text-sm\"><svg class='w-4 h-4' fill='none' stroke='#e67e22' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10'/><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>Not Verified</span>";
+      }
+      // Profile details
+      let details = "";
+      details += `<div class='mb-4 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Full Name:</span> <span class='text-lg'>${donorFullName}</span></div>`;
+      if (donor.email) {
+        details += `<div class='mb-4 flex items-center gap-2'>
         <span class='font-semibold text-[#121a0f] text-lg'>Email:</span>
         <span class='text-lg'>${donor.email}</span>
-        ${donor.verified ? '' : `<button id="verifyEmailBtn" class="ml-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#fff7ea] text-[#e67e22] border border-[#ffe0b2] hover:bg-[#ffe0b2] transition">Verify Email Address</button>
+        ${
+          donor.verified
+            ? ""
+            : `<button id="verifyEmailBtn" class="ml-2 px-3 py-1 rounded-full text-xs font-semibold bg-[#fff7ea] text-[#e67e22] border border-[#ffe0b2] hover:bg-[#ffe0b2] transition">Verify Email Address</button>
         <input id="otpInput" type="text" maxlength="6" placeholder="Enter OTP" class="ml-2 px-2 py-1 rounded border border-[#ffe0b2] text-xs" style="display:none;width:90px;" />
-        <button id="submitOtpBtn" class="ml-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#eaf3e7] text-[#54d12b] border border-[#b2ffc2] hover:bg-[#b2ffc2] transition" style="display:none;">Submit OTP</button>`}
-      </div>`;
-    }
-    // Email verification button logic (send OTP)
-    document.addEventListener('click', function(e) {
-      if (e.target && e.target.id === 'verifyEmailBtn') {
-        fetch('http://localhost:3000/api/email/send-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: donor.email })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            alert('An OTP has been sent to your email address. Please check your inbox.');
-            document.getElementById('otpInput').style.display = 'inline-block';
-            document.getElementById('submitOtpBtn').style.display = 'inline-block';
-          } else {
-            alert('Failed to send OTP: ' + (data.message || ''));
-          }
-        })
-        .catch(() => {
-          alert('Failed to send OTP.');
-        });
-      }
-      if (e.target && e.target.id === 'submitOtpBtn') {
-        const otp = document.getElementById('otpInput').value.trim();
-        if (!otp) {
-          alert('Please enter the OTP sent to your email.');
-          return;
+        <button id="submitOtpBtn" class="ml-1 px-3 py-1 rounded-full text-xs font-semibold bg-[#eaf3e7] text-[#54d12b] border border-[#b2ffc2] hover:bg-[#b2ffc2] transition" style="display:none;">Submit OTP</button>`
         }
-        fetch('http://localhost:3000/api/email/verify-otp', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email: donor.email, otp })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (data.success) {
-            alert('Email verified successfully!');
-            donor.verified = true;
-            setDonor(donor);
-            window.location.reload();
-          } else {
-            alert('OTP verification failed: ' + (data.message || ''));
+      </div>`;
+      }
+      // Email verification button logic (send OTP)
+      document.addEventListener("click", function (e) {
+        if (e.target && e.target.id === "verifyEmailBtn") {
+          fetch("https://foodshare-nairobi-1.onrender.com/api/email/send-otp", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email: donor.email }),
+          })
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                alert(
+                  "An OTP has been sent to your email address. Please check your inbox."
+                );
+                document.getElementById("otpInput").style.display =
+                  "inline-block";
+                document.getElementById("submitOtpBtn").style.display =
+                  "inline-block";
+              } else {
+                alert("Failed to send OTP: " + (data.message || ""));
+              }
+            })
+            .catch(() => {
+              alert("Failed to send OTP.");
+            });
+        }
+        if (e.target && e.target.id === "submitOtpBtn") {
+          const otp = document.getElementById("otpInput").value.trim();
+          if (!otp) {
+            alert("Please enter the OTP sent to your email.");
+            return;
           }
-        })
-        .catch(() => {
-          alert('Failed to verify OTP.');
-        });
+          fetch(
+            "https://foodshare-nairobi-1.onrender.com/api/email/verify-otp",
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({ email: donor.email, otp }),
+            }
+          )
+            .then((res) => res.json())
+            .then((data) => {
+              if (data.success) {
+                alert("Email verified successfully!");
+                donor.verified = true;
+                setDonor(donor);
+                window.location.reload();
+              } else {
+                alert("OTP verification failed: " + (data.message || ""));
+              }
+            })
+            .catch(() => {
+              alert("Failed to verify OTP.");
+            });
+        }
+      });
+      if (donor.phone)
+        details += `<div class='mb-2 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Phone:</span> <span class='text-lg'>${donor.phone}</span></div>`;
+      document.getElementById("profileDetails").innerHTML = details;
+      // Remove verification section for donors
+      document.getElementById("verifySection").innerHTML = "";
+      function showEditForm() {
+        document.getElementById("editForm").style.display = "block";
       }
-    });
-    if (donor.phone) details += `<div class='mb-2 flex items-center gap-2'><span class='font-semibold text-[#121a0f] text-lg'>Phone:</span> <span class='text-lg'>${donor.phone}</span></div>`;
-    document.getElementById('profileDetails').innerHTML = details;
-    // Remove verification section for donors
-    document.getElementById('verifySection').innerHTML = '';
-    function showEditForm() {
-      document.getElementById('editForm').style.display = 'block';
-    }
-    function showVerifyForm() {
-      document.getElementById('verifyForm').style.display = 'block';
-    }
-    // Handle edit form
-    document.addEventListener('submit', function(e) {
-      if (e.target && e.target.id === 'editForm') {
-        e.preventDefault();
-        const form = document.getElementById('editForm');
-        const updated = {
-          name: form.editName.value,
-          email: form.editEmail.value,
-          phone: form.editPhone.value,
-          verified: donor.verified
-        };
-        setDonor(updated);
-        alert('Profile updated!');
-        window.location.reload();
+      function showVerifyForm() {
+        document.getElementById("verifyForm").style.display = "block";
       }
-      // Handle verify form
-      if (e.target && e.target.id === 'verifyForm') {
-        e.preventDefault();
-        // Simulate verification submission
-        alert('Verification submitted! Your documents and info have been sent for review.');
-        donor.verified = false;
-        donor.phone = e.target.phone.value;
-        setDonor(donor);
-        document.querySelector('.profile-actions').style.display = 'none';
-        e.target.style.display = 'none';
-        document.getElementById('verifyStatus').innerHTML = '<span class="not-verified">Verification Pending</span>';
-      }
-    });
-    // Profile actions (edit form)
-    document.getElementById('profileActions').innerHTML = `
+      // Handle edit form
+      document.addEventListener("submit", function (e) {
+        if (e.target && e.target.id === "editForm") {
+          e.preventDefault();
+          const form = document.getElementById("editForm");
+          const updated = {
+            name: form.editName.value,
+            email: form.editEmail.value,
+            phone: form.editPhone.value,
+            verified: donor.verified,
+          };
+          setDonor(updated);
+          alert("Profile updated!");
+          window.location.reload();
+        }
+        // Handle verify form
+        if (e.target && e.target.id === "verifyForm") {
+          e.preventDefault();
+          // Simulate verification submission
+          alert(
+            "Verification submitted! Your documents and info have been sent for review."
+          );
+          donor.verified = false;
+          donor.phone = e.target.phone.value;
+          setDonor(donor);
+          document.querySelector(".profile-actions").style.display = "none";
+          e.target.style.display = "none";
+          document.getElementById("verifyStatus").innerHTML =
+            '<span class="not-verified">Verification Pending</span>';
+        }
+      });
+      // Profile actions (edit form)
+      document.getElementById("profileActions").innerHTML = `
       <div class="flex flex-col sm:flex-row gap-4 justify-center">
         <button class="submit-btn w-full sm:w-auto px-8 py-2 rounded-full font-bold text-base bg-[#54d12b] text-white hover:bg-[#43a81a] transition" onclick="showEditForm()"><svg class='inline w-5 h-5 mr-2 -ml-1' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M15.232 5.232l3.536 3.536M9 13l6-6m2 2l-6 6m-2 2h6'/></svg>Edit Profile</button>
         <button class="submit-btn w-full sm:w-auto px-8 py-2 rounded-full font-bold text-base bg-[#e67e22] text-white hover:bg-[#cf7c1b] transition" onclick="deleteAccount()"><svg class='inline w-5 h-5 mr-2 -ml-1' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><path stroke-linecap='round' stroke-linejoin='round' d='M6 18L18 6M6 6l12 12'/></svg>Delete Account</button>
       </div>
       <form id="editForm" style="display:none;margin-top:24px;" class="profile-verify-form bg-white rounded-xl shadow p-6 max-w-xl mx-auto">
         <label for="editName" class="block font-semibold mb-1">Full Name</label>
-        <input type="text" id="editName" name="editName" value="${donor.name || ''}" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+        <input type="text" id="editName" name="editName" value="${
+          donor.name || ""
+        }" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
         <label for="editEmail" class="block font-semibold mb-1">Email</label>
-        <input type="email" id="editEmail" name="editEmail" value="${donor.email || ''}" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+        <input type="email" id="editEmail" name="editEmail" value="${
+          donor.email || ""
+        }" required class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
         <label for="editPhone" class="block font-semibold mb-1">Phone</label>
-        <input type="text" id="editPhone" name="editPhone" value="${donor.phone || ''}" class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
+        <input type="text" id="editPhone" name="editPhone" value="${
+          donor.phone || ""
+        }" class="block w-full mb-4 border border-[#eaf3e7] rounded-lg px-3 py-2" />
         <button type="submit" class="submit-btn w-full">Save Changes</button>
       </form>
     `;
-    // Delete account
-    function deleteAccount() {
-      if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
-        // TODO: Call backend to delete, then clear localStorage
-        localStorage.removeItem('donor');
-        localStorage.removeItem('donorName');
-        alert('Account deleted.');
-        window.location.href = '../Login.html';
+      // Delete account
+      function deleteAccount() {
+        if (
+          confirm(
+            "Are you sure you want to delete your account? This cannot be undone."
+          )
+        ) {
+          // TODO: Call backend to delete, then clear localStorage
+          localStorage.removeItem("donor");
+          localStorage.removeItem("donorName");
+          alert("Account deleted.");
+          window.location.href = "../Login.html";
+        }
       }
-    }
-  </script>
-</body>
+    </script>
+  </body>
 </html>

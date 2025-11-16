@@ -32,13 +32,42 @@
           <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
         </div>
         <nav class="flex flex-col gap-2 text-base">
-          <a href="./FoodDonor.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Dashboard</a>
-          <a href="./Donations.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Donations</a>
-          <a href="./BrowseCharities.html" class="sidebar-link px-4 py-2 rounded-full font-medium">Charities</a>
-          <a href="./CharityRequestsPage.html" class="sidebar-link px-4 py-2 rounded-full font-medium active">Charity Requests</a>
-          <a href="./DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
+          <a
+            href="./FoodDonor.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            >Dashboard</a
+          >
+          <a
+            href="./Donations.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            >Donations</a
+          >
+          <a
+            href="./BrowseCharities.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium"
+            >Charities</a
+          >
+          <a
+            href="./CharityRequestsPage.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium active"
+            >Charity Requests</a
+          >
+          <a
+            href="./DonorAccount.html"
+            class="sidebar-link px-4 py-2 rounded-full font-medium flex items-center gap-2"
+            id="sidebar-account-link"
+            >Account<span
+              id="sidebar-account-alert"
+              style="display: none"
+            ></span
+          ></a>
           <!-- Help link removed -->
-          <button id="logoutBtn" class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
+          <button
+            id="logoutBtn"
+            class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8"
+          >
+            Logout
+          </button>
         </nav>
         <div class="mt-auto flex items-center gap-3 pt-10">
           <div
@@ -68,24 +97,46 @@
     </div>
     <script>
       // Set donor FULL NAME in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage)
-      let donorObj = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return {}; } })() || {};
-      const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
+      let donorObj =
+        (function () {
+          try {
+            return JSON.parse(localStorage.getItem("donor"));
+          } catch {
+            return {};
+          }
+        })() || {};
+      const donorFullName =
+        donorObj.fullname ||
+        donorObj.name ||
+        localStorage.getItem("donorName") ||
+        "Donor";
       document.getElementById("sidebar-donor-name").textContent = donorFullName;
-      document.getElementById("donor-avatar").style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
+      document.getElementById(
+        "donor-avatar"
+      ).style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(
+        donorFullName
+      )}')`;
       // Logout
       document.getElementById("logoutBtn").onclick = () => {
         localStorage.clear();
         window.location.href = "../Login.html";
       };
       // Show exclamation if not verified
-      const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
-      const alertSpan = document.getElementById('sidebar-account-alert');
+      const donor =
+        (function () {
+          try {
+            return JSON.parse(localStorage.getItem("donor"));
+          } catch {
+            return null;
+          }
+        })() || {};
+      const alertSpan = document.getElementById("sidebar-account-alert");
       if (alertSpan) {
         if (!donor.verified) {
-          alertSpan.style.display = 'inline-flex';
+          alertSpan.style.display = "inline-flex";
           alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
         } else {
-          alertSpan.style.display = 'none';
+          alertSpan.style.display = "none";
         }
       }
       // Fetch and render requests as cards
@@ -93,7 +144,7 @@
         const container = document.getElementById("charity-requests-cards");
         container.innerHTML =
           '<div class="text-gray-500">Loading requests...</div>';
-        fetch("http://localhost:3000/api/charity-requests")
+        fetch("https://foodshare-nairobi-1.onrender.com/api/charity-requests")
           .then((res) => res.json())
           .then((data) => {
             if (!data.success || !data.requests.length) {

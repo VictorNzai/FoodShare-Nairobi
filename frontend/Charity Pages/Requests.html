@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Charity Requests - FoodShare</title>
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      rel="stylesheet"
+    />
     <style>
       body {
         margin: 0;
@@ -123,7 +126,8 @@
         border-collapse: collapse;
         min-width: 600px;
       }
-      th, td {
+      th,
+      td {
         padding: 14px;
         text-align: left;
         border-bottom: 1px solid #eaf3e7;
@@ -227,7 +231,9 @@
               </tbody>
             </table>
           </div>
-          <a href="CharityDashboard.html" class="back-link">&larr; Back to Dashboard</a>
+          <a href="CharityDashboard.html" class="back-link"
+            >&larr; Back to Dashboard</a
+          >
         </main>
       </div>
     </div>
@@ -235,22 +241,22 @@
       function signOut() {
         window.location.href = "../Login.html";
       }
-      document.getElementById('sidebar-browse-donor').onclick = function(e) {
+      document.getElementById("sidebar-browse-donor").onclick = function (e) {
         e.preventDefault();
-        window.location.href = 'BrowseDonorOffers.html';
+        window.location.href = "BrowseDonorOffers.html";
       };
 
       // Modal for details
-      let detailsModal = document.createElement('div');
-      detailsModal.id = 'details-modal';
-      detailsModal.style.display = 'none';
-      detailsModal.style.position = 'fixed';
-      detailsModal.style.top = '0';
-      detailsModal.style.left = '0';
-      detailsModal.style.width = '100vw';
-      detailsModal.style.height = '100vh';
-      detailsModal.style.background = 'rgba(0,0,0,0.35)';
-      detailsModal.style.zIndex = '1000';
+      let detailsModal = document.createElement("div");
+      detailsModal.id = "details-modal";
+      detailsModal.style.display = "none";
+      detailsModal.style.position = "fixed";
+      detailsModal.style.top = "0";
+      detailsModal.style.left = "0";
+      detailsModal.style.width = "100vw";
+      detailsModal.style.height = "100vh";
+      detailsModal.style.background = "rgba(0,0,0,0.35)";
+      detailsModal.style.zIndex = "1000";
       detailsModal.innerHTML = `
         <div style="background:#fff;max-width:400px;margin:8vh auto 0 auto;padding:32px 28px 24px 28px;border-radius:16px;box-shadow:0 8px 32px rgba(0,0,0,0.12);position:relative;">
           <button id="close-details-modal" style="position:absolute;top:12px;right:16px;background:none;border:none;font-size:22px;cursor:pointer;color:#888;">&times;</button>
@@ -264,15 +270,20 @@
       // Helper: fetch need by id
       async function fetchNeedById(id) {
         try {
-          const jwt = localStorage.getItem('jwt');
-          const res = await fetch(`http://localhost:3000/api/foodneeds?org=${encodeURIComponent('')}&id=${id}`, {
-            headers: jwt ? { Authorization: "Bearer " + jwt } : {},
-          });
+          const jwt = localStorage.getItem("jwt");
+          const res = await fetch(
+            `https://foodshare-nairobi-1.onrender.com/api/foodneeds?org=${encodeURIComponent(
+              ""
+            )}&id=${id}`,
+            {
+              headers: jwt ? { Authorization: "Bearer " + jwt } : {},
+            }
+          );
           if (!res.ok) return null;
           const data = await res.json();
           // If backend returns an array, find by id
           if (Array.isArray(data)) {
-            return data.find(n => n.id == id || n._id == id) || null;
+            return data.find((n) => n.id == id || n._id == id) || null;
           }
           // If backend returns a single object
           return data;
@@ -298,7 +309,7 @@
         }
         try {
           const res = await fetch(
-            "http://localhost:3000/api/foodneeds?org=" +
+            "https://foodshare-nairobi-1.onrender.com/api/foodneeds?org=" +
               encodeURIComponent(orgName),
             {
               headers: jwt ? { Authorization: "Bearer " + jwt } : {},
@@ -319,12 +330,16 @@
                 <td>Request</td>
                 <td>${need.food_item}</td>
                 <td>${need.quantity}</td>
-                <td>${need.pickup_location || ''}</td>
+                <td>${need.pickup_location || ""}</td>
                 <td>${need.notes || ""}</td>
                 <td><span class="status">${need.status}</span></td>
                 <td>
-                  <button class="view-details-btn" data-id="${need._id || need.id || ''}" style="background:#eaf3e7;color:#222;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;margin-right:8px;">View Details</button>
-                  <button class="cancel-btn" data-id="${need._id || need.id || ''}" style="background:#ffdddd;color:#b30000;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;">Cancel</button>
+                  <button class="view-details-btn" data-id="${
+                    need._id || need.id || ""
+                  }" style="background:#eaf3e7;color:#222;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;margin-right:8px;">View Details</button>
+                  <button class="cancel-btn" data-id="${
+                    need._id || need.id || ""
+                  }" style="background:#ffdddd;color:#b30000;border:none;border-radius:8px;padding:6px 14px;cursor:pointer;">Cancel</button>
                 </td>
               `;
               tbody.appendChild(tr);
@@ -336,37 +351,45 @@
         }
       }
       // Cancel request handler
-      document.addEventListener('click', async function(e) {
-        if (e.target && e.target.classList.contains('cancel-btn')) {
-          const id = e.target.getAttribute('data-id');
+      document.addEventListener("click", async function (e) {
+        if (e.target && e.target.classList.contains("cancel-btn")) {
+          const id = e.target.getAttribute("data-id");
           if (!id) return;
-          if (!confirm('Are you sure you want to cancel this request? This action cannot be undone and the request will be permanently removed.')) return;
+          if (
+            !confirm(
+              "Are you sure you want to cancel this request? This action cannot be undone and the request will be permanently removed."
+            )
+          )
+            return;
           try {
-            const jwt = localStorage.getItem('jwt');
-            const res = await fetch(`http://localhost:3000/api/foodneeds/${id}`, {
-              method: 'DELETE',
-              headers: jwt ? { 'Authorization': 'Bearer ' + jwt } : {},
-            });
-            if (!res.ok) throw new Error('Failed to cancel request');
-            alert('Request cancelled.');
+            const jwt = localStorage.getItem("jwt");
+            const res = await fetch(
+              `https://foodshare-nairobi-1.onrender.com/api/foodneeds/${id}`,
+              {
+                method: "DELETE",
+                headers: jwt ? { Authorization: "Bearer " + jwt } : {},
+              }
+            );
+            if (!res.ok) throw new Error("Failed to cancel request");
+            alert("Request cancelled.");
             renderRequests();
           } catch (err) {
-            alert('Error cancelling request.');
+            alert("Error cancelling request.");
           }
         }
         // View Details handler
-        if (e.target && e.target.classList.contains('view-details-btn')) {
-          const id = e.target.getAttribute('data-id');
-          const contentDiv = document.getElementById('modal-details-content');
-          const footer = document.getElementById('modal-details-footer');
-          contentDiv.innerHTML = '<em>Loading details...</em>';
-          footer.innerHTML = '';
-          detailsModal.style.display = 'block';
+        if (e.target && e.target.classList.contains("view-details-btn")) {
+          const id = e.target.getAttribute("data-id");
+          const contentDiv = document.getElementById("modal-details-content");
+          const footer = document.getElementById("modal-details-footer");
+          contentDiv.innerHTML = "<em>Loading details...</em>";
+          footer.innerHTML = "";
+          detailsModal.style.display = "block";
           // Fetch latest details
           let need = null;
           try {
             // Instead of fetching by id, use the already loaded data for speed
-            const row = e.target.closest('tr');
+            const row = e.target.closest("tr");
             need = {
               date: row.children[0].textContent,
               type: row.children[1].textContent,
@@ -375,62 +398,79 @@
               pickup_location: row.children[4].textContent,
               notes: row.children[5].textContent,
               status: row.children[6].textContent,
-              id: e.target.getAttribute('data-id')
+              id: e.target.getAttribute("data-id"),
             };
           } catch {}
-          let html = '';
+          let html = "";
           if (need) {
             html += `<b>Date:</b> ${need.date}<br/>`;
             html += `<b>Type:</b> ${need.type}<br/>`;
             html += `<b>Food Item:</b> ${need.food_item}<br/>`;
             html += `<b>Quantity:</b> ${need.quantity}<br/>`;
-            if (need.pickup_location) html += `<b>Pickup Location:</b> ${need.pickup_location}<br/>`;
-            html += `<b>Notes:</b> ${need.notes || ''}<br/>`;
+            if (need.pickup_location)
+              html += `<b>Pickup Location:</b> ${need.pickup_location}<br/>`;
+            html += `<b>Notes:</b> ${need.notes || ""}<br/>`;
             html += `<b>Status:</b> <span class="status">${need.status}</span><br/>`;
           } else {
-            html = '<span style="color:#b30000">Could not load request details.</span>';
+            html =
+              '<span style="color:#b30000">Could not load request details.</span>';
           }
           contentDiv.innerHTML = html;
           // Add footer buttons
-          footer.innerHTML = '';
-          if (need && need.status === 'Scheduled') {
+          footer.innerHTML = "";
+          if (need && need.status === "Scheduled") {
             // Arrived button
-            const arrivedBtn = document.createElement('button');
-            arrivedBtn.textContent = 'Arrived';
-            arrivedBtn.style = 'background:#54d12b;color:#fff;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;';
-            arrivedBtn.onclick = async function() {
+            const arrivedBtn = document.createElement("button");
+            arrivedBtn.textContent = "Arrived";
+            arrivedBtn.style =
+              "background:#54d12b;color:#fff;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;";
+            arrivedBtn.onclick = async function () {
               try {
                 // PATCH or POST to update status to Completed
-                const jwt = localStorage.getItem('jwt');
-                const res = await fetch(`http://localhost:3000/api/foodneeds/${need.id}/arrived`, {
-                  method: 'POST',
-                  headers: jwt ? { 'Authorization': 'Bearer ' + jwt, 'Content-Type': 'application/json' } : { 'Content-Type': 'application/json' },
-                  body: JSON.stringify({ status: 'Completed' })
-                });
-                if (!res.ok) throw new Error('Failed to mark as arrived');
-                contentDiv.innerHTML = contentDiv.innerHTML.replace(/Status:(.*?)<br\/>/, 'Status: <span class="status">Completed</span><br/>');
-                detailsModal.style.display = 'none';
-                alert('Marked as completed!');
+                const jwt = localStorage.getItem("jwt");
+                const res = await fetch(
+                  `https://foodshare-nairobi-1.onrender.com/api/foodneeds/${need.id}/arrived`,
+                  {
+                    method: "POST",
+                    headers: jwt
+                      ? {
+                          Authorization: "Bearer " + jwt,
+                          "Content-Type": "application/json",
+                        }
+                      : { "Content-Type": "application/json" },
+                    body: JSON.stringify({ status: "Completed" }),
+                  }
+                );
+                if (!res.ok) throw new Error("Failed to mark as arrived");
+                contentDiv.innerHTML = contentDiv.innerHTML.replace(
+                  /Status:(.*?)<br\/>/,
+                  'Status: <span class="status">Completed</span><br/>'
+                );
+                detailsModal.style.display = "none";
+                alert("Marked as completed!");
                 renderRequests();
               } catch (err) {
-                alert('Error marking as completed.');
+                alert("Error marking as completed.");
               }
             };
             footer.appendChild(arrivedBtn);
           }
           // Always show Close button
-          const closeBtn = document.createElement('button');
-          closeBtn.textContent = 'Close';
-          closeBtn.style = 'background:#eaf3e7;color:#54d12b;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;';
-          closeBtn.onclick = function() { detailsModal.style.display = 'none'; };
+          const closeBtn = document.createElement("button");
+          closeBtn.textContent = "Close";
+          closeBtn.style =
+            "background:#eaf3e7;color:#54d12b;border:none;padding:8px 24px;border-radius:999px;font-weight:700;cursor:pointer;";
+          closeBtn.onclick = function () {
+            detailsModal.style.display = "none";
+          };
           footer.appendChild(closeBtn);
         }
-        if (e.target && e.target.id === 'close-details-modal') {
-          detailsModal.style.display = 'none';
+        if (e.target && e.target.id === "close-details-modal") {
+          detailsModal.style.display = "none";
         }
         // Also close modal if clicking outside the modal box
         if (e.target === detailsModal) {
-          detailsModal.style.display = 'none';
+          detailsModal.style.display = "none";
         }
       });
 
