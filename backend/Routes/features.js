@@ -169,16 +169,29 @@ router.get('/admin/pickups', async (req, res) => {
 });
 
 // ---- Impact ----
+// `donated` is everything the donor has given: offers to a charity plus general
+// donations. `pickups` is the part a charity has confirmed as collected.
 router.get('/impact/donor/:id', async (req, res) => {
   try {
-    const [pickups] = await db.query(
-      `SELECT id, charity_id, charity_name, food_type, quantity, unit, people_fed, completed_at FROM donor_offers
-       WHERE donor_id = ? AND status = 'Completed' ORDER BY id DESC`,
+    const [offers] = await db.query(
+      `SELECT id, charity_id, charity_name, food_type, quantity, unit, status, people_fed, completed_at, created_at
+       FROM donor_offers WHERE donor_id = ? ORDER BY created_at DESC`,
       [req.params.id]
     );
+    const [donations] = await db.query(
+      `SELECT id, category AS food_type, quantity, unit, status, created_at
+       FROM food_donations WHERE donor_id = ? ORDER BY created_at DESC`,
+      [req.params.id]
+    );
+    const donated = [...offers, ...donations].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+    const pickups = offers.filter((o) => o.status === 'Completed');
+    // Offers a charity turned down, and cancelled donations, were not given
+    const given = donated.filter((d) => !['Denied', 'Cancelled'].includes(d.status));
     res.json({
       success: true,
+      donated,
       pickups,
+      total_donated: given.reduce((sum, d) => sum + (parseFloat(d.quantity) || 0), 0),
       total_quantity: pickups.reduce((sum, p) => sum + (parseFloat(p.quantity) || 0), 0),
       charities_helped: new Set(pickups.map((p) => p.charity_id)).size,
       people_fed: pickups.reduce((sum, p) => sum + (p.people_fed || 0), 0)
