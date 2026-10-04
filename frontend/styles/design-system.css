@@ -1342,3 +1342,8 @@ a.stat:hover {
     animation: none;
   }
 }
+
+/* Cross-fade between pages instead of a hard cut (browsers without support just navigate) */
+@view-transition {
+  navigation: auto;
+}

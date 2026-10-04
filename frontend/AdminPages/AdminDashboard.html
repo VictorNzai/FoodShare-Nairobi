@@ -762,6 +762,8 @@
             : "none";
           document.getElementById(link).classList.toggle("active", isCurrent);
         }
+        // Keep the section in the address so a refresh stays on it
+        history.replaceState(null, "", `#${sectionId}`);
         setMenuOpen(false);
         window.scrollTo(0, 0);
       }
@@ -806,12 +808,11 @@
         if (e.key === "Escape") setMenuOpen(false);
       });
 
-      // Notification links point at a section of this page, e.g. #cases-section
+      // The address names the open section, e.g. #cases-section. Used on
+      // refresh and by notification links.
       function openSectionFromHash() {
         const id = location.hash.slice(1);
-        if (!SECTIONS[id]) return;
-        showSection(id);
-        history.replaceState(null, "", location.pathname);
+        if (SECTIONS[id]) showSection(id);
       }
       window.addEventListener("hashchange", openSectionFromHash);
 
@@ -1601,7 +1602,10 @@
       // ============================================
       // START
       // ============================================
-      showSection("dashboard-section");
+      // A refresh reopens the section named in the address
+      showSection(
+        SECTIONS[location.hash.slice(1)] ? location.hash.slice(1) : "dashboard-section"
+      );
       fetchDashboardStats();
       loadFeedback();
       switchUserTab("donor");
@@ -1609,7 +1613,6 @@
       fetchCases();
       fetchPickups();
       initInbox(document.getElementById("adminInbox"), "admin", 0);
-      openSectionFromHash();
 
       (function loadChartJs() {
         const script = document.createElement("script");
