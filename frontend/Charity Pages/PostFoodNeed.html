@@ -47,6 +47,9 @@
               <input type="text" id="pickupLocation" name="pickupLocation" class="input" required />
             </div>
             <div class="field">
+              <label><input type="checkbox" id="urgent" name="urgent" /> This need is urgent</label>
+            </div>
+            <div class="field">
               <label for="notes">Additional Notes</label>
               <textarea id="notes" name="notes" class="input" placeholder="Any extra information..."></textarea>
             </div>
@@ -108,6 +111,7 @@
             document.getElementById("unit").value,
           pickupLocation: document.getElementById("pickupLocation").value,
           notes: document.getElementById("notes").value,
+          urgent: document.getElementById("urgent").checked,
           status: "Pending",
         };
         setBusy(submitBtn, true);

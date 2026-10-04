@@ -92,12 +92,16 @@
                       offer.created_at ? String(offer.created_at).slice(0, 10) : ""
                     )}</td>
                     <td>${esc(offer.donor_name || offer.donorId || "")}</td>
-                    <td>${esc(offer.food_type || "")}</td>
+                    <td>${esc(offer.food_type || "")}${expiryNote(offer)}</td>
                     <td class="num">${esc(offer.quantity || "")} ${esc(
                     offer.unit || ""
                   )}</td>
                     <td>${esc(offer.notes || offer.message || "")}</td>
-                    <td>${statusBadge(status)}</td>
+                    <td>${statusBadge(status)}${
+                    status === "Scheduled" && offer.pickup_at
+                      ? `<span class="cell-sub">Pickup ${esc(formatPickup(offer.pickup_at))}</span>`
+                      : ""
+                  }</td>
                     <td><div class="btn-row">
                       <button type="button" class="btn btn--quiet" onclick="showOffer(${id})">View Details</button>
                       ${
@@ -115,12 +119,34 @@
         }
       }
 
-      // POST an action for an offer; throws if the server refuses
-      async function offerAction(id, action) {
+      // "2026-10-05T14:00" -> "2026-10-05 14:00"
+      const formatPickup = (value) => String(value).replace("T", " ");
+
+      // Expiry date under the food item; pending offers close to it are flagged
+      function expiryNote(offer) {
+        if (!offer.expiry) return "";
+        const expiry = new Date(offer.expiry);
+        const daysLeft = (expiry - Date.now()) / 86400000;
+        const flag =
+          (offer.status || "Pending") !== "Pending" || daysLeft > 2
+            ? ""
+            : " " + statusBadge(daysLeft < -1 ? "Expired" : "Expires soon");
+        return `<span class="cell-sub">Expires ${esc(
+          expiry.toLocaleDateString()
+        )}${flag}</span>`;
+      }
+
+      // POST an action for an offer; throws the server's message if it refuses
+      async function offerAction(id, action, body = {}) {
         const res = await fetch(`${API_BASE_URL}/api/donor-offers/${id}/${action}`, {
           method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
         });
-        if (!res.ok) throw new Error(`Failed to ${action} offer`);
+        if (!res.ok) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data.message || `Failed to ${action} offer`);
+        }
       }
 
       async function denyOffer(id) {
@@ -166,9 +192,16 @@
           ["Quantity", `${offer.quantity || ""} ${offer.unit || ""}`],
           ["Message", offer.notes || offer.message || "-"],
         ];
+        if (offer.expiry) {
+          rows.push(["Expiry Date", new Date(offer.expiry).toLocaleDateString()]);
+        }
         // The pickup address is shared once the offer is accepted
         if (status === "Scheduled") {
           rows.push(["Pickup Address", offer.pickup_address || "N/A"]);
+          if (offer.pickup_at) rows.push(["Pickup Time", formatPickup(offer.pickup_at)]);
+        }
+        if (status === "Completed" && offer.people_fed != null) {
+          rows.push(["People Fed", offer.people_fed]);
         }
         content.innerHTML =
           rows
@@ -190,26 +223,49 @@
 
         if (status === "Pending") {
           addButton("Accept", async () => {
+            const values = await formDialog(
+              "When will you collect it?",
+              `<div class="field">
+                <label for="pickup-at">Pickup date and time</label>
+                <input type="datetime-local" id="pickup-at" name="pickup_at" class="input" required />
+              </div>
+              <p class="muted">The donor is told the time and given a pickup code to hand over when you collect.</p>`,
+              "Accept Offer"
+            );
+            if (!values) return;
             try {
-              await offerAction(id, "accept");
-              showToast("Thank you for accepting this donation.", "success");
+              await offerAction(id, "accept", values);
+              showToast("Offer accepted. The donor has been told the pickup time.", "success");
               renderOffers();
-              // Reload the dialog: it now shows the pickup address and "Arrived"
+              // Reload the dialog: it now shows the pickup address and "Confirm Pickup"
               await showOffer(id);
             } catch (err) {
-              showToast("Error accepting offer.", "error");
+              showToast(err.message || "Error accepting offer.", "error");
             }
           });
         }
         if (status === "Scheduled") {
-          addButton("Arrived", async () => {
+          addButton("Confirm Pickup", async () => {
+            const values = await formDialog(
+              "Confirm pickup",
+              `<div class="field">
+                <label for="pickup-code">Pickup code from the donor</label>
+                <input type="text" id="pickup-code" name="code" class="input input--code" inputmode="numeric" maxlength="6" autocomplete="off" />
+              </div>
+              <div class="field">
+                <label for="people-fed">People this will feed (optional)</label>
+                <input type="number" id="people-fed" name="people_fed" min="0" class="input" />
+              </div>`,
+              "Confirm"
+            );
+            if (!values) return;
             try {
-              await offerAction(id, "arrived");
+              await offerAction(id, "arrived", values);
               modal.close();
-              showToast("Marked as completed!", "success");
+              showToast("Pickup confirmed. The donor has been told.", "success");
               renderOffers();
             } catch (err) {
-              showToast("Error marking as completed.", "error");
+              showToast(err.message || "Error confirming pickup.", "error");
             }
           });
         }

@@ -29,11 +29,15 @@ function fetchCharityRequests() {
           '<p class="muted">No open requests from charities at this time.</p>';
         return;
       }
-      tbody.innerHTML = data.requests
+      // Urgent needs first; the server already sorts the rest by date
+      tbody.innerHTML = [...data.requests]
+        .sort((a, b) => (b.urgent || 0) - (a.urgent || 0))
         .map(
             (req) => `<tr>
               <td>${esc(req.org_name)}</td>
-              <td>${esc(req.food_item)}</td>
+              <td>${esc(req.food_item)}${
+              req.urgent ? " " + statusBadge("Urgent") : ""
+            }</td>
               <td class="num">${esc(req.quantity)}</td>
               <td>${esc(req.pickup_location)}</td>
               <td class="num">${

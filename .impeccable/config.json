@@ -68,6 +68,24 @@
         ],
         "createdAt": "2026-10-04T18:07:38.665Z",
         "reason": "agent: cream/olive palette comes from the user's reference screenshots and is the project's design system"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "frontend/Food Donor Pages/Certificate.html"
+        ],
+        "createdAt": "2026-10-04T18:44:31.164Z",
+        "reason": "False positive: padding comes from .panel/.card in the linked design-system.css, which the detector does not resolve"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "frontend/Food Donor Pages/Certificate.html"
+        ],
+        "createdAt": "2026-10-04T18:44:31.710Z",
+        "reason": "Project palette from the user's reference screenshots"
       }
     ]
   }

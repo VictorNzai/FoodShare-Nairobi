@@ -73,6 +73,7 @@ function logout() {
     inbox:
       '<path d="M4 13l2-8h12l2 8v6H4v-6z"/><path d="M4 13h5a3 3 0 006 0h5"/>',
     logout: '<path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9"/>',
+    bell: '<path d="M6 16V11a6 6 0 0112 0v5l2 2H4l2-2zM10 21h4"/>',
     menu: '<path d="M4 7h16M4 12h16M4 17h16"/>',
   };
 
@@ -151,6 +152,9 @@ function logout() {
           initials(NAV.userName)
         )}</span><span>${esc(NAV.userName)}</span></div>
         <nav class="app-nav" aria-label="Account">
+          <button type="button" id="appInbox">${icon(
+            ICONS.bell
+          )}Notifications</button>
           <button type="button" id="appLogout">${icon(
             ICONS.logout
           )}Logout</button>
@@ -176,4 +180,6 @@ function logout() {
     if (e.key === "Escape") setMenuOpen(false);
   });
   document.getElementById("appLogout").addEventListener("click", logout);
+  const userId = role === "donor" ? donor.id : charity.id;
+  if (userId) initInbox(document.getElementById("appInbox"), role, userId);
 })();

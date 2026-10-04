@@ -97,6 +97,14 @@ const STATUS_KIND = {
   rejected: "danger",
   denied: "danger",
   cancelled: "danger",
+  resolved: "success",
+  open: "warning",
+  "in review": "warning",
+  "expires soon": "warning",
+  dismissed: "danger",
+  urgent: "danger",
+  expired: "danger",
+  late: "danger",
 };
 
 function statusBadge(status) {
@@ -409,4 +417,83 @@ function noteRow(colspan, text) {
   return `<tr><td class="table-note" colspan="${colspan}">${escapeHtml(
     text
   )}</td></tr>`;
+}
+
+// A dialog holding a small form. Resolves with the form's values, or null if
+// the user cancels.
+// const values = await formDialog("Confirm pickup", '<div class="field">…</div>', "Confirm");
+function formDialog(title, fieldsHtml, submitLabel = "Save") {
+  return new Promise((resolve) => {
+    const dialog = document.createElement("dialog");
+    dialog.className = "dialog dialog--form";
+    dialog.innerHTML = `<h2 class="dialog-title"></h2><form>${fieldsHtml}<div class="dialog-actions"><button type="button" class="btn btn--quiet">Cancel</button><button type="submit" class="btn btn--solid"></button></div></form>`;
+    dialog.querySelector(".dialog-title").textContent = title;
+    dialog.querySelector('[type="submit"]').textContent = submitLabel;
+    const form = dialog.querySelector("form");
+    let values = null;
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+      values = Object.fromEntries(new FormData(form));
+      dialog.close();
+    });
+    dialog.querySelector(".btn--quiet").addEventListener("click", () => dialog.close());
+    dialog.addEventListener("close", () => {
+      resolve(values);
+      dialog.remove();
+    });
+    document.body.appendChild(dialog);
+    dialog.showModal();
+  });
+}
+
+// Notification bell: shows the unread count on `button` and opens the inbox.
+// Needs API_BASE_URL, which /js/app-shell.js or the admin page defines.
+// initInbox(button, "donor" | "charity" | "admin", userId)
+async function initInbox(button, userType, userId) {
+  const url = `${API_BASE_URL}/api/inbox/${userType}/${userId}`;
+  const count = document.createElement("span");
+  count.className = "app-nav-count";
+  count.hidden = true;
+  button.appendChild(count);
+  let items = [];
+
+  const load = async () => {
+    try {
+      items = (await (await fetch(url)).json()).notifications || [];
+      const unread = items.filter((n) => !n.is_read).length;
+      count.textContent = unread;
+      count.hidden = !unread;
+    } catch {}
+  };
+
+  button.addEventListener("click", () => {
+    const dialog = document.createElement("dialog");
+    dialog.className = "dialog";
+    dialog.innerHTML = `<h2 class="dialog-title">Notifications</h2><ul class="inbox">${
+      items.length
+        ? items
+            .map(
+              (n) =>
+                `<li${n.is_read ? "" : ' class="is-unread"'}>${
+                  n.link
+                    ? `<a class="link" href="${escapeHtml(n.link)}">${escapeHtml(n.message)}</a>`
+                    : escapeHtml(n.message)
+                }<span class="cell-sub">${escapeHtml(
+                  new Date(n.created_at).toLocaleString()
+                )}</span></li>`
+            )
+            .join("")
+        : '<li class="muted">Nothing yet.</li>'
+    }</ul><form method="dialog" class="dialog-actions"><button class="btn btn--solid" autofocus>Close</button></form>`;
+    // A link may point at a section of the page that is already open
+    dialog.addEventListener("click", (e) => {
+      if (e.target.closest("a")) dialog.close();
+    });
+    dialog.addEventListener("close", () => dialog.remove());
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    if (!count.hidden) fetch(`${url}/read`, { method: "POST" }).then(load).catch(() => {});
+  });
+
+  await load();
 }

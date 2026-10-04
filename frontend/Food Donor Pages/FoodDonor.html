@@ -24,6 +24,7 @@
           <div class="btn-row">
             <a class="btn btn--solid" href="./MakeDonation.html" id="btn-make-donation">Make a Donation</a>
             <a class="btn" href="./BrowseCharities.html" id="btn-browse-charities">Browse Charities</a>
+            <a class="btn" href="./Certificate.html">Donation Certificate</a>
           </div>
         </div>
 
@@ -41,6 +42,10 @@
               <span class="stat-label">Charities Helped</span>
               <span class="stat-value" id="stat-charities-helped"></span>
             </div>
+            <a class="stat" href="./Certificate.html" title="View your donation certificate">
+              <span class="stat-label">People Fed</span>
+              <span class="stat-value" id="stat-people-fed"></span>
+            </a>
           </div>
 
             <div class="panel card">
@@ -149,6 +154,13 @@
           set("stat-charities-helped", charitySet.size);
         } catch {
           set("stat-charities-helped", null);
+        }
+        // People Fed (reported by charities when they collect)
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/impact/donor/${donor.id}`);
+          set("stat-people-fed", (await res.json()).people_fed);
+        } catch {
+          set("stat-people-fed", null);
         }
       }
       updateDashboardStats();

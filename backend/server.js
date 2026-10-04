@@ -79,6 +79,7 @@ const pool = require('./db');
       const conn = await pool.getConnection();
       console.log('✅ Connected to foodshare_db successfully');
       conn.release();
+      await require('./Utils/schema').ensureSchema();
       break;
     } catch (err) {
       retries--;
@@ -135,6 +136,9 @@ app.use('/api/charities', charitiesRoutes(pool));
 // Food Needs API (modular route)
 const foodNeedsRoutes = require('./Routes/food_needs');
 app.use('/api/food-needs', foodNeedsRoutes);
+
+// Notifications, complaints and appeals, pickup oversight, impact
+app.use('/api', require('./Routes/features'));
 
 // Email Verification API (for sending verification links)
 const emailVerificationRoutes = require('./Routes/emailVerification');
@@ -385,6 +389,8 @@ app.post('/api/verify-charity', upload.fields([
     VALUES (?, ?, ?, ?, ?, ?, 'pending', NOW())`;
   try {
     await pool.query(sql, [charityName, address, contact, desc, idFile, certFile]);
+    const { notify, LINKS, ADMIN_ID } = require('./Utils/notify');
+    await notify('admin', ADMIN_ID, `${charityName} submitted documents for verification.`, LINKS.adminVerifications);
     res.json({ success: true, message: 'Verification submitted.' });
   } catch (err) {
     res.status(500).json({ success: false, message: 'Database error.' });
@@ -789,7 +795,7 @@ app.get('/', (req, res) => {
 
 // POST /api/foodneeds - Add a new food need
 app.post('/api/foodneeds', async (req, res) => {
-  const { orgName, date, foodItem, quantity, pickupLocation, notes, status } = req.body;
+  const { orgName, date, foodItem, quantity, pickupLocation, notes, status, urgent } = req.body;
   if (!orgName || !date || !foodItem || !quantity || !pickupLocation) {
     return res.status(400).json({ success: false, message: 'Missing required fields.' });
   }
@@ -798,7 +804,15 @@ app.post('/api/foodneeds', async (req, res) => {
     VALUES (?, ?, ?, ?, ?, ?, ?)
   `;
   try {
-    await pool.query(sql, [orgName, date, foodItem, quantity, pickupLocation, notes || '', status || 'Pending']);
+    const [inserted] = await pool.query(sql, [orgName, date, foodItem, quantity, pickupLocation, notes || '', status || 'Pending']);
+    if (urgent) {
+      // Separate query so posting still works if the urgent column is missing
+      try {
+        await pool.query('UPDATE food_needs SET urgent = 1 WHERE id = ?', [inserted.insertId]);
+      } catch (urgentErr) {
+        console.error('Could not mark food need as urgent:', urgentErr.message);
+      }
+    }
 
     // Lookup charity email by orgName
     let charityEmail = null;

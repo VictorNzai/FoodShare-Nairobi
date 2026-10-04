@@ -178,11 +178,23 @@
             </svg>
             Reports
           </button>
+          <button type="button" id="sidebar-cases" onclick="showSection('cases-section')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 21V4M5 4h11l-2 4 2 4H5" /></svg>
+            Complaints &amp; Appeals
+          </button>
+          <button type="button" id="sidebar-pickups" onclick="showSection('pickups-section')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9" /><path d="M12 7v5l3 2" /></svg>
+            Pickups &amp; Impact
+          </button>
         </nav>
 
         <div class="app-sidebar-foot">
           <div class="app-user" id="admin-name"></div>
           <nav class="app-nav" aria-label="Account">
+            <button type="button" id="adminInbox">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 16V11a6 6 0 0112 0v5l2 2H4l2-2zM10 21h4" /></svg>
+              Notifications
+            </button>
             <button type="button" onclick="adminLogout()">
               <svg
                 viewBox="0 0 24 24"
@@ -555,6 +567,143 @@
           </div>
         </div>
 
+        <!-- Complaints and Appeals Section -->
+        <div id="cases-section" style="display: none">
+          <div class="page-head">
+            <div>
+              <h1 class="page-title">Complaints &amp; Appeals</h1>
+              <p class="page-lede">
+                Reports from donors and charities. Your reply is sent to the
+                person who reported it.
+              </p>
+            </div>
+          </div>
+          <div class="panel card">
+            <div class="card-head">
+              <div class="toolbar">
+                <label>
+                  Status
+                  <select id="caseStatusFilter" class="input input--sm" onchange="fetchCases()">
+                    <option value="all">All</option>
+                    <option value="Open">Open</option>
+                    <option value="In Review">In Review</option>
+                    <option value="Resolved">Resolved</option>
+                    <option value="Dismissed">Dismissed</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Date</th>
+                    <th>From</th>
+                    <th>Type</th>
+                    <th>Details</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="casesBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pickups and Impact Section -->
+        <div id="pickups-section" style="display: none">
+          <div class="page-head">
+            <div>
+              <h1 class="page-title">Pickups &amp; Impact</h1>
+              <p class="page-lede">
+                Pickups that are overdue, food that expired unclaimed, and what
+                completed pickups achieved.
+              </p>
+            </div>
+          </div>
+          <div class="stack">
+            <div class="stat-grid">
+              <div class="stat">
+                <span class="stat-label">Late Pickups</span>
+                <span class="stat-value" id="stat-late"></span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Expired Unclaimed</span>
+                <span class="stat-value" id="stat-expired"></span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">Completed Pickups</span>
+                <span class="stat-value" id="stat-completed"></span>
+              </div>
+              <div class="stat">
+                <span class="stat-label">People Fed</span>
+                <span class="stat-value" id="stat-people"></span>
+              </div>
+            </div>
+
+            <div class="panel card">
+              <div class="card-head">
+                <h2 class="card-title">Late Pickups</h2>
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Offer</th>
+                      <th>Donor</th>
+                      <th>Charity</th>
+                      <th>Food</th>
+                      <th>Pickup Was Due</th>
+                    </tr>
+                  </thead>
+                  <tbody id="lateBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel card">
+              <div class="card-head">
+                <h2 class="card-title">Expired Unclaimed</h2>
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Offer</th>
+                      <th>Donor</th>
+                      <th>Charity</th>
+                      <th>Food</th>
+                      <th>Expired</th>
+                    </tr>
+                  </thead>
+                  <tbody id="expiredBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="panel card">
+              <div class="card-head">
+                <h2 class="card-title">Impact by Month</h2>
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th>Completed Pickups</th>
+                      <th>Quantity</th>
+                      <th>People Fed</th>
+                    </tr>
+                  </thead>
+                  <tbody id="impactBody"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <footer class="app-foot">
           <p>&copy; 2025 FoodShare. All rights reserved.</p>
         </footer>
@@ -601,6 +750,8 @@
         "charity-verification-section": "sidebar-verifications",
         "user-management-section": "sidebar-users",
         "reports-section": "sidebar-reports",
+        "cases-section": "sidebar-cases",
+        "pickups-section": "sidebar-pickups",
       };
 
       function showSection(sectionId) {
@@ -654,6 +805,15 @@
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") setMenuOpen(false);
       });
+
+      // Notification links point at a section of this page, e.g. #cases-section
+      function openSectionFromHash() {
+        const id = location.hash.slice(1);
+        if (!SECTIONS[id]) return;
+        showSection(id);
+        history.replaceState(null, "", location.pathname);
+      }
+      window.addEventListener("hashchange", openSectionFromHash);
 
       // ============================================
       // SHARED HELPERS
@@ -758,6 +918,150 @@
       document.getElementById("endDate").addEventListener("change", (e) => {
         document.getElementById("startDate").max = e.target.value;
       });
+
+      // ============================================
+      // COMPLAINTS AND APPEALS
+      // ============================================
+      const CASE_STATUSES = ["Open", "In Review", "Resolved", "Dismissed"];
+      let cases = [];
+
+      async function fetchCases() {
+        const tbody = document.getElementById("casesBody");
+        tableLoading(tbody, ["num", "num", "two", "text", "text", "badge", "btn"]);
+        try {
+          const status = document.getElementById("caseStatusFilter").value;
+          const res = await fetch(
+            `${API_BASE_URL}/api/admin/cases?status=${encodeURIComponent(status)}`
+          );
+          cases = (await res.json()).cases || [];
+          tbody.innerHTML = cases.length
+            ? cases
+                .map(
+                  (c, index) => `<tr>
+                    <td class="num">#${esc(c.id)}</td>
+                    <td class="num">${esc(formatDate(c.created_at))}</td>
+                    <td>${esc(c.user_name || "-")}
+                      <span class="cell-sub">${esc(c.user_type)}${
+                    c.offer_id ? ` · offer #${esc(c.offer_id)}` : ""
+                  }</span></td>
+                    <td>${esc(c.kind)}</td>
+                    <td>${esc(c.description)}${
+                    c.outcome
+                      ? `<span class="cell-sub">Reply: ${esc(c.outcome)}</span>`
+                      : ""
+                  }</td>
+                    <td>${statusBadge(c.status)}</td>
+                    <td><button type="button" class="btn btn--solid" onclick="updateCase(${index})">Update</button></td>
+                  </tr>`
+                )
+                .join("")
+            : noteRow(7, "No complaints or appeals.");
+        } catch (err) {
+          console.error("Could not load cases:", err);
+          tbody.innerHTML = noteRow(7, "Could not load complaints and appeals.");
+        }
+      }
+
+      // Set the status and the reply; the reporter gets a notification
+      async function updateCase(index) {
+        const c = cases[index];
+        const values = await formDialog(
+          `${c.kind === "appeal" ? "Appeal" : "Complaint"} #${c.id}`,
+          `<p class="muted" style="margin-bottom: 1rem">${esc(c.description)}</p>
+           <div class="field">
+             <label for="case-status">Status</label>
+             <select id="case-status" name="status" class="input">${CASE_STATUSES.map(
+               (s) => `<option${s === c.status ? " selected" : ""}>${s}</option>`
+             ).join("")}</select>
+           </div>
+           <div class="field">
+             <label for="case-outcome">Reply to the ${esc(c.user_type)}</label>
+             <textarea id="case-outcome" name="outcome" rows="4" class="input">${esc(
+               c.outcome || ""
+             )}</textarea>
+           </div>`
+        );
+        if (!values) return;
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/admin/cases/${c.id}`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(values),
+          });
+          const data = await res.json();
+          if (!data.success) throw new Error(data.message);
+          showToast("Case updated. The reporter has been told.", "success");
+          fetchCases();
+        } catch (err) {
+          showToast(err.message || "Could not update the case.", "error");
+        }
+      }
+
+      // ============================================
+      // PICKUPS AND IMPACT
+      // ============================================
+      async function fetchPickups() {
+        const offerRows = (offers, dateOf, empty) =>
+          offers.length
+            ? offers
+                .map(
+                  (o) => `<tr>
+                    <td class="num">#${esc(o.id)}</td>
+                    <td>${esc(o.donor_name)}</td>
+                    <td>${esc(o.charity_name)}</td>
+                    <td>${esc(o.food_type)}
+                      <span class="cell-sub">${esc(o.quantity)} ${esc(o.unit)}</span></td>
+                    <td class="num">${esc(dateOf(o))}</td>
+                  </tr>`
+                )
+                .join("")
+            : noteRow(5, empty);
+        const set = (id, value) => (document.getElementById(id).textContent = value);
+        const sum = (rows, key) => rows.reduce((total, row) => total + (Number(row[key]) || 0), 0);
+
+        try {
+          const [pickupsRes, impactRes] = await Promise.all([
+            fetch(`${API_BASE_URL}/api/admin/pickups`),
+            fetch(`${API_BASE_URL}/api/admin/impact`),
+          ]);
+          const pickups = await pickupsRes.json();
+          const impact = await impactRes.json();
+          if (!pickups.success || !impact.success) throw new Error("Server error");
+
+          set("stat-late", pickups.late.length);
+          set("stat-expired", pickups.expired.length);
+          set("stat-completed", sum(impact.months, "pickups"));
+          set("stat-people", sum(impact.months, "people_fed"));
+          document.getElementById("lateBody").innerHTML = offerRows(
+            pickups.late,
+            (o) => String(o.pickup_at).replace("T", " "),
+            "No late pickups."
+          );
+          document.getElementById("expiredBody").innerHTML = offerRows(
+            pickups.expired,
+            (o) => new Date(o.expiry).toLocaleDateString(),
+            "No offers expired unclaimed."
+          );
+          document.getElementById("impactBody").innerHTML = impact.months.length
+            ? impact.months
+                .map(
+                  (m) => `<tr>
+                    <td class="num">${esc(m.month)}</td>
+                    <td class="num">${esc(m.pickups)}</td>
+                    <td class="num">${esc(m.quantity ?? 0)}</td>
+                    <td class="num">${esc(m.people_fed ?? 0)}</td>
+                  </tr>`
+                )
+                .join("")
+            : noteRow(4, "No completed pickups yet.");
+        } catch (err) {
+          console.error("Could not load pickups:", err);
+          for (const id of ["stat-late", "stat-expired", "stat-completed", "stat-people"]) set(id, "--");
+          document.getElementById("lateBody").innerHTML = noteRow(5, "Could not load pickups.");
+          document.getElementById("expiredBody").innerHTML = noteRow(5, "Could not load pickups.");
+          document.getElementById("impactBody").innerHTML = noteRow(4, "Could not load impact.");
+        }
+      }
 
       // ============================================
       // USER MANAGEMENT
@@ -1302,6 +1606,10 @@
       loadFeedback();
       switchUserTab("donor");
       fetchVerifications();
+      fetchCases();
+      fetchPickups();
+      initInbox(document.getElementById("adminInbox"), "admin", 0);
+      openSectionFromHash();
 
       (function loadChartJs() {
         const script = document.createElement("script");

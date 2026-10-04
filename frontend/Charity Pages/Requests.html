@@ -87,7 +87,9 @@
                     <td class="num">${esc(
                       need.date ? String(need.date).slice(0, 10) : ""
                     )}</td>
-                    <td>${esc(need.food_item)}</td>
+                    <td>${esc(need.food_item)}${
+                      need.urgent ? " " + statusBadge("Urgent") : ""
+                    }</td>
                     <td class="num">${esc(need.quantity)}</td>
                     <td>${esc(need.pickup_location || "")}</td>
                     <td>${esc(need.notes || "")}</td>

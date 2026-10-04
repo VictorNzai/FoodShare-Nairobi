@@ -30,6 +30,9 @@ async function loadDonations() {
       notes: o.notes,
       status: o.status || "Pending",
       created_at: o.created_at,
+      pickup_at: o.pickup_at,
+      pickup_code: o.pickup_code,
+      people_fed: o.people_fed,
       type: "offer",
     }));
     const donations = (donationsData.donations || []).map((d) => ({
@@ -73,7 +76,11 @@ function renderDonationsTable() {
             <td>${esc(d.charity_name || "-")}</td>
             <td>${esc(d.food_type)} - ${esc(d.description || "")}
               <span class="cell-sub">${esc(d.quantity)} ${esc(d.unit)}</span></td>
-            <td>${statusBadge(d.status)}</td>
+            <td>${statusBadge(d.status)}${
+            d.status === "Scheduled" && d.pickup_at
+              ? `<span class="cell-sub">Pickup ${esc(d.pickup_at.replace("T", " "))}</span>`
+              : ""
+          }</td>
             <td><button type="button" class="btn btn--quiet" onclick="showDonation(${index})">View Details</button></td>
           </tr>`
         )
@@ -100,6 +107,12 @@ function showDonation(index) {
     ["Notes", d.notes || "-"],
     ["Created At", formatDateTime(d.created_at)],
   ];
+  if (d.status === "Scheduled" && d.pickup_at) {
+    rows.push(["Pickup Time", d.pickup_at.replace("T", " ")]);
+    // The charity must enter this code to mark the donation as collected
+    if (d.pickup_code) rows.push(["Pickup Code", d.pickup_code]);
+  }
+  if (d.people_fed != null) rows.push(["People Fed", d.people_fed]);
   document.getElementById("modal-content").innerHTML =
     rows
       .map(([label, value]) => `<dt>${label}</dt><dd>${esc(value)}</dd>`)

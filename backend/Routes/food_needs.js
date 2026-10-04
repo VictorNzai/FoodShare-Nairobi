@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../Database/db');
+const { notify, LINKS } = require('../Utils/notify');
 
 // POST: Schedule a ride (pledge) for a food need 
 router.post('/:id/schedule-pledge', async (req, res) => {
@@ -26,8 +27,11 @@ router.post('/:id/schedule-pledge', async (req, res) => {
       if (foodNeed.donor_email) donorEmailFinal = foodNeed.donor_email;
     }
     if (charityName) {
-      const [[charityRow]] = await db.query('SELECT email FROM charity WHERE orgname = ?', [charityName]);
+      const [[charityRow]] = await db.query('SELECT id, email FROM charity WHERE orgname = ?', [charityName]);
       if (charityRow && charityRow.email) charityEmail = charityRow.email;
+      if (charityRow) {
+        await notify('charity', charityRow.id, `${donorNameFinal || 'A donor'} pledged to fulfil one of your food requests.`, LINKS.charityRequests);
+      }
     }
     if (charityEmail) {
       try {
