@@ -3,53 +3,33 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Make a Food Donation | FoodShare</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title>Make a Donation - FoodShare</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Manrope", "Noto Sans", sans-serif;
-      }
-    </style>
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
-  <body class="bg-[#f9fcf8] text-[#111b0e]">
-    <div class="flex min-h-screen">
-      <!-- Sidebar -->
-      <aside class="hidden lg:flex flex-col w-64 bg-white border-r border-[#eaf3e7] py-8 px-6 sticky top-0 h-screen z-10">
-        <div class="mb-10 flex items-center gap-2">
-          <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
-          <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
-        </div>
-        <nav class="flex flex-col gap-2 text-base">
-          <a href="./FoodDonor.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-dashboard">Dashboard</a>
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-donations">Donations</a>
-          <a href="./BrowseCharities.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-charities">Charities</a>
-          <a href="./CharityRequestsPage.html" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-requests">Charity Requests</a>
-          <a href="./DonorAccount.html" class="sidebar-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="sidebar-account-link">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
-          <a href="#" class="sidebar-link px-4 py-2 rounded-full font-medium" id="sidebar-help">Help</a>
-          <button id="logoutBtn" class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
-        </nav>
-        <div class="mt-auto flex items-center gap-3 pt-10">
-          <div class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]" id="donor-avatar" style="background-image: url('https://ui-avatars.com/api/?name=Donor');"></div>
-          <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name">Donor</span>
-        </div>
-      </aside>
-      <!-- Main Content -->
-      <main class="flex-1 flex flex-col items-center justify-center p-6">
-        <div class="w-full max-w-lg bg-white rounded-xl shadow p-8 border border-[#eaf3e7] mt-10">
-          <div id="donating-to-charity" class="mb-4 hidden">
-            <div class="text-sm text-gray-700 mb-1"><span class="font-semibold">Donating to:</span> <span id="donation-charity-name" class="font-bold text-[#54d12b]"></span></div>
+  <body>
+    <!-- Sidebar and mobile menu are added by /js/app-shell.js -->
+    <div class="app" data-role="donor" data-page="donations">
+      <main class="app-main">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Make a Food Donation</h1>
+            <p class="page-lede" id="donating-to-charity" hidden>
+              Donating to: <strong id="donation-charity-name"></strong>
+            </p>
           </div>
-          <h2 class="text-2xl font-bold mb-6 text-[#54d12b]">
-            Make a Food Donation
-          </h2>
-          <form id="donationForm" class="space-y-4">
-            <div>
-              <label for="category" class="block font-medium mb-1">Food Category</label>
-              <select id="category" name="category" required class="w-full border rounded px-3 py-2">
+        </div>
+
+        <div class="narrow">
+          <form id="donationForm" class="panel card">
+            <div class="field">
+              <label for="category">Food Category</label>
+              <select id="category" name="category" class="input" required>
                 <option value="">Select a category</option>
                 <option value="Cereals">Cereals</option>
                 <option value="Vegetables">Vegetables</option>
@@ -57,22 +37,22 @@
                 <option value="Dairy">Dairy</option>
                 <option value="Baked Goods">Baked Goods</option>
                 <option value="Canned Foods">Canned Foods</option>
-                <option value="Meat & Poultry">Meat & Poultry</option>
+                <option value="Meat &amp; Poultry">Meat &amp; Poultry</option>
                 <option value="Other">Other</option>
               </select>
             </div>
-            <div>
-              <label for="description" class="block font-medium mb-1">Food Description</label>
-              <input type="text" id="description" name="description" required class="w-full border rounded px-3 py-2" placeholder="e.g. Brown rice, 2 loaves of bread" />
+            <div class="field">
+              <label for="description">Food Description</label>
+              <input type="text" id="description" name="description" class="input" required placeholder="e.g. Brown rice, 2 loaves of bread" />
             </div>
-            <div class="flex gap-2">
-              <div class="flex-1">
-                <label for="quantity" class="block font-medium mb-1">Quantity</label>
-                <input type="number" id="quantity" name="quantity" min="1" required class="w-full border rounded px-3 py-2" placeholder="e.g. 5" />
+            <div class="field-row">
+              <div class="field">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" min="1" class="input" required placeholder="e.g. 5" />
               </div>
-              <div class="w-32">
-                <label for="unit" class="block font-medium mb-1">Unit</label>
-                <select id="unit" name="unit" required class="w-full border rounded px-3 py-2">
+              <div class="field">
+                <label for="unit">Unit</label>
+                <select id="unit" name="unit" class="input" required>
                   <option value="kg">kg</option>
                   <option value="g">g</option>
                   <option value="liters">liters</option>
@@ -82,98 +62,65 @@
                 </select>
               </div>
             </div>
-            <div>
-              <label for="expiry" class="block font-medium mb-1">Expiry Date</label>
-              <input type="date" id="expiry" name="expiry" required class="w-full border rounded px-3 py-2" />
+            <div class="field-row">
+              <div class="field">
+                <label for="expiry">Expiry Date</label>
+                <input type="date" id="expiry" name="expiry" class="input" required />
+              </div>
+              <div class="field">
+                <label for="pickup_address">Pickup Address</label>
+                <input type="text" id="pickup_address" name="pickup_address" class="input" required placeholder="e.g. 123 Main St, Nairobi" />
+              </div>
             </div>
-            <div>
-              <label for="pickup_address" class="block font-medium mb-1">Pickup Address</label>
-              <input type="text" id="pickup_address" name="pickup_address" required class="w-full border rounded px-3 py-2" placeholder="e.g. 123 Main St, Nairobi" />
+            <div class="field">
+              <label for="notes">Additional Notes (optional)</label>
+              <textarea id="notes" name="notes" class="input" rows="2" placeholder="Any special instructions..."></textarea>
             </div>
-            <div>
-              <label for="notes" class="block font-medium mb-1">Additional Notes (optional)</label>
-              <textarea id="notes" name="notes" class="w-full border rounded px-3 py-2" rows="2" placeholder="Any special instructions..."></textarea>
-            </div>
-            <button type="submit" class="w-full bg-[#53d22c] hover:bg-[#43b81a] text-white font-bold py-2 rounded-full mt-4">Submit Donation</button>
+            <button type="submit" class="pill pill--solid pill--block">
+              Submit Donation
+              <span class="pill-arrow">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </span>
+            </button>
           </form>
-          <div id="form-message" class="mt-4 text-center text-sm"></div>
-          <div class="mt-6 text-center">
-            <a href="./FoodDonor.html" class="text-[#54d12b] hover:underline">&larr; Back to Dashboard</a>
-          </div>
+          <div id="form-message" class="alert" role="status" style="margin-top: 1rem"></div>
+          <p style="margin-top: 1.5rem">
+            <a class="link" href="./FoodDonor.html">&larr; Back to Dashboard</a>
+          </p>
         </div>
+
+        <footer class="app-foot">
+          <p>&copy; 2025 FoodShare. All rights reserved.</p>
+        </footer>
       </main>
     </div>
-    <script>
-      // Set donor FULL NAME in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage)
-      let donorObj = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return {}; } })() || {};
-      const donorFullName = donorObj.fullname || donorObj.name || localStorage.getItem('donorName') || 'Donor';
-      document.getElementById("sidebar-donor-name").textContent = donorFullName;
-      document.getElementById("donor-avatar").style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
-      // Logout
-      document.getElementById("logoutBtn").onclick = () => {
-        localStorage.clear();
-        window.location.href = "../Login.html";
-      };
-      // Show exclamation if not verified
-      const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
-      const alertSpan = document.getElementById('sidebar-account-alert');
-      if (alertSpan) {
-        if (!donor.verified) {
-          alertSpan.style.display = 'inline-flex';
-          alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
-        } else {
-          alertSpan.style.display = 'none';
-        }
-      }
-      // Sidebar navigation
-      document.getElementById('sidebar-dashboard').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './FoodDonor.html';
-      };
-      document.getElementById('sidebar-donations').onclick = function(e) {
-        e.preventDefault();
-        alert('Donations page coming soon!');
-      };
-      document.getElementById('sidebar-charities').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './BrowseCharities.html';
-      };
-      document.getElementById('sidebar-requests').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './CharityRequestsPage.html';
-      };
-      document.getElementById('sidebar-account-link').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './DonorAccount.html';
-      };
-      document.getElementById('sidebar-help').onclick = function(e) {
-        e.preventDefault();
-        alert('Help page coming soon!');
-      };
 
-      // Show "Donating to" if charity selected
-      const donationCharity = JSON.parse(localStorage.getItem('donationCharity') || 'null');
+    <script src="/js/ui.js"></script>
+    <script src="/js/app-shell.js"></script>
+    <script>
+      // Show "Donating to" if a charity was chosen beforehand
+      const donationCharity = readStored("donationCharity");
       if (donationCharity && donationCharity.orgname) {
-        document.getElementById('donating-to-charity').classList.remove('hidden');
-        document.getElementById('donation-charity-name').textContent = donationCharity.orgname;
+        document.getElementById("donating-to-charity").hidden = false;
+        document.getElementById("donation-charity-name").textContent =
+          donationCharity.orgname;
       }
 
       document.getElementById("donationForm").onsubmit = async function (e) {
         e.preventDefault();
-        const donor = JSON.parse(localStorage.getItem("donor") || "{}");
-        if (!donor.id) {
-          document.getElementById("form-message").textContent =
-            "You must be logged in as a donor to submit a donation.";
-          return;
-        }
-        const offerMode = localStorage.getItem('donationOfferMode') === 'true';
-        const donationCharity = JSON.parse(localStorage.getItem('donationCharity') || 'null');
+        const donor = getDonor();
+        const msg = document.getElementById("form-message");
+        const submitBtn = this.querySelector('[type="submit"]');
+        const offerMode = localStorage.getItem("donationOfferMode") === "true";
+        const donationCharity = readStored("donationCharity");
         let data = {};
         if (offerMode && donationCharity && donationCharity.charity_id) {
           // Donor Offer Mode
           data = {
             donor_id: donor.id,
-            donor_name: donor.fullname || donor.name || '',
+            donor_name: donor.fullname || donor.name || "",
             charity_id: donationCharity.charity_id || donationCharity.id,
             charity_name: donationCharity.charity_name || donationCharity.orgname,
             food_type: this.category.value,
@@ -182,7 +129,7 @@
             description: this.description.value,
             unit: this.unit.value,
             expiry: this.expiry.value,
-            pickup_address: this.pickup_address.value
+            pickup_address: this.pickup_address.value,
           };
         } else {
           // Standard Donation
@@ -203,35 +150,40 @@
             data.charity_email = donationCharity.email;
           }
         }
-        let endpoint = "/api/donations";
-        if (offerMode && data.charity_id) {
-          endpoint = "/api/donor-offers";
-        }
-        const res = await fetch(endpoint, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(data),
-        });
-        const msg = document.getElementById("form-message");
-        if (res.ok) {
-          let thankYouMsg = "Donation submitted successfully!";
-          if (offerMode && donationCharity && donationCharity.charity_name) {
-            thankYouMsg = `Thank you for your offer to <span class='font-bold text-[#54d12b]'>${donationCharity.charity_name}</span>!`;
-          } else if (donationCharity && donationCharity.orgname) {
-            thankYouMsg = `Thank you for donating to <span class='font-bold text-[#54d12b]'>${donationCharity.orgname}</span>!`;
+        const endpoint =
+          offerMode && data.charity_id ? "/api/donor-offers" : "/api/donations";
+
+        setBusy(submitBtn, true);
+        try {
+          const res = await fetch(API_BASE_URL + endpoint, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(data),
+          });
+          if (res.ok) {
+            let thankYouMsg = "Donation submitted successfully!";
+            if (offerMode && donationCharity && donationCharity.charity_name) {
+              thankYouMsg = `Thank you for your offer to ${donationCharity.charity_name}!`;
+            } else if (donationCharity && donationCharity.orgname) {
+              thankYouMsg = `Thank you for donating to ${donationCharity.orgname}!`;
+            }
+            msg.textContent = thankYouMsg;
+            msg.className = "alert alert--success";
+            this.reset();
+            // Remove charity info and offer mode after a successful donation/offer
+            localStorage.removeItem("donationCharity");
+            localStorage.removeItem("donationOfferMode");
+            document.getElementById("donating-to-charity").hidden = true;
+          } else {
+            const err = await res.json().catch(() => ({}));
+            msg.textContent = err.message || "Failed to submit donation.";
+            msg.className = "alert alert--error";
           }
-          msg.innerHTML = thankYouMsg;
-          msg.className = "mt-4 text-center text-green-600";
-          this.reset();
-          // Remove charity info and offer mode after successful donation/offer
-          localStorage.removeItem('donationCharity');
-          localStorage.removeItem('donationOfferMode');
-          document.getElementById('donating-to-charity').classList.add('hidden');
-        } else {
-          const err = await res.json();
-          msg.textContent = err.message || "Failed to submit donation.";
-          msg.className = "mt-4 text-center text-red-600";
+        } catch {
+          msg.textContent = "Could not reach the server. Please try again.";
+          msg.className = "alert alert--error";
         }
+        setBusy(submitBtn, false);
       };
     </script>
   </body>

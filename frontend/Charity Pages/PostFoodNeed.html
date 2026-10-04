@@ -3,271 +3,133 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Post a New Food Need - FoodShare</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title>Post Food Need - FoodShare</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
-      }
-    </style>
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
-  <body class="bg-[#f9fcf8] text-[#111b0e]">
-    <header
-      class="bg-white flex justify-between items-center px-10 py-5 border-b border-[#ddd] relative z-20"
-    >
-      <div
-        class="logo font-extrabold text-xl text-[#54d12b] cursor-pointer"
-        onclick="window.location.href='../../Index.html'"
-      >
-        🍴 FoodShare
-      </div>
-      <nav>
-        <a href="Profile.html" class="ml-8 text-[#333] text-base font-medium"
-          >Profile</a
-        >
-        <a
-          href="#"
-          class="sign-up-btn ml-8 bg-[#54d12b] text-white px-5 py-2 rounded-full font-bold"
-          onclick="signOut()"
-          >Sign Out</a
-        >
-      </nav>
-    </header>
-    <div class="flex min-h-screen">
-      <!-- Sidebar (identical to CharityDashboard.html) -->
-      <aside class="sidebar">
-        <div class="logo">FoodShare</div>
-        <nav>
-          <a href="CharityDashboard.html">Dashboard</a>
-          <a href="#" class="active" id="sidebar-post-need">Post Food Need</a>
-          <a href="#" id="sidebar-browse-donor">Browse Donor Offers</a>
-          <a href="Requests.html">Requests</a>
-          <!-- <a href="#">Beneficiaries</a> -->
-          <a href="Profile.html">Profile</a>
-        </nav>
-      </aside>
-      <style>
-        .sidebar {
-          width: 250px;
-          padding: 32px 24px;
-          border-right: 1px solid #eaf3e7;
-          background: #fff;
-          display: none;
-          position: fixed;
-          top: 70px;
-          left: 0;
-          height: calc(100vh - 70px);
-          z-index: 1;
-        }
-        @media (min-width: 1024px) {
-          .sidebar {
-            display: block;
-          }
-        }
-        .sidebar .logo {
-          font-size: 20px;
-          font-weight: 700;
-          margin-bottom: 32px;
-          color: #54d12b;
-        }
-        .sidebar nav {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-        }
-        .sidebar nav a {
-          display: flex;
-          align-items: center;
-          gap: 12px;
-          padding: 12px 20px;
-          border-radius: 999px;
-          background: none;
-          color: #222;
-          font-size: 15px;
-          font-weight: 500;
-          text-decoration: none;
-          transition: background 0.2s, color 0.2s;
-        }
-        .sidebar nav a.active,
-        .sidebar nav a:hover {
-          background: #eaf3e7;
-          color: #54d12b;
-          font-weight: 700;
-        }
-      </style>
-      <!-- Main Content -->
-      <main class="flex-1 flex flex-col items-center justify-center p-6">
-        <div
-          class="w-full max-w-lg bg-white rounded-xl shadow p-8 border border-[#eaf3e7] mt-10"
-        >
-          <h2 class="text-2xl font-bold mb-6 text-[#54d12b] text-center">
-            Post a New Food Need
-          </h2>
-          <form id="foodNeedForm" class="space-y-4">
-            <div>
-              <label for="foodItem" class="block font-medium mb-1"
-                >Food Item</label
-              >
-              <input
-                type="text"
-                id="foodItem"
-                name="foodItem"
-                required
-                class="w-full border rounded px-3 py-2"
-              />
+  <body>
+    <!-- Sidebar and mobile menu are added by /js/app-shell.js -->
+    <div class="app" data-role="charity" data-page="post-need">
+      <main class="app-main">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Post a New Food Need</h1>
+            <p class="page-lede">Tell donors what you need and where to bring it.</p>
+          </div>
+        </div>
+
+        <div class="narrow">
+          <form id="foodNeedForm" class="panel card">
+            <div class="field">
+              <label for="foodItem">Food Item</label>
+              <input type="text" id="foodItem" name="foodItem" class="input" required />
             </div>
-            <div class="flex gap-2">
-              <div class="flex-1">
-                <label for="quantity" class="block font-medium mb-1"
-                  >Quantity</label
-                >
-                <input
-                  type="number"
-                  id="quantity"
-                  name="quantity"
-                  min="0"
-                  step="any"
-                  required
-                  class="w-full border rounded px-3 py-2"
-                />
+            <div class="field-row">
+              <div class="field">
+                <label for="quantity">Quantity</label>
+                <input type="number" id="quantity" name="quantity" min="0" step="any" class="input" required />
               </div>
-              <div class="w-32">
-                <label for="unit" class="block font-medium mb-1">Unit</label>
-                <select
-                  id="unit"
-                  name="unit"
-                  required
-                  class="w-full border rounded px-3 py-2"
-                >
+              <div class="field">
+                <label for="unit">Unit</label>
+                <select id="unit" name="unit" class="input" required>
                   <option value="kg">kg</option>
                   <option value="l">litre(s)</option>
                 </select>
               </div>
             </div>
-            <div>
-              <label for="pickupLocation" class="block font-medium mb-1"
-                >Pickup Location</label
-              >
-              <input
-                type="text"
-                id="pickupLocation"
-                name="pickupLocation"
-                required
-                class="w-full border rounded px-3 py-2"
-              />
+            <div class="field">
+              <label for="pickupLocation">Pickup Location</label>
+              <input type="text" id="pickupLocation" name="pickupLocation" class="input" required />
             </div>
-            <div>
-              <label for="notes" class="block font-medium mb-1"
-                >Additional Notes</label
-              >
-              <textarea
-                id="notes"
-                name="notes"
-                placeholder="Any extra information..."
-                class="w-full border rounded px-3 py-2 min-h-[70px] resize-y"
-              ></textarea>
+            <div class="field">
+              <label for="notes">Additional Notes</label>
+              <textarea id="notes" name="notes" class="input" placeholder="Any extra information..."></textarea>
             </div>
-            <button
-              type="submit"
-              class="w-full bg-[#53d22c] hover:bg-[#43b81a] text-white font-bold py-2 rounded-full mt-4"
-            >
+            <button type="submit" class="pill pill--solid pill--block">
               Submit Need
+              <span class="pill-arrow">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </span>
             </button>
           </form>
-          <button
-            id="another-need-btn"
-            class="w-full bg-[#eaf3e7] text-[#222] font-bold py-2 rounded-full mt-4"
-            style="display: none"
-          >
-            Post Another Need
-          </button>
-          <div class="mt-6 text-center">
-            <a
-              href="CharityDashboard.html"
-              class="text-[#54d12b] hover:underline"
-              >&larr; Back to Dashboard</a
-            >
+
+          <div id="need-posted" class="panel card" hidden>
+            <p class="alert alert--success" style="margin-bottom: 1rem">Food need submitted!</p>
+            <div class="btn-row">
+              <button type="button" class="btn btn--solid" id="another-need-btn">Post Another Need</button>
+              <a class="btn" href="./Requests.html">View Requests</a>
+            </div>
           </div>
+
+          <p style="margin-top: 1.5rem">
+            <a class="link" href="./CharityDashboard.html">&larr; Back to Dashboard</a>
+          </p>
         </div>
+
+        <footer class="app-foot">
+          <p>&copy; 2025 FoodShare. All rights reserved.</p>
+        </footer>
       </main>
     </div>
+
+    <script src="/js/ui.js"></script>
+    <script src="/js/app-shell.js"></script>
     <script>
-      function signOut() {
-        window.location.href = "../Login.html";
-      }
-      document.getElementById("sidebar-browse-donor").onclick = function (e) {
+      const charity = getCharity();
+      const form = document.getElementById("foodNeedForm");
+      const posted = document.getElementById("need-posted");
+
+      form.addEventListener("submit", async function (e) {
         e.preventDefault();
-        window.location.href = "BrowseDonorOffers.html";
-      };
-      document
-        .getElementById("foodNeedForm")
-        .addEventListener("submit", async function (e) {
-          e.preventDefault();
-          // JWT check for verification
-          let jwt = localStorage.getItem("jwt");
-          let verified = false;
-          let orgName = "";
-          if (jwt) {
-            try {
-              const jwtObj = JSON.parse(jwt);
-              verified = jwtObj.verified;
-              orgName = jwtObj.name || "";
-            } catch {}
-          }
-          if (!verified) {
-            alert(
-              "You must verify your account before posting a new food need."
-            );
-            window.location.href = "Profile.html";
-            return;
-          }
-          // Collect form data
-          const foodItem = document.getElementById("foodItem").value;
-          const quantity = document.getElementById("quantity").value;
-          const unit = document.getElementById("unit").value;
-          const pickupLocation =
-            document.getElementById("pickupLocation").value;
-          const notes = document.getElementById("notes").value;
-          // Create food need object
-          const today = new Date();
-          const dateStr = today.toISOString().slice(0, 10);
-          const foodNeed = {
-            orgName: orgName,
-            date: dateStr,
-            foodItem: foodItem,
-            quantity: quantity + " " + unit,
-            pickupLocation: pickupLocation,
-            notes: notes,
-            status: "Pending",
-          };
-          try {
-            const res = await fetch(
-              "https://foodshare-nairobi-1.onrender.com/api/foodneeds",
-              {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  ...(jwt ? { Authorization: "Bearer " + jwt } : {}),
-                },
-                body: JSON.stringify(foodNeed),
-              }
-            );
-            if (!res.ok) throw new Error("Failed to submit food need");
-            alert("Food need submitted!");
-            document.getElementById("another-need-btn").style.display = "block";
-            document.getElementById("foodNeedForm").style.display = "none";
-          } catch (err) {
-            alert("Error submitting food need. Please try again.");
-          }
-        });
+        // Only verified charities can post
+        if (!charity.verified) {
+          showToast(
+            "You must verify your account before posting a new food need.",
+            "error"
+          );
+          setTimeout(() => (window.location.href = "Profile.html"), 1800);
+          return;
+        }
+        const submitBtn = form.querySelector('[type="submit"]');
+        const foodNeed = {
+          orgName: charity.name || "",
+          date: new Date().toISOString().slice(0, 10),
+          foodItem: document.getElementById("foodItem").value,
+          quantity:
+            document.getElementById("quantity").value +
+            " " +
+            document.getElementById("unit").value,
+          pickupLocation: document.getElementById("pickupLocation").value,
+          notes: document.getElementById("notes").value,
+          status: "Pending",
+        };
+        setBusy(submitBtn, true);
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/foodneeds`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(foodNeed),
+          });
+          if (!res.ok) throw new Error("Failed to submit food need");
+          form.hidden = true;
+          posted.hidden = false;
+        } catch (err) {
+          showToast("Error submitting food need. Please try again.", "error");
+        }
+        setBusy(submitBtn, false);
+      });
+
       document.getElementById("another-need-btn").onclick = function () {
-        document.getElementById("foodNeedForm").reset();
-        document.getElementById("foodNeedForm").style.display = "block";
-        document.getElementById("another-need-btn").style.display = "none";
+        form.reset();
+        form.hidden = false;
+        posted.hidden = true;
       };
     </script>
   </body>

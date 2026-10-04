@@ -98,6 +98,19 @@ router.post('/:offer_id/accept', async (req, res) => {
   }
 });
 
+// POST /api/donor-offers/:offer_id/deny - Charity turns down an offer (set status to Denied)
+router.post('/:offer_id/deny', async (req, res) => {
+  try {
+    const { offer_id } = req.params;
+    const sql = `UPDATE donor_offers SET status = 'Denied' WHERE id = ?`;
+    await db.query(sql, [offer_id]);
+    res.json({ success: true, message: 'Offer denied.' });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: 'Server error.' });
+  }
+});
+
 // POST /api/donor-offers/:offer_id/arrived - Mark offer as completed (status = Completed)
 router.post('/:offer_id/arrived', async (req, res) => {
   try {

@@ -1,0 +1,74 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "overused-font",
+        "value": "inter",
+        "createdAt": "2026-10-04T16:42:54.638Z",
+        "reason": "agent: Inter is the body face of the landing-page system the user asked to reuse for the design system page; Archivo carries the display voice"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "frontend/design-system.html"
+        ],
+        "createdAt": "2026-10-04T16:42:55.057Z",
+        "reason": "agent: cream/olive palette comes from the user's own reference screenshots and the user asked for this page to use the landing page's system"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "frontend/AdminPages/AdminDashboard.html"
+        ],
+        "createdAt": "2026-10-04T17:28:06.814Z",
+        "reason": "agent: false positive, verified in screenshots; padding comes from .card and table cell rules in the linked design-system.css, which the detector does not resolve"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "frontend/design-system.html"
+        ],
+        "createdAt": "2026-10-04T17:28:07.191Z",
+        "reason": "agent: false positive, verified in screenshots; padding comes from .card and table cell rules in the linked design-system.css, which the detector does not resolve"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "frontend/AdminPages/AdminDashboard.html"
+        ],
+        "createdAt": "2026-10-04T17:28:07.556Z",
+        "reason": "agent: cream/olive palette comes from the user's reference screenshots and is the project's design system"
+      },
+      {
+        "rule": "overused-font",
+        "value": "arial",
+        "createdAt": "2026-10-04T18:07:37.741Z",
+        "reason": "agent: Arial is used only in HTML emails, where web fonts do not load reliably in mail clients"
+      },
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "frontend/404.html"
+        ],
+        "createdAt": "2026-10-04T18:07:38.212Z",
+        "reason": "agent: false positive, verified in a screenshot; padding comes from .auth-panel in the linked auth.css, which the detector does not resolve"
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "frontend/404.html"
+        ],
+        "createdAt": "2026-10-04T18:07:38.665Z",
+        "reason": "agent: cream/olive palette comes from the user's reference screenshots and is the project's design system"
+      }
+    ]
+  }
+}

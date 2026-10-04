@@ -3,532 +3,149 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FoodShare Donor Dashboard</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title>Donor Dashboard - FoodShare</title>
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Manrope", "Noto Sans", sans-serif;
-      }
-      .sticky-navbar {
-        position: sticky;
-        top: 0;
-        z-index: 50;
-        background: #fff;
-        box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.04);
-      }
-      .nav-link.active,
-      .nav-link:hover {
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-      }
-      /* Mobile Sidebar Overlay */
-      .mobile-sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-      }
-      .mobile-sidebar-overlay.active {
-        display: block;
-      }
-      @media (max-width: 1024px) {
-        aside.sidebar-mobile-active {
-          display: flex !important;
-          position: fixed !important;
-          top: 0;
-          left: 0;
-          height: 100vh;
-          z-index: 1000;
-          transform: translateX(0);
-          transition: transform 0.3s ease-in-out;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
-  <body class="bg-[#f9fcf8] text-[#111b0e]">
-    <!-- Mobile Sidebar Overlay -->
-    <div class="mobile-sidebar-overlay" id="mobileSidebarOverlay"></div>
-    
-    <!-- Sticky Navbar & Sidebar Layout -->
-    <div class="flex min-h-screen">
-      <!-- Sidebar -->
-      <aside id="donorSidebar" class="hidden lg:flex flex-col w-64 bg-white border-r border-[#eaf3e7] py-8 px-6 sticky top-0 h-screen z-10">
-        <div class="mb-10 flex items-center gap-2">
-          <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
-          <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
-        </div>
-        <nav class="flex flex-col gap-2 text-base">
-          <a href="./FoodDonor.html" class="nav-link px-4 py-2 rounded-full font-medium active" id="nav-dashboard">Dashboard</a>
-          <a href="#" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-donations">Donations</a>
-          <a href="#" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-charities">Charities</a>
-          <a href="./CharityRequestsPage.html" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-requests">Charity Requests</a>
-        <a href="./DonorAccount.html" class="nav-link px-4 py-2 rounded-full font-medium flex items-center gap-2" id="nav-account">Account<span id="sidebar-account-alert" style="display:none;"></span></a>
-        <a href="./Feedback.html" class="nav-link px-4 py-2 rounded-full font-medium" id="nav-feedback">Feedback</a>
-    <script>
-      // Show exclamation if not verified (sidebar Account link)
-      document.addEventListener('DOMContentLoaded', function() {
-        const donor = (function() { try { return JSON.parse(localStorage.getItem('donor')); } catch { return null; } })() || {};
-        const alertSpan = document.getElementById('sidebar-account-alert');
-        if (alertSpan) {
-          if (!donor.verified) {
-            alertSpan.style.display = 'inline-flex';
-            alertSpan.innerHTML = `<svg class='w-4 h-4 text-[#e67e22]' fill='none' stroke='currentColor' stroke-width='2' viewBox='0 0 24 24'><circle cx='12' cy='12' r='10' /><path stroke-linecap='round' stroke-linejoin='round' d='M12 8v4m0 4h.01'/></svg>`;
-          } else {
-            alertSpan.style.display = 'none';
-          }
-        }
-      });
-    </script>
-          <button id="logoutBtn" class="nav-link px-4 py-2 rounded-full font-medium text-left mt-8">Logout</button>
-        </nav>
-        <div class="mt-auto flex items-center gap-3 pt-10">
-          <div class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]" id="donor-avatar" style="background-image: url('https://ui-avatars.com/api/?name=Donor');"></div>
-          <span class="font-semibold text-[#121a0f]" id="sidebar-donor-name">Donor</span>
-        </div>
-      </aside>
-      <!-- Main Content Area -->
-      <div class="flex-1 flex flex-col">
-        <!-- Sticky Navbar (for mobile/tablet) -->
-        <nav class="sticky-navbar flex lg:hidden items-center justify-between px-6 py-3 border-b border-[#eaf3e7] bg-white z-20">
-          <div class="flex items-center gap-4">
-            <button id="mobileMenuBtn" class="p-2 rounded-lg hover:bg-[#eaf3e7]" aria-label="Toggle menu">
-              <svg class="w-6 h-6 text-[#54d12b]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
-              </svg>
-            </button>
-            <span class="font-extrabold text-xl text-[#54d12b]">🍴 FoodShare</span>
+  <body>
+    <!-- Sidebar and mobile menu are added by /js/app-shell.js -->
+    <div class="app" data-role="donor" data-page="dashboard">
+      <main class="app-main">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title" id="donor-greeting"></h1>
+            <p class="page-lede">Your donations and what charities need right now.</p>
           </div>
-          <div class="flex items-center gap-4">
-            <button id="logoutBtnMobile" class="nav-link px-4 py-2 rounded-full text-sm font-medium">Logout</button>
-            <div class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]" id="donor-avatar-mobile" style="background-image: url('https://ui-avatars.com/api/?name=Donor');"></div>
-          </div>
-        </nav>
-
-    <!-- Main Content -->
-    <main class="flex-1">
-      <section class="p-6 max-w-screen-xl mx-auto">
-        <h2
-          id="donor-greeting"
-          class="text-[32px] font-bold leading-tight mb-6"
-        ></h2>
-        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-          <div
-            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start cursor-pointer hover:shadow-lg transition"
-            id="card-active-donations"
-            tabindex="0"
-          >
-            <p class="text-base font-medium text-[#54d12b] mb-1">
-              Active Donations
-            </p>
-            <p
-              class="text-2xl font-extrabold text-[#121a0f]"
-              id="stat-active-donations"
-            >
-              0
-            </p>
-          </div>
-          <div
-            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start cursor-pointer hover:shadow-lg transition"
-            id="card-food-donated"
-            tabindex="0"
-          >
-            <p class="text-base font-medium text-[#54d12b] mb-1">
-              Total Food Donated
-            </p>
-            <p
-              class="text-2xl font-extrabold text-[#121a0f]"
-              id="stat-food-donated"
-            >
-              0
-            </p>
-          </div>
-          <div
-            class="bg-[#fff] border border-[#eaf3e7] p-6 rounded-xl flex flex-col items-start cursor-pointer hover:shadow-lg transition"
-            id="card-charities-helped"
-            tabindex="0"
-          >
-            <p class="text-base font-medium text-[#54d12b] mb-1">
-              Charities Helped
-            </p>
-            <p
-              class="text-2xl font-extrabold text-[#121a0f]"
-              id="stat-charities-helped"
-            >
-              0
-            </p>
+          <div class="btn-row">
+            <a class="btn btn--solid" href="./MakeDonation.html" id="btn-make-donation">Make a Donation</a>
+            <a class="btn" href="./BrowseCharities.html" id="btn-browse-charities">Browse Charities</a>
           </div>
         </div>
-        <div class="flex flex-wrap gap-3 mb-4">
-          <button
-            class="bg-[#53d22c] hover:bg-[#43b81a] text-white h-10 px-5 rounded-full text-sm font-bold shadow"
-            id="btn-make-donation"
-          >
-            Make a Donation
-          </button>
-          <!-- Schedule a Pickup button removed -->
-          <button
-            class="bg-[#eaf3e7] hover:bg-[#d5e7d0] text-[#121a0f] h-10 px-5 rounded-full text-sm font-bold"
-            id="btn-browse-charities"
-          >
-            Browse Charities
-          </button>
+
+        <div class="stack">
+          <div class="stat-grid">
+            <a class="stat" href="./Donations.html" id="card-active-donations" title="View all donations">
+              <span class="stat-label">Active Donations</span>
+              <span class="stat-value" id="stat-active-donations">--</span>
+            </a>
+            <div class="stat" id="card-food-donated">
+              <span class="stat-label">Total Food Donated</span>
+              <span class="stat-value" id="stat-food-donated">--</span>
+            </div>
+            <div class="stat" id="card-charities-helped">
+              <span class="stat-label">Charities Helped</span>
+              <span class="stat-value" id="stat-charities-helped">--</span>
+            </div>
+          </div>
+
+            <div class="panel card">
+              <div class="card-head">
+                <h2 class="card-title">Active Donations</h2>
+                <div class="toolbar">
+                  <label>
+                    Status
+                    <select id="donation-status-filter" class="input input--sm">
+                      <option value="all">All</option>
+                    <option value="Pending">Pending</option>
+                    <option value="Scheduled">Scheduled</option>
+                    <option value="Picked Up">Picked Up</option>
+                    <option value="Delivered">Delivered</option>
+                    <option value="Cancelled">Cancelled</option>
+                    </select>
+                  </label>
+                </div>
+              </div>
+              <div class="table-wrap">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th>Donation ID</th>
+                      <th>Charity</th>
+                      <th>Food Items</th>
+                      <th>Status</th>
+                      <th>Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="donationsBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+          <div class="panel card">
+            <div class="card-head">
+              <h2 class="card-title">Charity Food Requests</h2>
+            </div>
+            <div id="charity-requests-section"></div>
+          </div>
         </div>
 
-        <!-- Active Donations Table -->
-        <div class="flex items-center gap-2 mb-2 mt-8">
-          <h3 class="text-[22px] font-bold tracking-tight mb-0">Active Donations</h3>
-          <label for="donation-status-filter" class="ml-4 text-sm font-medium">Status:</label>
-          <select id="donation-status-filter" class="border rounded px-2 py-1 text-sm">
-            <option value="all">All</option>
-            <option value="Pending">Pending</option>
-            <option value="Scheduled">Scheduled</option>
-            <option value="Picked Up">Picked Up</option>
-            <option value="Delivered">Delivered</option>
-            <option value="Cancelled">Cancelled</option>
-          </select>
-        </div>
-        <div
-          class="overflow-auto rounded-xl border border-[#d5e7d0] bg-white mb-6"
-        >
-          <table class="w-full text-sm" id="activeDonationsTable">
-            <thead class="text-left">
-              <tr class="border-b border-[#d5e7d0]">
-                <th class="px-4 py-3">Donation ID</th>
-                <th class="px-4 py-3">Charity</th>
-                <th class="px-4 py-3">Food Items</th>
-                <th class="px-4 py-3">Status</th>
-                <th class="px-4 py-3">Action</th>
-              </tr>
-            </thead>
-            <tbody id="activeDonationsBody">
-              <!-- Dynamic -->
-            </tbody>
-          </table>
-        </div>
+        <dialog class="dialog" id="donation-modal" aria-labelledby="donationModalTitle">
+          <h2 class="dialog-title" id="donationModalTitle">Donation Details</h2>
+          <dl class="detail-list" id="modal-content"></dl>
+          <form method="dialog" class="dialog-actions">
+            <button class="btn btn--solid">Close</button>
+          </form>
+        </dialog>
 
-
-        <!-- Charity Requests Section -->
-        <h3 class="text-[22px] font-bold tracking-tight mb-2 mt-10">
-          Charity Food Requests
-        </h3>
-        <div id="charity-requests-section" class="mb-10"></div>
-      </section>
-
-      <!-- Footer -->
-      <footer class="text-center py-10 text-[#5e974e] text-sm">
-        <div class="flex flex-wrap justify-center gap-6 mb-4">
-          <a href="#">About</a>
-          <a href="#">Contact</a>
-          <a href="#">Terms of Service</a>
-          <a href="#">Privacy Policy</a>
-        </div>
-        <p>© 2025 FoodShare. All rights reserved.</p>
-      </footer>
-    </main>
-
-    <!-- Donation Details Modal -->
-    <div id="donation-modal" class="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40 hidden">
-      <div class="bg-white rounded-xl shadow-lg max-w-md w-full p-6 relative">
-        <button id="close-modal-btn" class="absolute top-3 right-3 text-gray-400 hover:text-[#54d12b] text-2xl font-bold">&times;</button>
-        <h4 class="text-xl font-bold mb-4 text-[#54d12b]">Donation Details</h4>
-        <div id="modal-content" class="space-y-2 text-sm"></div>
-        <div class="flex justify-end gap-2 mt-6">
-          <button id="cancel-donation-btn" class="bg-red-100 text-red-700 font-bold px-4 py-2 rounded-full hidden">Cancel Donation</button>
-          <button id="close-modal-btn2" class="bg-[#eaf3e7] text-[#121a0f] font-bold px-4 py-2 rounded-full">Close</button>
-        </div>
-      </div>
+        <footer class="app-foot">
+          <p>&copy; 2025 FoodShare. All rights reserved.</p>
+        </footer>
+      </main>
     </div>
 
-    <!-- JS: Navbar, Stats, Table, Actions -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/js/ui.js"></script>
+    <script src="/js/app-shell.js"></script>
     <script src="CharityRequests.js"></script>
+    <script src="DonationsTable.js"></script>
     <script>
-      // --- Mobile Menu Toggle ---
-      document.addEventListener('DOMContentLoaded', function() {
-        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
-        const sidebar = document.getElementById('donorSidebar');
-        const overlay = document.getElementById('mobileSidebarOverlay');
-        
-        function toggleMobileMenu() {
-          sidebar.classList.toggle('sidebar-mobile-active');
-          overlay.classList.toggle('active');
-          document.body.style.overflow = sidebar.classList.contains('sidebar-mobile-active') ? 'hidden' : '';
-        }
-        
-        if (mobileMenuBtn) {
-          mobileMenuBtn.addEventListener('click', toggleMobileMenu);
-        }
-        
-        if (overlay) {
-          overlay.addEventListener('click', toggleMobileMenu);
-        }
-        
-        // Close menu when clicking a sidebar link
-        const sidebarLinks = sidebar.querySelectorAll('nav a');
-        sidebarLinks.forEach(link => {
-          link.addEventListener('click', function() {
-            if (window.innerWidth < 1024) {
-              toggleMobileMenu();
-            }
-          });
-        });
-      });
+      document.getElementById(
+        "donor-greeting"
+      ).textContent = `Welcome back, ${donorDisplayName()}`;
 
-      // Sidebar navigation logic (fixes broken links)
-      document.getElementById('nav-dashboard').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './FoodDonor.html';
-      };
-      document.getElementById('nav-donations').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './Donations.html';
-      };
-      document.getElementById('nav-charities').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './BrowseCharities.html';
-      };
-      document.getElementById('nav-requests').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './CharityRequestsPage.html';
-      };
-      document.getElementById('nav-account').onclick = function(e) {
-        e.preventDefault();
-        window.location.href = './DonorAccount.html';
-      };
-      // Help link removed
-      document.getElementById('logoutBtn').onclick = function() {
-        localStorage.clear();
-        window.location.href = '../Login.html';
-      };
-
-
-      // Dynamic greeting and sidebar username using donor.username
-      function updateDonorUsernameUI() {
-        let donorObj = null;
-        try {
-          donorObj = JSON.parse(localStorage.getItem('donor'));
-        } catch (e) {
-          donorObj = null;
-        }
-        // Prefer full name for greeting and sidebar, fallback to name, then donorName/localStorage, then 'Donor'
-        let donorFullName = (donorObj && donorObj.fullname && donorObj.fullname.trim() !== "")
-          ? donorObj.fullname
-          : (donorObj && donorObj.name && donorObj.name.trim() !== "")
-            ? donorObj.name
-            : (localStorage.getItem('donorName') && localStorage.getItem('donorName').trim() !== "")
-              ? localStorage.getItem('donorName')
-              : 'Donor';
-        // Greeting
-        document.getElementById("donor-greeting").textContent = `Welcome back, ${donorFullName}`;
-        // Sidebar name
-        const sidebarName = document.getElementById("sidebar-donor-name");
-        if (sidebarName) sidebarName.textContent = donorFullName;
-        // Avatars
-        document.getElementById("donor-avatar").style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
-        const mobileAvatar = document.getElementById("donor-avatar-mobile");
-        if (mobileAvatar) mobileAvatar.style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(donorFullName)}')`;
-      }
-      updateDonorUsernameUI();
-
-
-      // --- Fetch and update dashboard stats ---
+      // --- Dashboard stats ---
       async function updateDashboardStats() {
-        // Set initial values to 0 for all stats
-        document.getElementById("stat-active-donations").textContent = 0;
-        document.getElementById("stat-food-donated").textContent = 0;
-        document.getElementById("stat-charities-helped").textContent = 0;
-        const donor = JSON.parse(localStorage.getItem('donor') || '{}');
-        if (!donor.id) return;
+        const donor = getDonor();
+        const set = (id, value) =>
+          (document.getElementById(id).textContent = value ?? "--");
+
         // Total Donations (used for Active Donations card)
         try {
-          const res = await fetch(`https://foodshare-nairobi-1.onrender.com/api/donor/stats/total-donations?donor_id=${donor.id}`);
-          const data = await res.json();
-          document.getElementById("stat-active-donations").textContent = data.count ?? '--';
+          const res = await fetch(
+            `${API_BASE_URL}/api/donor/stats/total-donations?donor_id=${donor.id}`
+          );
+          set("stat-active-donations", (await res.json()).count);
         } catch {}
         // Food Donated (simple sum)
         try {
-          const res = await fetch(`https://foodshare-nairobi-1.onrender.com/api/donor/stats/food-sum?donor_id=${donor.id}`);
-          const data = await res.json();
-          document.getElementById("stat-food-donated").textContent = data.total_quantity ?? 0;
+          const res = await fetch(
+            `${API_BASE_URL}/api/donor/stats/food-sum?donor_id=${donor.id}`
+          );
+          set("stat-food-donated", (await res.json()).total_quantity ?? 0);
         } catch {}
-        // Charities Helped (count unique charities with completed donations/offers)
+        // Charities Helped (unique charities with completed donations/offers)
         try {
           const [offersRes, donationsRes] = await Promise.all([
-            fetch(`https://foodshare-nairobi-1.onrender.com/api/donor-offers?donor_id=${donor.id}`),
-            fetch(`https://foodshare-nairobi-1.onrender.com/api/donations?donor_id=${donor.id}`)
+            fetch(`${API_BASE_URL}/api/donor-offers?donor_id=${donor.id}`),
+            fetch(`${API_BASE_URL}/api/donations?donor_id=${donor.id}`),
           ]);
           const offersData = await offersRes.json();
           const donationsData = await donationsRes.json();
-          // Get all completed offers and donations
-          const completedOffers = (offersData.offers || []).filter(o => o.status === 'Completed');
-          const completedDonations = (donationsData.donations || []).filter(d => d.status === 'Completed');
-          // Collect unique charity names/IDs
           const charitySet = new Set();
-          completedOffers.forEach(o => charitySet.add(o.charity_id || o.charity_name));
-          completedDonations.forEach(d => charitySet.add(d.charity_id || d.charity_orgname));
-          document.getElementById("stat-charities-helped").textContent = charitySet.size;
-        } catch {
-          document.getElementById("stat-charities-helped").textContent = 0;
-        }
+          (offersData.offers || [])
+            .filter((o) => o.status === "Completed")
+            .forEach((o) => charitySet.add(o.charity_id || o.charity_name));
+          (donationsData.donations || [])
+            .filter((d) => d.status === "Completed")
+            .forEach((d) => charitySet.add(d.charity_id || d.charity_orgname));
+          set("stat-charities-helped", charitySet.size);
+        } catch {}
       }
       updateDashboardStats();
-      // --- Card click actions ---
-      document.getElementById('card-active-donations').onclick = function() {
-        window.location.href = './Donations.html';
-      };
-      document.getElementById('card-active-donations').onkeypress = function(e) { if (e.key === 'Enter') this.click(); };
-
-      // Remove modal for food donated breakdown (no longer needed)
-      document.getElementById('card-food-donated').onclick = null;
-      document.getElementById('card-food-donated').onkeypress = null;
-
-      // Active Donations Table - Fetch and render active donations for this donor
-      let allDonations = [];
-      let currentModalDonation = null;
-      async function fetchAndRenderDonations() {
-        const donor = JSON.parse(localStorage.getItem('donor') || '{}');
-        if (!donor.id) {
-          console.log('No donor id found in localStorage:', donor);
-          return;
-        }
-        try {
-          // Fetch both donor_offers and food_donations
-          const [offersRes, donationsRes] = await Promise.all([
-            fetch(`https://foodshare-nairobi-1.onrender.com/api/donor-offers?donor_id=${donor.id}`),
-            fetch(`https://foodshare-nairobi-1.onrender.com/api/donations?donor_id=${donor.id}`)
-          ]);
-          const offersData = await offersRes.json();
-          const donationsData = await donationsRes.json();
-          // Normalize both arrays to a common format
-          const offers = (offersData.offers || []).map(o => ({
-            id: o.id,
-            charity_name: o.charity_name || '-',
-            food_type: o.food_type,
-            description: o.description,
-            quantity: o.quantity,
-            unit: o.unit,
-            expiry: o.expiry,
-            pickup_address: o.pickup_address,
-            notes: o.notes,
-            status: o.status || 'pending',
-            created_at: o.created_at,
-            type: 'offer'
-          }));
-          const donations = (donationsData.donations || []).map(d => ({
-            id: d.id,
-            charity_name: d.charity_orgname || '-',
-            food_type: d.category,
-            description: d.description,
-            quantity: d.quantity,
-            unit: d.unit,
-            expiry: d.expiry,
-            pickup_address: d.pickup_address,
-            notes: d.notes,
-            status: d.status || 'Scheduled',
-            created_at: d.created_at,
-            type: 'donation'
-          }));
-          allDonations = [...offers, ...donations].sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
-          renderDonationsTable();
-        } catch (e) {
-          document.getElementById("activeDonationsBody").innerHTML = '<tr><td colspan="7" class="text-center py-4 text-red-600">Failed to load donations.</td></tr>';
-          console.error('Error fetching donations:', e);
-        }
-      }
-      function renderDonationsTable() {
-        const statusFilter = document.getElementById('donation-status-filter').value;
-        const tbody = document.getElementById("activeDonationsBody");
-        let filtered = allDonations;
-        if (statusFilter !== 'all') {
-          filtered = allDonations.filter(d => d.status === statusFilter);
-        }
-        tbody.innerHTML = "";
-        if (filtered.length) {
-          filtered.forEach((d) => {
-            tbody.innerHTML += `<tr class="border-t border-[#d5e7d0]">
-              <td class="px-4 py-2">#${d.id}</td>
-              <td class="px-4 py-2 text-[#5e974e]">${d.charity_name || '-'}</td>
-              <td class="px-4 py-2 text-[#5e974e]">${d.food_type} - ${d.description} (${d.quantity} ${d.unit})</td>
-              <td class="px-4 py-2">${d.status}</td>
-              <td class="px-4 py-2 text-[#5e974e] font-bold cursor-pointer" onclick="showDonationModal(${d.id}, '${d.type}')">View Details</td>
-            </tr>`;
-          });
-        } else {
-          tbody.innerHTML = '<tr><td colspan="7" class="text-center py-4">No donations found for this status.</td></tr>';
-        }
-      }
-      window.showDonationModal = function(id, type) {
-        const d = allDonations.find(x => x.id === id && x.type === type);
-        if (!d) return;
-        currentModalDonation = d;
-        const modal = document.getElementById('donation-modal');
-        const content = document.getElementById('modal-content');
-        content.innerHTML = `
-          <div><span class='font-medium'>${d.type === 'offer' ? 'Offer' : 'Donation'} ID:</span> #${d.id}</div>
-          <div><span class='font-medium'>Charity:</span> ${d.charity_name || '-'}</div>
-          <div><span class='font-medium'>Food Type:</span> ${d.food_type}</div>
-          <div><span class='font-medium'>Description:</span> ${d.description}</div>
-          <div><span class='font-medium'>Quantity:</span> ${d.quantity} ${d.unit}</div>
-          <div><span class='font-medium'>Expiry Date:</span> ${d.expiry}</div>
-          <div><span class='font-medium'>Pickup Address:</span> ${d.pickup_address}</div>
-          <div><span class='font-medium'>Notes:</span> ${d.notes || '-'}</div>
-          <div><span class='font-medium'>Status:</span> <span class='font-bold text-[#54d12b]'>${d.status}</span></div>
-          <div><span class='font-medium'>Created At:</span> ${d.created_at}</div>
-        `;
-        // Hide cancel button for now (implement if needed)
-        document.getElementById('cancel-donation-btn').classList.add('hidden');
-        modal.classList.remove('hidden');
-      };
-function closeDonationModal() {
-  document.getElementById('donation-modal').classList.add('hidden');
-  currentModalDonation = null;
-}
-document.getElementById('close-modal-btn').onclick = closeDonationModal;
-document.getElementById('close-modal-btn2').onclick = closeDonationModal;
-document.getElementById('donation-modal').addEventListener('click', function(e) {
-  if (e.target === this) closeDonationModal();
-});
-document.getElementById('cancel-donation-btn').onclick = async function() {
-  if (!currentModalDonation) return;
-  if (!confirm('Are you sure you want to cancel this donation?')) return;
-  try {
-    const res = await fetch(`/api/donations/${currentModalDonation.id}/status`, {
-      method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ status: 'Cancelled' })
-    });
-    if (res.ok) {
-      closeDonationModal();
-      await fetchAndRenderDonations();
-    } else {
-      alert('Failed to cancel donation.');
-    }
-  } catch {
-    alert('Failed to cancel donation.');
-  }
-};
-
-      // Button actions (scaffold)
-      document.getElementById("btn-make-donation").onclick = () =>
-        window.location.href = "./BrowseCharities.html";
-      // Schedule a Pickup button removed
-      document.getElementById("btn-browse-charities").onclick = () =>
-        (window.location.href = "./BrowseCharities.html");
-
-      // Ensure fetchAndRenderDonations is called on page load
-fetchAndRenderDonations();
-document.getElementById('donation-status-filter').addEventListener('change', renderDonationsTable);
-
     </script>
   </body>
 </html>

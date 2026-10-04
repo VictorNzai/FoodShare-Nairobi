@@ -1,5 +1,5 @@
 const express = require('express');
-require('dotenv').config();
+require('dotenv').config({ path: require('path').join(__dirname, '.env') });
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const bodyParser = require('body-parser');
@@ -34,7 +34,7 @@ const corsOptions = {
   optionsSuccessStatus: 200,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With'],
-  exposedHeaders: ['Content-Range', 'X-Content-Range']
+  exposedHeaders: ['Content-Range', 'X-Content-Range', 'Content-Disposition']
 };
 
 // Middleware
@@ -875,6 +875,10 @@ app.use('/api/donor', donorDashboardStatsRoutes(pool));
 
 // 404 handler
 app.use((req, res) => {
+  // A person following a bad link gets a page; API callers get JSON
+  if (req.method === 'GET' && !req.path.startsWith('/api') && !req.path.startsWith('/auth')) {
+    return res.status(404).sendFile(path.join(__dirname, '../frontend/404.html'));
+  }
   res.status(404).json({ success: false, message: 'Not found' });
 });
 

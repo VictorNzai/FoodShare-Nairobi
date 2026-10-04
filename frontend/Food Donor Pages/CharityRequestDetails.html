@@ -4,274 +4,150 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Charity Request Details - FoodShare</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Manrope", "Noto Sans", sans-serif;
-      }
-      /* Use the same sidebar-link style as CharityRequestDetails.html */
-      .sidebar-link.active,
-      .sidebar-link:hover {
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-      }
-    </style>
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
-  <body class="bg-[#f9fcf8] text-[#111b0e]">
-    <div class="flex min-h-screen">
-      <!-- Sidebar -->
-      <aside
-        class="hidden lg:flex flex-col w-64 bg-white border-r border-[#eaf3e7] py-8 px-6 sticky top-0 h-screen z-10"
-      >
-        <div class="mb-10 flex items-center gap-2">
-          <span class="font-extrabold text-2xl text-[#54d12b]">🍴</span>
-          <span class="font-extrabold text-xl text-[#54d12b]">FoodShare</span>
+  <body>
+    <!-- Sidebar and mobile menu are added by /js/app-shell.js -->
+    <div class="app" data-role="donor" data-page="requests">
+      <main class="app-main">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title">Request Details</h1>
+            <p class="page-lede"><a class="link" href="./CharityRequestsPage.html">&larr; Back to Requests</a></p>
+          </div>
         </div>
-        <nav class="flex flex-col gap-2 text-base">
-          <a
-            href="FoodDonor.html"
-            class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Dashboard</a
-          >
-          <a
-            href="Donations.html"
-            class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Donations</a
-          >
-          <a
-            href="BrowseCharities.html"
-            class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Charities</a
-          >
-          <a
-            href="CharityRequestsPage.html"
-            class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Charity Requests</a
-          >
-          <a
-            href="DonorAccount.html"
-            class="sidebar-link px-4 py-2 rounded-full font-medium"
-            >Account</a
-          >
-          <button
-            id="logoutBtn"
-            class="sidebar-link px-4 py-2 rounded-full font-medium text-left mt-8"
-          >
-            Logout
-          </button>
-        </nav>
-        <div class="mt-auto flex items-center gap-3 pt-10">
-          <div
-            class="w-10 h-10 bg-cover bg-center rounded-full border border-[#eaf3e7]"
-            id="donor-avatar"
-            style="
-              background-image: url('https://ui-avatars.com/api/?name=Donor');
-            "
-          ></div>
-          <span
-            class="font-semibold text-[#121a0f]"
-            id="sidebar-donor-name"
-          ></span>
-        </div>
-      </aside>
-      <!-- Main Content -->
-      <main class="flex-1">
-        <section class="p-6 max-w-2xl mx-auto">
-          <button
-            onclick="window.history.back()"
-            class="mb-6 text-[#54d12b] hover:underline font-medium"
-          >
-            &larr; Back to Requests
-          </button>
-          <div
-            id="request-details"
-            class="bg-white border border-[#d5e7d0] rounded-2xl shadow p-8 flex flex-col gap-4"
-          ></div>
-        </section>
+
+        <div id="request-details" class="panel card card--stack narrow"></div>
+
+        <!-- Pledge Form -->
+        <dialog class="dialog dialog--form" id="pledge-modal" aria-labelledby="pledgeModalTitle">
+          <h2 class="dialog-title" id="pledgeModalTitle">Schedule a Ride!</h2>
+          <form id="pledge-form">
+            <div class="field">
+              <label for="pledge-location">Pickup Location</label>
+              <input type="text" id="pledge-location" name="pickup_location" class="input" required placeholder="e.g. 123 Main St, Nairobi" />
+            </div>
+            <div class="field-row">
+              <div class="field">
+                <label for="pledge-date">Date of Pickup</label>
+                <input type="date" id="pledge-date" name="pickup_date" class="input" required />
+              </div>
+              <div class="field">
+                <label for="pledge-phone">Contact Phone</label>
+                <input type="tel" id="pledge-phone" name="contact_phone" class="input" required placeholder="e.g. 0712 345678" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="pledge-notes">Additional Notes (optional)</label>
+              <textarea id="pledge-notes" name="notes" class="input" rows="2" placeholder="Any special instructions..."></textarea>
+            </div>
+            <div id="pledge-message" class="alert" role="alert"></div>
+            <div class="dialog-actions">
+              <button type="button" class="btn btn--quiet" onclick="this.closest('dialog').close()">Cancel</button>
+              <button type="submit" class="btn btn--solid">Submit Pledge</button>
+            </div>
+          </form>
+        </dialog>
+
+        <footer class="app-foot">
+          <p>&copy; 2025 FoodShare. All rights reserved.</p>
+        </footer>
       </main>
     </div>
+
+    <script src="/js/ui.js"></script>
+    <script src="/js/app-shell.js"></script>
     <script>
-      // Set donor full name/avatar in sidebar (prefer donor.fullname, fallback to donor.name, then donorName/localStorage, then 'Donor')
-      let donorObj =
-        (function () {
-          try {
-            return JSON.parse(localStorage.getItem("donor"));
-          } catch {
-            return {};
-          }
-        })() || {};
-      const donorFullName =
-        donorObj.fullname ||
-        donorObj.name ||
-        localStorage.getItem("donorName") ||
-        "Donor";
-      document.getElementById("sidebar-donor-name").textContent = donorFullName;
-      document.getElementById(
-        "donor-avatar"
-      ).style.backgroundImage = `url('https://ui-avatars.com/api/?name=${encodeURIComponent(
-        donorFullName
-      )}')`;
-      document.getElementById("logoutBtn").onclick = () => {
-        localStorage.clear();
-        window.location.href = "../Login.html";
-      };
-      // Get request ID from URL
-      function getRequestId() {
-        const params = new URLSearchParams(window.location.search);
-        return params.get("id");
-      }
+      const requestId = new URLSearchParams(window.location.search).get("id");
+
       // Fetch and render request details
       function fetchRequestDetails() {
-        const id = getRequestId();
         const detailsDiv = document.getElementById("request-details");
-        if (!id) {
-          detailsDiv.innerHTML =
-            '<div class="text-red-500">Invalid request ID.</div>';
+        if (!requestId) {
+          detailsDiv.innerHTML = '<p class="muted">Invalid request ID.</p>';
           return;
         }
-        detailsDiv.innerHTML =
-          '<div class="text-gray-500">Loading details...</div>';
+        detailsDiv.innerHTML = '<p class="muted">Loading details...</p>';
         fetch(
-          `https://foodshare-nairobi-1.onrender.com/api/charity-requests/${id}`
+          `${API_BASE_URL}/api/charity-requests/${encodeURIComponent(requestId)}`
         )
           .then((res) => res.json())
           .then((data) => {
             if (!data.success || !data.request) {
-              detailsDiv.innerHTML =
-                '<div class="text-red-500">Request not found.</div>';
+              detailsDiv.innerHTML = '<p class="muted">Request not found.</p>';
               return;
             }
             const req = data.request;
             detailsDiv.innerHTML = `
-            <div class="flex items-center gap-3 mb-2">
-              <span class="inline-block bg-[#eaf3e7] text-[#54d12b] font-bold px-3 py-1 rounded-full text-xs">${
-                req.org_name
-              }</span>
-              <span class="ml-auto text-xs text-gray-400">${
-                req.date ? new Date(req.date).toLocaleDateString() : ""
-              }</span>
-            </div>
-            <div class="font-bold text-2xl text-[#121a0f] mb-1">${
-              req.food_item
-            }</div>
-            <div class="text-base text-gray-700 mb-1">Quantity: <span class="font-semibold">${
-              req.quantity
-            }</span></div>
-            <div class="text-base text-gray-700 mb-1">Pickup Location: <span class="font-semibold">${
-              req.pickup_location
-            }</span></div>
-            <div class="text-base text-gray-700 mb-2">${
-              req.notes
-                ? `<span class='font-medium'>Notes:</span> ${req.notes}`
-                : ""
-            }</div>
-            <div class="flex gap-4 mt-4">
-              <button id="pledge-btn" class="bg-[#53d22c] hover:bg-[#43b81a] text-white px-6 py-2 rounded-full text-base font-bold">Pledge to Fulfill</button>
-            </div>
-            <!-- Pledge Form Modal -->
-            <div id="pledge-modal" class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50 hidden">
-              <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-8 relative">
-                <button id="close-pledge-modal" class="absolute top-3 right-3 text-gray-400 hover:text-gray-700 text-2xl font-bold">&times;</button>
-                <h3 class="text-xl font-bold mb-4 text-[#54d12b] text-center">Schedule a Ride!</h3>
-                <form id="pledge-form" class="space-y-4">
-                  <div>
-                    <label class="block font-medium mb-1">Pickup Location</label>
-                    <input type="text" name="pickup_location" required class="w-full border rounded px-3 py-2" placeholder="e.g. 123 Main St, Nairobi" />
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">Date of Pickup</label>
-                    <input type="date" name="pickup_date" required class="w-full border rounded px-3 py-2" />
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">Contact Phone</label>
-                    <input type="tel" name="contact_phone" required class="w-full border rounded px-3 py-2" placeholder="e.g. 0712 345678" />
-                  </div>
-                  <div>
-                    <label class="block font-medium mb-1">Additional Notes (optional)</label>
-                    <textarea name="notes" class="w-full border rounded px-3 py-2" rows="2" placeholder="Any special instructions..."></textarea>
-                  </div>
-                  <button type="submit" class="w-full bg-[#53d22c] hover:bg-[#43b81a] text-white font-bold py-2 rounded-full mt-2">Submit Pledge</button>
-                  <div id="pledge-message" class="mt-2 text-center text-sm"></div>
-                </form>
-              </div>
-            </div>
-          `;
+              <p class="muted">${esc(req.org_name)}${
+              req.date ? " · " + new Date(req.date).toLocaleDateString() : ""
+            }</p>
+              <h2 class="profile-name">${esc(req.food_item)}</h2>
+              <p>Quantity: <strong>${esc(req.quantity)}</strong></p>
+              <p>Pickup Location: <strong>${esc(req.pickup_location)}</strong></p>
+              ${req.notes ? `<p>Notes: ${esc(req.notes)}</p>` : ""}
+              <div class="card-foot" style="justify-content: flex-start">
+                <button type="button" class="pill pill--solid" id="pledge-btn">Pledge to Fulfill
+                  <span class="pill-arrow"><svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 8h10M9 4l4 4-4 4"/></svg></span>
+                </button>
+              </div>`;
+            document.getElementById("pledge-btn").onclick = () =>
+              document.getElementById("pledge-modal").showModal();
           })
           .catch(() => {
-            detailsDiv.innerHTML =
-              '<div class="text-red-500">Failed to load details.</div>';
+            detailsDiv.innerHTML = '<p class="muted">Failed to load details.</p>';
           });
       }
       fetchRequestDetails();
 
-      // Pledge to Fulfill modal logic
-      document.addEventListener("click", function (e) {
-        if (e.target && e.target.id === "pledge-btn") {
-          document.getElementById("pledge-modal").classList.remove("hidden");
-        }
-        if (e.target && e.target.id === "close-pledge-modal") {
-          document.getElementById("pledge-modal").classList.add("hidden");
-        }
-        if (e.target && e.target.id === "pledge-modal") {
-          document.getElementById("pledge-modal").classList.add("hidden");
-        }
-      });
       // Handle pledge form submit
-      document.addEventListener("submit", async function (e) {
-        if (e.target && e.target.id === "pledge-form") {
-          e.preventDefault();
-          const form = e.target;
-          const data = {
-            pickup_location: form.pickup_location.value.trim(),
-            date: form.pickup_date.value,
-            contact_phone: form.contact_phone.value.trim(),
-            notes: form.notes.value.trim(),
-          };
-          const id = getRequestId();
-          const msg = document.getElementById("pledge-message");
-          try {
-            const res = await fetch(
-              `https://foodshare-nairobi-1.onrender.com/api/food-needs/${id}/schedule-pledge`,
-              {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(data),
-              }
-            );
-            if (res.ok) {
-              msg.textContent = "Pledge submitted! Thank you for helping.";
-              msg.className = "mt-2 text-center text-green-600";
-              setTimeout(() => {
-                document.getElementById("pledge-modal").classList.add("hidden");
-                form.reset();
-                msg.textContent = "";
-                fetchRequestDetails();
-              }, 1200);
-            } else {
-              const err = await res.json();
-              msg.textContent = err.message || "Failed to submit pledge.";
-              msg.className = "mt-2 text-center text-red-600";
+      document.getElementById("pledge-form").onsubmit = async function (e) {
+        e.preventDefault();
+        const form = e.target;
+        const msg = document.getElementById("pledge-message");
+        const submitBtn = form.querySelector('[type="submit"]');
+        const data = {
+          pickup_location: form.pickup_location.value.trim(),
+          date: form.pickup_date.value,
+          contact_phone: form.contact_phone.value.trim(),
+          notes: form.notes.value.trim(),
+        };
+        msg.textContent = "";
+        msg.className = "alert";
+        submitBtn.disabled = true;
+        try {
+          const res = await fetch(
+            `${API_BASE_URL}/api/food-needs/${encodeURIComponent(
+              requestId
+            )}/schedule-pledge`,
+            {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(data),
             }
-          } catch (err) {
-            msg.textContent = "Failed to submit pledge.";
-            msg.className = "mt-2 text-center text-red-600";
+          );
+          if (res.ok) {
+            form.reset();
+            document.getElementById("pledge-modal").close();
+            showToast("Pledge submitted! Thank you for helping.", "success");
+            fetchRequestDetails();
+          } else {
+            const err = await res.json().catch(() => ({}));
+            msg.textContent = err.message || "Failed to submit pledge.";
+            msg.className = "alert alert--error";
           }
+        } catch (err) {
+          msg.textContent = "Failed to submit pledge.";
+          msg.className = "alert alert--error";
         }
-      });
-
-      // Example: highlight the Donations link if on Donations.html
-      if (window.location.pathname.endsWith("Donations.html")) {
-        document.querySelectorAll(".sidebar-link").forEach((link) => {
-          if (link.getAttribute("href") === "Donations.html") {
-            link.classList.add("active");
-          }
-        });
-      }
+        submitBtn.disabled = false;
+      };
     </script>
   </body>
 </html>

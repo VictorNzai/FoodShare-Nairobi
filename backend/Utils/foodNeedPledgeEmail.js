@@ -1,4 +1,4 @@
-const { sendEmail } = require('./mailer');
+const { sendEmail, emailLayout, emailDetails, escapeHtml } = require('./mailer');
 
 /**
  * Send an email to the charity when a donor pledges to fulfill a food need.
@@ -7,24 +7,23 @@ const { sendEmail } = require('./mailer');
  * @param {object} pledge - Pledge details (pickup_location, date, contact_phone, notes, donorName, donorEmail)
  */
 async function sendFoodNeedPledgeEmail(toEmail, charityName, pledge) {
-  const subject = `A Donor Has Pledged to Fulfill Your Food Request!`;
-  const body = `
-    <p>Dear ${charityName},</p>
-    <p>Good news! A donor has pledged to fulfill your food request. Here are the details:</p>
-    <ul>
-      <li><b>Pickup Location:</b> ${pledge.pickup_location}</li>
-      <li><b>Date of Pickup:</b> ${pledge.date}</li>
-      <li><b>Contact Phone:</b> ${pledge.contact_phone}</li>
-      <li><b>Additional Notes:</b> ${pledge.notes || 'None'}</li>
-    </ul>
-    <p>Please log in to your FoodShare profile to view the progress of your request.</p>
-    <p>Thank you for using FoodShare Nairobi!</p>
-    <p><i>This is an automated message from FoodShare Nairobi.</i></p>
-  `;
   await sendEmail({
     to: toEmail,
-    subject,
-    html: body,
+    subject: 'A Donor Has Pledged to Fulfill Your Food Request!',
+    html: emailLayout({
+      heading: 'A donor has pledged to fulfill your request',
+      body: `<p style="margin:0 0 12px;">Dear ${escapeHtml(charityName)},</p>
+    <p style="margin:0;">Good news! A donor has pledged to fulfill your food request. Here are the details:</p>
+    ${emailDetails([
+      ['Pickup Location', pledge.pickup_location],
+      ['Date of Pickup', pledge.date],
+      ['Contact Phone', pledge.contact_phone],
+      ['Additional Notes', pledge.notes || 'None']
+    ])}
+    <p style="margin:0 0 12px;">Please log in to your FoodShare profile to view the progress of your request.</p>
+    <p style="margin:0 0 12px;">Thank you for using FoodShare Nairobi!</p>
+    <p style="margin:0;color:#4b5540;font-size:13px;">This is an automated message from FoodShare Nairobi.</p>`
+    }),
     provider: process.env.EMAIL_PROVIDER_PLEDGE || undefined
   });
 }

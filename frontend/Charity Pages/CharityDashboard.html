@@ -3,545 +3,52 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FoodShare Charity Dashboard</title>
+    <title>Charity Dashboard - FoodShare</title>
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Noto+Sans:wght@400;500;700;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        margin: 0;
-        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
-        background: #f9fcf8;
-        color: #111b0e;
-      }
-      header {
-        background: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        border-bottom: 1px solid #ddd;
-        position: relative;
-        z-index: 2;
-      }
-      .logo {
-        font-weight: bold;
-        font-size: 18px;
-        color: #54d12b;
-      }
-      nav a {
-        margin-left: 30px;
-        text-decoration: none;
-        color: #333;
-        font-size: 14px;
-      }
-      .sign-up-btn {
-        background-color: #54d12b;
-        color: white;
-        padding: 8px 18px;
-        border: none;
-        border-radius: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-left: 30px;
-      }
-      .flex {
-        display: flex;
-        min-height: 100vh;
-      }
-      /* Sidebar */
-      .sidebar {
-        width: 250px;
-        padding: 32px 24px;
-        border-right: 1px solid #eaf3e7;
-        background: #fff;
-        display: none;
-        position: fixed;
-        top: 70px;
-        left: 0;
-        height: calc(100vh - 70px);
-        z-index: 1;
-      }
-      @media (min-width: 1024px) {
-        .sidebar {
-          display: block;
-        }
-      }
-      .sidebar .logo {
-        font-size: 20px;
-        font-weight: 700;
-        margin-bottom: 32px;
-        color: #54d12b;
-      }
-      .sidebar nav {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .sidebar nav a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 20px;
-        border-radius: 999px;
-        background: none;
-        color: #222;
-        font-size: 15px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background 0.2s, color 0.2s;
-      }
-      .sidebar nav a.active,
-      .sidebar nav a:hover {
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-      }
-      /* Main Content */
-      .main-content {
-        flex: 1;
-        padding: 32px 24px;
-        max-width: 1200px;
-        margin: 0 auto;
-        margin-left: 320px;
-        margin-top: 70px;
-      }
-      .main-content h2 {
-        font-size: 32px;
-        font-weight: 800;
-        margin-bottom: 24px;
-        letter-spacing: -1px;
-      }
-      .stats {
-        display: flex;
-        gap: 24px;
-        margin-bottom: 32px;
-        flex-wrap: wrap;
-      }
-      .stat-card {
-        background: #eaf3e7;
-        border-radius: 18px;
-        padding: 32px 24px;
-        flex: 1 1 220px;
-        min-width: 220px;
-        text-align: center;
-      }
-      .stat-card p {
-        margin: 0;
-        font-size: 16px;
-        font-weight: 500;
-        color: #222;
-      }
-      .stat-card .stat-value {
-        font-size: 28px;
-        font-weight: 800;
-        color: #111b0e;
-        margin-top: 8px;
-      }
-      .actions {
-        display: flex;
-        gap: 16px;
-        margin-bottom: 24px;
-        flex-wrap: wrap;
-      }
-      .action-btn {
-        background: #66ea42;
-        color: #111b0e;
-        border: none;
-        border-radius: 999px;
-        padding: 12px 32px;
-        font-size: 15px;
-        font-weight: 700;
-        cursor: pointer;
-        transition: background 0.2s;
-      }
-      .action-btn.secondary {
-        background: #eaf3e7;
-        color: #222;
-      }
-      .action-btn:hover {
-        background: #54d12b;
-        color: #fff;
-      }
-      /* Table */
-      .table-section {
-        margin-bottom: 32px;
-      }
-      .table-section h3 {
-        font-size: 22px;
-        font-weight: 700;
-        margin-bottom: 12px;
-      }
-      .table-wrap {
-        overflow-x: auto;
-        border-radius: 16px;
-        border: 1px solid #d5e7d0;
-        background: #fff;
-        margin-bottom: 24px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 600px;
-      }
-      th,
-      td {
-        padding: 16px;
-        text-align: left;
-        border-bottom: 1px solid #eaf3e7;
-      }
-      th {
-        background: #f5f5f5;
-        font-size: 15px;
-        font-weight: 700;
-        color: #222;
-      }
-      td {
-        font-size: 14px;
-        color: #222;
-      }
-      .status {
-        display: inline-block;
-        padding: 4px 16px;
-        border-radius: 999px;
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-        font-size: 13px;
-      }
-      /* Hamburger Menu Button */
-      .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 8px;
-        z-index: 1001;
-      }
-
-      .hamburger-btn span {
-        display: block;
-        width: 25px;
-        height: 3px;
-        background: #54d12b;
-        margin: 5px 0;
-        transition: 0.3s;
-        border-radius: 3px;
-      }
-
-      /* Mobile Sidebar Overlay */
-      .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
-        height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-      }
-
-      .sidebar-overlay.active {
-        display: block;
-      }
-
-      /* Responsive */
-      @media (max-width: 900px) {
-        .main-content {
-          padding: 16px 4vw;
-          margin-left: 0;
-          margin-top: 70px;
-        }
-
-        .hamburger-btn {
-          display: block;
-        }
-
-        .sidebar {
-          display: block;
-          transform: translateX(-100%);
-          transition: transform 0.3s ease-in-out;
-          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar.active {
-          transform: translateX(0);
-        }
-
-        .stats {
-          flex-direction: column;
-          gap: 16px;
-        }
-      }
-
-      /* Enhanced responsive styles for tablets and mobile */
-      @media (max-width: 768px) {
-        header {
-          padding: 15px 20px;
-          flex-wrap: wrap;
-        }
-
-        .logo {
-          font-size: 16px;
-        }
-
-        nav {
-          display: flex;
-          gap: 15px;
-        }
-
-        nav a {
-          margin-left: 0;
-          font-size: 13px;
-        }
-
-        .sign-up-btn {
-          padding: 6px 14px;
-          font-size: 13px;
-          margin-left: 0;
-        }
-
-        .main-content {
-          padding: 16px;
-          margin-left: 0;
-        }
-
-        .main-content h2 {
-          font-size: 26px;
-          margin-bottom: 20px;
-        }
-
-        .stat-card {
-          padding: 24px 20px;
-          min-width: 180px;
-        }
-
-        .stat-card p {
-          font-size: 14px;
-        }
-
-        .stat-card .stat-value {
-          font-size: 24px;
-        }
-
-        .actions {
-          gap: 12px;
-        }
-
-        .action-btn {
-          padding: 10px 24px;
-          font-size: 14px;
-          flex: 1 1 auto;
-          min-width: 150px;
-        }
-
-        .table-section h3 {
-          font-size: 20px;
-        }
-
-        table {
-          font-size: 13px;
-          min-width: 500px;
-        }
-
-        th,
-        td {
-          padding: 12px 10px;
-        }
-
-        th {
-          font-size: 13px;
-        }
-
-        td {
-          font-size: 12px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        header {
-          padding: 10px 15px;
-        }
-
-        .logo {
-          font-size: 14px;
-        }
-
-        nav {
-          flex-wrap: wrap;
-          gap: 10px;
-          width: 100%;
-          margin-top: 8px;
-        }
-
-        nav a {
-          font-size: 12px;
-        }
-
-        .sign-up-btn {
-          padding: 5px 12px;
-          font-size: 12px;
-        }
-
-        .main-content {
-          padding: 12px;
-          margin-top: 80px;
-        }
-
-        .main-content h2 {
-          font-size: 22px;
-          margin-bottom: 16px;
-          letter-spacing: -0.5px;
-        }
-
-        .stats {
-          gap: 12px;
-        }
-
-        .stat-card {
-          padding: 20px 16px;
-          min-width: 100%;
-          border-radius: 12px;
-        }
-
-        .stat-card p {
-          font-size: 13px;
-        }
-
-        .stat-card .stat-value {
-          font-size: 22px;
-          margin-top: 6px;
-        }
-
-        .actions {
-          gap: 10px;
-          flex-direction: column;
-        }
-
-        .action-btn {
-          padding: 10px 20px;
-          font-size: 13px;
-          width: 100%;
-          min-width: 100%;
-        }
-
-        .table-section {
-          margin-bottom: 24px;
-        }
-
-        .table-section h3 {
-          font-size: 18px;
-          margin-bottom: 10px;
-        }
-
-        .table-wrap {
-          border-radius: 12px;
-        }
-
-        table {
-          font-size: 11px;
-          min-width: 450px;
-        }
-
-        th,
-        td {
-          padding: 10px 8px;
-        }
-
-        th {
-          font-size: 11px;
-        }
-
-        td {
-          font-size: 10px;
-        }
-
-        .status {
-          padding: 3px 12px;
-          font-size: 10px;
-        }
-      }
-    </style>
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
   <body>
-    <!-- Mobile Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <header>
-      <div style="display: flex; align-items: center; gap: 15px">
-        <button
-          class="hamburger-btn"
-          id="hamburgerBtn"
-          aria-label="Toggle menu"
-        >
-          <span></span>
-          <span></span>
-          <span></span>
-        </button>
-        <div
-          class="logo"
-          style="cursor: pointer"
-          onclick="window.location.href='../../Index.html'"
-        >
-          🍴 FoodShare
+    <!-- Sidebar and mobile menu are added by /js/app-shell.js -->
+    <div class="app" data-role="charity" data-page="dashboard">
+      <main class="app-main">
+        <div class="page-head">
+          <div>
+            <h1 class="page-title" id="charity-greeting"></h1>
+            <p class="page-lede">Your food needs and the donations you have received.</p>
+          </div>
+          <div class="btn-row">
+            <a class="btn btn--solid" href="./PostFoodNeed.html">Post a New Food Need</a>
+            <a class="btn" href="./BrowseDonorOffers.html">Browse Donor Offers</a>
+          </div>
         </div>
-      </div>
-      <nav>
-        <a href="Profile.html">Profile</a>
-        <a href="#" class="sign-up-btn" onclick="signOut()">Sign Out</a>
-      </nav>
-    </header>
-    <div class="flex">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <div class="logo">FoodShare</div>
-        <nav>
-          <a href="#" class="active">Dashboard</a>
-          <a href="PostFoodNeed.html" id="sidebar-post-need">Post Food Need</a>
-          <a href="#" id="sidebar-browse-donor">Browse Donor Offers</a>
-          <a href="Requests.html">Requests</a>
-          <!-- <a href="#">Beneficiaries</a> -->
-          <a href="Profile.html">Profile</a>
-          <a href="Feedback.html" id="sidebar-feedback">Feedback</a>
-        </nav>
-      </aside>
-      <!-- Main Content -->
-      <div
-        style="
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-        "
-      >
-        <main class="main-content">
-          <h2 id="charity-greeting">Welcome back, Charity Org</h2>
-          <div class="stats">
-            <div class="stat-card">
-              <p>Active Requests</p>
-              <div class="stat-value">7</div>
+
+        <div class="stack">
+          <div class="stat-grid">
+            <div class="stat">
+              <span class="stat-label">Active Requests</span>
+              <span class="stat-value" id="stat-active">--</span>
             </div>
-            <div class="stat-card">
-              <p>Total Donations Received</p>
-              <div class="stat-value" id="total-donations-kg">1,200 kg</div>
+            <div class="stat">
+              <span class="stat-label">Total Donations Received</span>
+              <span class="stat-value" id="total-donations-kg">--</span>
             </div>
-            <div class="stat-card">
-              <p>Total Benefactors</p>
-              <div class="stat-value">350</div>
+            <div class="stat">
+              <span class="stat-label">Total Benefactors</span>
+              <span class="stat-value" id="stat-served">--</span>
             </div>
           </div>
-          <div class="actions">
-            <a href="PostFoodNeed.html"
-              ><button class="action-btn">Post a New Food Need</button></a
-            >
-            <button class="action-btn secondary">Browse Donor Offers</button>
-          </div>
-          <div class="table-section">
-            <h3>Recent Activity</h3>
+
+          <div class="panel card">
+            <div class="card-head">
+              <h2 class="card-title">Recent Activity</h2>
+            </div>
             <div class="table-wrap">
-              <table id="recent-activity-table">
+              <table class="table" id="recent-activity-table">
                 <thead>
                   <tr>
                     <th>Date</th>
@@ -553,206 +60,93 @@
                     <th>Status</th>
                   </tr>
                 </thead>
-                <tbody id="recent-activity-body">
-                  <!-- Dynamic rows will be inserted here -->
-                </tbody>
+                <tbody id="recent-activity-body"></tbody>
               </table>
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+
+        <footer class="app-foot">
+          <p>&copy; 2025 FoodShare. All rights reserved.</p>
+        </footer>
+      </main>
     </div>
+
+    <script src="/js/ui.js"></script>
+    <script src="/js/app-shell.js"></script>
     <script>
-      // ============================================
-      // BASE URL CONFIGURATION (Auto-detect local vs production)
-      // ============================================
-      const API_BASE_URL =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-          ? "http://localhost:3000" // Local development
-          : "${API_BASE_URL}"; // Production
-
-      console.log("🌐 Using API Base URL:", API_BASE_URL);
-      // ============================================
-
-      function signOut() {
-        window.location.href = "../Login.html";
-      }
-
-      // --- Mobile Menu Toggle ---
-      document.addEventListener("DOMContentLoaded", function () {
-        const hamburgerBtn = document.getElementById("hamburgerBtn");
-        const sidebar = document.querySelector(".sidebar");
-        const overlay = document.getElementById("sidebarOverlay");
-
-        function toggleMenu() {
-          sidebar.classList.toggle("active");
-          overlay.classList.toggle("active");
-          document.body.style.overflow = sidebar.classList.contains("active")
-            ? "hidden"
-            : "";
-        }
-
-        if (hamburgerBtn) {
-          hamburgerBtn.addEventListener("click", toggleMenu);
-        }
-
-        if (overlay) {
-          overlay.addEventListener("click", toggleMenu);
-        }
-
-        // Close menu when clicking a sidebar link
-        const sidebarLinks = sidebar.querySelectorAll("nav a");
-        sidebarLinks.forEach((link) => {
-          link.addEventListener("click", function () {
-            if (window.innerWidth <= 900) {
-              toggleMenu();
-            }
-          });
-        });
-      });
-
-      // Set greeting from localStorage if available
-      let charityName = "Charity Org";
-      try {
-        const jwt = JSON.parse(localStorage.getItem("jwt"));
-        if (jwt && jwt.name) charityName = jwt.name;
-      } catch {}
+      const charity = getCharity();
       document.getElementById("charity-greeting").textContent =
-        "Welcome back, " + charityName;
+        "Welcome back, " + charity.name;
 
-      // Dynamically load food needs from backend for this org
+      // Quantities are stored as text like "25 kg"; pull out the number
+      const toNumber = (value) =>
+        parseFloat(String(value).replace(/[^\d.]/g, "")) || 0;
+      const day = (value) => (value ? String(value).slice(0, 10) : "");
+
+      // Load this charity's food needs and completed donor offers
       async function renderRecentActivity() {
         const tbody = document.getElementById("recent-activity-body");
-        tbody.innerHTML = "";
-        let jwt = localStorage.getItem("jwt");
-        let orgName = "";
+        tbody.innerHTML = noteRow(7, "Loading activity...");
         try {
-          const jwtObj = JSON.parse(jwt);
-          if (jwtObj && jwtObj.name) orgName = jwtObj.name;
-        } catch {}
-        if (!orgName) {
-          tbody.innerHTML =
-            '<tr><td colspan="7">Please log in as a charity to view your activity.</td></tr>';
-          return;
-        }
-
-        try {
-          // Get charity data from localStorage
-          let charityId = null;
-          try {
-            const charity = JSON.parse(localStorage.getItem("charity"));
-            if (charity && charity.id) {
-              charityId = charity.id;
-              orgName = charity.orgname;
-            }
-          } catch {}
-
-          // Fetch food needs
           const res = await fetch(
-            `${API_BASE_URL}/api/foodneeds?org=${encodeURIComponent(orgName)}`,
-            {
-              headers: jwt ? { Authorization: "Bearer " + jwt } : {},
-            }
+            `${API_BASE_URL}/api/foodneeds?org=${encodeURIComponent(charity.name)}`
           );
           if (!res.ok) throw new Error("Failed to fetch food needs");
           const foodNeeds = await res.json();
 
-          // Fetch completed donor offers for this charity
+          // Completed donor offers made to this charity
           let donorOffers = [];
-          if (charityId) {
+          if (charity.id) {
             try {
               const offersRes = await fetch(
-                `${API_BASE_URL}/api/donor-offers/${charityId}`,
-                { headers: jwt ? { Authorization: "Bearer " + jwt } : {} }
+                `${API_BASE_URL}/api/donor-offers/${charity.id}`
               );
               if (offersRes.ok) {
                 const offersData = await offersRes.json();
-                // Filter only completed offers
-                donorOffers = Array.isArray(offersData.offers)
-                  ? offersData.offers.filter(
-                      (offer) => offer.status === "Completed"
-                    )
-                  : [];
+                donorOffers = (offersData.offers || []).filter(
+                  (offer) => offer.status === "Completed"
+                );
               }
             } catch (err) {
               console.error("Error fetching donor offers:", err);
             }
           }
 
-          // Update Active Requests stat
-          const activeCount = foodNeeds.filter(
+          // Stats
+          const completedNeeds = foodNeeds.filter(
+            (need) => need.status === "Completed"
+          );
+          const needsKg = completedNeeds
+            .filter((need) => String(need.quantity).toLowerCase().includes("kg"))
+            .reduce((sum, need) => sum + toNumber(need.quantity), 0);
+          const offersKg = donorOffers
+            .filter((offer) =>
+              String(offer.unit || "").toLowerCase().includes("kg")
+            )
+            .reduce((sum, offer) => sum + toNumber(offer.quantity), 0);
+          document.getElementById("stat-active").textContent = foodNeeds.filter(
             (need) => need.status === "Pending"
           ).length;
-          const statCards = document.querySelectorAll(".stat-card");
-          statCards.forEach((card) => {
-            const label = card.querySelector("p");
-            const value = card.querySelector(".stat-value");
-            if (label && value) {
-              if (label.textContent.includes("Active Requests")) {
-                value.textContent = activeCount;
-              } else if (
-                label.textContent.includes("Total Donations Received")
-              ) {
-                // Sum quantity for completed requests in kg
-                let totalKg = foodNeeds
-                  .filter(
-                    (need) =>
-                      need.status === "Completed" &&
-                      String(need.quantity).toLowerCase().includes("kg")
-                  )
-                  .reduce((sum, need) => {
-                    let qty = parseFloat(
-                      String(need.quantity).replace(/[^\d.]/g, "")
-                    );
-                    return sum + (isNaN(qty) ? 0 : qty);
-                  }, 0);
-                // Add completed donor offers (in kg)
-                let donorKg = donorOffers
-                  .filter((offer) =>
-                    String(offer.unit || "")
-                      .toLowerCase()
-                      .includes("kg")
-                  )
-                  .reduce((sum, offer) => {
-                    let qty = parseFloat(
-                      String(offer.quantity).replace(/[^\d.]/g, "")
-                    );
-                    return sum + (isNaN(qty) ? 0 : qty);
-                  }, 0);
-                value.textContent = totalKg + donorKg + " kg";
-              } else if (label.textContent.includes("Total Benefactors")) {
-                // Count completed requests as beneficiaries served
-                let served = foodNeeds.filter(
-                  (need) => need.status === "Completed"
-                ).length;
-                value.textContent = served;
-              }
-            }
-          });
+          document.getElementById("total-donations-kg").textContent =
+            needsKg + offersKg + " kg";
+          // Completed requests count as beneficiaries served
+          document.getElementById("stat-served").textContent =
+            completedNeeds.length;
 
-          // Merge and sort recent activity: food needs and donor offers
-          let activityRows = [];
-          foodNeeds.forEach((need) => {
-            activityRows.push({
-              date: need.date ? String(need.date).slice(0, 10) : "",
+          // Merge food needs and donor offers, newest first
+          const activityRows = [
+            ...foodNeeds.map((need) => ({
+              date: day(need.date),
               type: "Request",
               food_item: need.food_item,
               quantity: need.quantity,
               pickup_location: need.pickup_location,
               notes: need.notes || "",
               status: need.status,
-            });
-          });
-          donorOffers.forEach((offer) => {
-            activityRows.push({
-              date: offer.completed_at
-                ? String(offer.completed_at).slice(0, 10)
-                : offer.updated_at
-                ? String(offer.updated_at).slice(0, 10)
-                : offer.created_at
-                ? String(offer.created_at).slice(0, 10)
-                : "",
+            })),
+            ...donorOffers.map((offer) => ({
+              date: day(offer.completed_at || offer.updated_at || offer.created_at),
               type: "Donation",
               food_item: offer.food_type || offer.food_item || "",
               quantity:
@@ -761,68 +155,29 @@
                 offer.pickup_address || offer.pickup_location || "",
               notes: offer.notes || offer.message || "",
               status: offer.status || "Completed",
-            });
-          });
-          // Sort by date descending
-          activityRows.sort((a, b) =>
-            (b.date || "").localeCompare(a.date || "")
-          );
+            })),
+          ].sort((a, b) => (b.date || "").localeCompare(a.date || ""));
 
-          if (activityRows.length === 0) {
-            tbody.innerHTML =
-              '<tr><td colspan="7">No food needs or donations yet.</td></tr>';
-          } else {
-            activityRows.forEach((row) => {
-              const tr = document.createElement("tr");
-              tr.innerHTML = `
-                <td>${row.date}</td>
-                <td>${row.type}</td>
-                <td>${row.food_item}</td>
-                <td>${row.quantity}</td>
-                <td>${row.pickup_location}</td>
-                <td>${row.notes}</td>
-                <td><span class="status">${row.status}</span></td>
-              `;
-              tbody.appendChild(tr);
-            });
-          }
+          tbody.innerHTML = activityRows.length
+            ? activityRows
+                .map(
+                  (row) => `<tr>
+                    <td class="num">${esc(row.date)}</td>
+                    <td>${esc(row.type)}</td>
+                    <td>${esc(row.food_item)}</td>
+                    <td class="num">${esc(row.quantity)}</td>
+                    <td>${esc(row.pickup_location)}</td>
+                    <td>${esc(row.notes)}</td>
+                    <td>${statusBadge(row.status)}</td>
+                  </tr>`
+                )
+                .join("")
+            : noteRow(7, "No food needs or donations yet.");
         } catch (err) {
-          tbody.innerHTML =
-            '<tr><td colspan="7">Error loading activity.</td></tr>';
+          tbody.innerHTML = noteRow(7, "Error loading activity.");
         }
-        // Optionally, add static rows below if needed
       }
       renderRecentActivity();
-
-      // Sidebar actions for Post Need and Browse Donor Offers
-      document.getElementById("sidebar-post-need").onclick = function (e) {
-        e.preventDefault();
-        window.location.href = "PostFoodNeed.html";
-      };
-      document.getElementById("sidebar-browse-donor").onclick = function (e) {
-        e.preventDefault();
-        window.location.href = "BrowseDonorOffers.html";
-      };
-
-      // Only add onclick if elements exist
-      const sidebarRequests = document.getElementById("sidebar-requests");
-      if (sidebarRequests) {
-        sidebarRequests.onclick = function () {
-          // Scroll to or focus on recent activity table
-          const tableSection = document.querySelector(".table-section");
-          if (tableSection) {
-            tableSection.scrollIntoView({ behavior: "smooth" });
-          }
-        };
-      }
-
-      const sidebarReports = document.getElementById("sidebar-reports");
-      if (sidebarReports) {
-        sidebarReports.onclick = function () {
-          // Implement reports view (Amt to Donation received)
-          alert("Reports feature coming soon!");
-        };
-      }
     </script>
   </body>
 </html>

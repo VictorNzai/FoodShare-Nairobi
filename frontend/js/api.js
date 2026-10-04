@@ -6,9 +6,7 @@
 class FoodShareAPI {
   constructor() {
     // Use environment-based URL
-    this.baseURL = window.location.hostname === 'localhost' 
-      ? 'http://localhost:3000' 
-      : 'https://foodshare-nairobi-1.onrender.com';
+    this.baseURL = 'https://foodshare-nairobi-1.onrender.com';
   }
 
   /**

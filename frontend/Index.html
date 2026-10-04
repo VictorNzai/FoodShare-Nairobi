@@ -10,38 +10,13 @@
     />
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
+    <link rel="stylesheet" href="/styles/design-system.css" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-      }
-
-      :root {
-        --primary: #54d12b;
-        --primary-dark: #43b81a;
-        --primary-light: #66ea42;
-        --secondary: #121a0f;
-        --text-dark: #111b0e;
-        --text-light: #639155;
-        --bg-light: #f9fcf8;
-        --bg-white: #ffffff;
-        --border: #eaf3e7;
-        --shadow-sm: 0 2px 12px 0 rgba(84, 209, 43, 0.06);
-        --shadow-md: 0 4px 24px 0 rgba(84, 209, 43, 0.12);
-        --shadow-lg: 0 8px 32px 0 rgba(84, 209, 43, 0.18);
-      }
-
       body {
-        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
-          sans-serif;
-        background: var(--bg-light);
-        color: var(--text-dark);
-        line-height: 1.6;
         overflow-x: hidden;
       }
 
@@ -52,165 +27,182 @@
         position: sticky;
         top: 0;
         z-index: 100;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(12px);
-        border-bottom: 1px solid var(--border);
-        box-shadow: var(--shadow-sm);
-        transition: all 0.3s ease;
+        background: var(--olive);
+        padding: var(--frame) var(--frame) 0;
+        transition: box-shadow 0.35s var(--ease-out);
       }
 
       header.scrolled {
-        box-shadow: var(--shadow-md);
+        box-shadow: 0 14px 30px -18px rgba(29, 36, 21, 0.7);
       }
 
       .nav-container {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 1rem 2rem;
         display: flex;
-        justify-content: space-between;
-        align-items: center;
+        align-items: stretch;
+        gap: 2rem;
+        height: 62px;
       }
 
+      /* Logo sits in a cream tab that joins the hero panel below */
       .logo {
+        position: relative;
         display: flex;
         align-items: center;
-        gap: 0.75rem;
-        font-size: 1.5rem;
-        font-weight: 800;
-        color: var(--primary);
+        gap: 0.6rem;
+        padding: 0 1.75rem 0 1.5rem;
+        background: var(--cream);
+        color: var(--ink);
+        border-radius: 24px 24px 0 0;
+        font-family: var(--display);
+        font-stretch: 112%;
+        font-size: 1.2rem;
+        font-weight: 700;
+        letter-spacing: -0.01em;
         text-decoration: none;
-        transition: transform 0.2s ease;
+        white-space: nowrap;
+        transition: border-radius 0.35s var(--ease-out),
+          margin 0.35s var(--ease-out);
       }
 
-      .logo:hover {
-        transform: scale(1.05);
+      .logo::after {
+        content: "";
+        position: absolute;
+        left: 100%;
+        bottom: 0;
+        width: 24px;
+        height: 24px;
+        background: radial-gradient(
+          circle at 100% 0,
+          transparent 23.5px,
+          var(--cream) 24px
+        );
+        transition: opacity 0.2s ease;
+      }
+
+      /* Once the hero scrolls away the tab detaches into a pill */
+      header.scrolled .logo {
+        border-radius: var(--radius-pill);
+        margin-bottom: 10px;
+      }
+
+      header.scrolled .logo::after {
+        opacity: 0;
       }
 
       .logo-icon {
-        width: 40px;
-        height: 40px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
+        width: 26px;
+        height: 26px;
+        color: var(--leaf);
+        flex-shrink: 0;
       }
 
       .nav-links {
         display: flex;
         align-items: center;
-        gap: 2.5rem;
+        gap: 2.25rem;
       }
 
-      .nav-links a {
-        color: var(--text-dark);
-        text-decoration: none;
-        font-weight: 500;
-        font-size: 0.95rem;
+      .nav-container > .nav-links {
+        margin-inline: auto;
+      }
+
+      .nav-links a,
+      .nav-login {
         position: relative;
+        color: var(--cream-dim);
+        text-decoration: none;
+        font-size: 0.9rem;
+        font-weight: 500;
         transition: color 0.2s ease;
       }
 
-      .nav-links a::after {
+      .nav-links a::after,
+      .nav-login::after {
         content: "";
         position: absolute;
-        bottom: -4px;
         left: 0;
-        width: 0;
-        height: 2px;
-        background: var(--primary);
-        transition: width 0.3s ease;
+        right: 0;
+        bottom: -7px;
+        height: 1.5px;
+        background: var(--lime);
+        transform: scaleX(0);
+        transform-origin: left;
+        transition: transform 0.35s var(--ease-out);
       }
 
-      .nav-links a:hover {
-        color: var(--primary);
+      .nav-links a:hover,
+      .nav-login:hover {
+        color: var(--cream);
       }
 
-      .nav-links a:hover::after {
-        width: 100%;
+      .nav-links a:hover::after,
+      .nav-login:hover::after {
+        transform: scaleX(1);
       }
 
       .nav-actions {
         display: flex;
-        gap: 1rem;
-      }
-
-      .btn {
-        padding: 0.65rem 1.5rem;
-        border: none;
-        border-radius: 999px;
-        font-size: 0.95rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-        text-decoration: none;
-        display: inline-flex;
         align-items: center;
-        justify-content: center;
-        gap: 0.5rem;
+        gap: 1.5rem;
       }
 
-      .btn-primary {
-        background: linear-gradient(
-          135deg,
-          var(--primary) 0%,
-          var(--primary-light) 100%
-        );
-        color: white;
-        box-shadow: var(--shadow-sm);
+      header a:focus-visible,
+      .mobile-menu-btn:focus-visible {
+        outline: 2px solid var(--lime);
+        outline-offset: 4px;
+        border-radius: 4px;
       }
 
-      .btn-primary:hover {
-        background: linear-gradient(
-          135deg,
-          var(--primary-dark) 0%,
-          var(--primary) 100%
-        );
-        box-shadow: var(--shadow-md);
-        transform: translateY(-2px);
+      header .logo:focus-visible {
+        outline-offset: -5px;
+        outline-color: var(--ink);
+        border-radius: 24px;
       }
 
-      .btn-secondary {
-        background: var(--bg-light);
-        color: var(--text-dark);
-      }
-
-      .btn-secondary:hover {
-        background: var(--border);
-        color: var(--primary);
+      header .pill:focus-visible,
+      .hero .pill:focus-visible {
+        border-radius: var(--radius-pill);
       }
 
       .mobile-menu-btn {
         display: none;
-        background: none;
+        place-items: center;
+        align-self: center;
+        margin-left: auto;
+        width: 44px;
+        height: 44px;
+        background: var(--cream);
+        color: var(--ink);
         border: none;
-        font-size: 1.75rem;
+        border-radius: 50%;
+        font-size: 1.25rem;
+        line-height: 1;
         cursor: pointer;
-        color: var(--text-dark);
       }
 
       /* Mobile Menu */
       .mobile-menu {
         display: none;
-        position: fixed;
-        top: 70px;
+        position: absolute;
+        top: 100%;
         left: 0;
         right: 0;
-        background: white;
-        border-bottom: 1px solid var(--border);
-        box-shadow: var(--shadow-md);
-        padding: 1.5rem;
+        background: var(--olive);
+        border-radius: 0 0 24px 24px;
+        box-shadow: 0 24px 40px -20px rgba(29, 36, 21, 0.8);
+        padding: 1.5rem 1.75rem 1.75rem;
         z-index: 99;
       }
 
       .mobile-menu.active {
         display: block;
-        animation: slideDown 0.3s ease;
+        animation: slideDown 0.35s var(--ease-out);
       }
 
       @keyframes slideDown {
         from {
           opacity: 0;
-          transform: translateY(-20px);
+          transform: translateY(-12px);
         }
         to {
           opacity: 1;
@@ -222,331 +214,517 @@
         flex-direction: column;
         gap: 1.25rem;
         align-items: flex-start;
-        margin-bottom: 1.5rem;
+        margin-bottom: 1.75rem;
+      }
+
+      .mobile-menu .nav-links a {
+        font-size: 1.05rem;
       }
 
       .mobile-menu .nav-actions {
-        flex-direction: column;
-        width: 100%;
-      }
-
-      .mobile-menu .btn {
-        width: 100%;
+        justify-content: space-between;
       }
 
       /* ============================================ */
       /* HERO SECTION */
       /* ============================================ */
       .hero {
-        position: relative;
-        min-height: 85vh;
+        display: grid;
+        gap: var(--frame);
+        padding: 0 var(--frame) var(--frame);
+        background: var(--olive);
+        color: var(--ink);
+      }
+
+      .hero a:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 4px;
+      }
+
+      /* Panel 1: headline + photo */
+      .hero-main {
+        display: grid;
+        grid-template-columns: minmax(0, 1.05fr) minmax(0, 1fr);
+        gap: clamp(1.5rem, 3vw, 3rem);
+        min-height: clamp(460px, 64vh, 640px);
+        padding: clamp(1rem, 1.6vw, 1.5rem);
+        padding-left: clamp(1.5rem, 3.5vw, 3.5rem);
+        border-top-left-radius: 0;
+      }
+
+      .hero-copy {
         display: flex;
-        align-items: center;
+        flex-direction: column;
         justify-content: center;
-        padding: 4rem 2rem;
-        overflow: hidden;
-      }
-
-      .hero-bg {
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(
-            135deg,
-            rgba(84, 209, 43, 0.15) 0%,
-            rgba(0, 0, 0, 0.4) 100%
-          ),
-          url("https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&w=1920&q=80")
-            center/cover no-repeat;
-        z-index: 0;
-      }
-
-      .hero-content {
-        position: relative;
-        z-index: 1;
-        max-width: 900px;
-        text-align: center;
-        animation: fadeInUp 1s ease;
-      }
-
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(40px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
+        align-items: flex-start;
+        padding-block: clamp(1.5rem, 4vw, 3.5rem);
       }
 
       .hero-title {
-        font-size: clamp(2.5rem, 6vw, 4.5rem);
-        font-weight: 900;
-        line-height: 1.1;
-        color: white;
-        margin-bottom: 1.5rem;
-        text-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+        font-family: var(--display);
+        font-stretch: 112%;
+        font-size: clamp(2rem, 3.7vw, 3.6rem);
+        font-weight: 600;
+        line-height: 1.04;
+        letter-spacing: -0.02em;
+        text-transform: uppercase;
+        text-wrap: balance;
+        margin-bottom: 1.25rem;
       }
 
       .hero-subtitle {
-        font-size: clamp(1.1rem, 2.5vw, 1.35rem);
-        color: rgba(255, 255, 255, 0.95);
-        margin-bottom: 2.5rem;
-        line-height: 1.7;
-        text-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
-        max-width: 700px;
-        margin-left: auto;
-        margin-right: auto;
+        max-width: 46ch;
+        text-wrap: pretty;
+        font-size: clamp(1rem, 1.2vw, 1.1rem);
+        line-height: 1.65;
+        color: var(--ink-soft);
+        margin-bottom: 2rem;
       }
 
-      .hero-actions {
+      .hero-cta {
         display: flex;
-        gap: 1.25rem;
-        justify-content: center;
+        align-items: center;
         flex-wrap: wrap;
-        margin-bottom: 10rem; /* Space for floating stats */
+        gap: 1.5rem;
       }
 
-      .hero-actions .btn {
-        font-size: 1.1rem;
-        padding: 0.9rem 2rem;
+      .hero-link {
+        color: var(--ink);
+        font-weight: 600;
+        font-size: 0.95rem;
+        text-decoration: underline;
+        text-decoration-thickness: 1.5px;
+        text-underline-offset: 6px;
+        transition: text-underline-offset 0.3s var(--ease-out);
       }
 
-      /* Floating Stats */
+      .hero-link:hover {
+        text-underline-offset: 9px;
+      }
+
       .hero-stats {
-        position: absolute;
-        bottom: 2rem;
-        left: 50%;
-        transform: translateX(-50%);
         display: flex;
-        gap: 3rem;
-        background: rgba(255, 255, 255, 0.95);
-        padding: 1.5rem 3rem;
-        border-radius: 16px;
-        box-shadow: var(--shadow-lg);
-        backdrop-filter: blur(12px);
-        z-index: 10;
+        gap: clamp(1.25rem, 2.5vw, 2.5rem);
+        margin-top: clamp(2rem, 4vw, 3.25rem);
       }
 
       .hero-stat {
-        text-align: center;
+        display: flex;
+        flex-direction: column-reverse;
       }
 
-      .hero-stat-value {
-        font-size: 2rem;
-        font-weight: 800;
-        color: var(--primary);
-        display: block;
+      .hero-stat + .hero-stat {
+        padding-left: clamp(1.25rem, 2.5vw, 2.5rem);
+        border-left: 1px solid var(--cream-line);
       }
 
-      .hero-stat-label {
-        font-size: 0.85rem;
-        color: var(--text-light);
+      .hero-stat dd {
+        font-family: var(--display);
+        font-stretch: 112%;
+        font-size: 1.6rem;
+        font-weight: 600;
+        line-height: 1.2;
+        font-variant-numeric: tabular-nums;
+      }
+
+      .hero-stat dt {
+        font-size: 0.8rem;
         font-weight: 500;
+        color: var(--ink-soft);
       }
 
-      /* ============================================ */
-      /* FEATURES SECTION */
-      /* ============================================ */
-      .section {
-        padding: 5rem 2rem;
-        max-width: 1200px;
-        margin: 0 auto;
+      .hero-media {
+        position: relative;
+        min-height: 320px;
+        border-radius: var(--radius-media);
+        background: var(--sage);
       }
 
-      .section-header {
-        text-align: center;
-        margin-bottom: 3.5rem;
+      .hero-media > img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: inherit;
       }
 
-      .section-tag {
-        display: inline-block;
+      /* Rotating badge notched into the photo's edge */
+      .hero-badge {
+        position: absolute;
+        left: 0;
+        bottom: 9%;
+        transform: translateX(-50%);
+        display: grid;
+        place-items: center;
+        width: clamp(108px, 10vw, 136px);
+        aspect-ratio: 1;
+        border-radius: 50%;
+        background: var(--cream);
+        color: var(--ink);
+      }
+
+      .hero-badge > * {
+        grid-area: 1 / 1;
+      }
+
+      .hero-badge-ring {
+        width: 100%;
+        height: 100%;
+        font-family: var(--display);
+        font-size: 9.5px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        fill: currentColor;
+      }
+
+      .hero-badge-icon {
+        width: 22%;
+        height: 22%;
+        color: var(--leaf);
+      }
+
+      /* Panel 2: what gets shared */
+      .hero-sub {
+        display: grid;
+        grid-template-columns: minmax(0, 0.95fr) minmax(0, 2.4fr);
+        gap: clamp(1.25rem, 2.5vw, 2.5rem);
+        padding: clamp(1rem, 1.6vw, 1.5rem);
+        padding-left: clamp(1.5rem, 3.5vw, 3.5rem);
+      }
+
+      .hero-sub-copy {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: flex-start;
+        padding-block: 1.5rem;
+      }
+
+      .hero-sub-title {
+        font-family: var(--display);
+        font-stretch: 112%;
+        font-size: clamp(1.45rem, 2.1vw, 2rem);
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: -0.015em;
+        text-transform: uppercase;
+        margin-bottom: 0.85rem;
+      }
+
+      .hero-sub-text {
+        max-width: 34ch;
+        font-size: 0.95rem;
+        color: var(--ink-soft);
+        margin-bottom: 1.5rem;
+      }
+
+      .hero-cards {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: var(--frame);
+      }
+
+      .hero-card {
+        position: relative;
+        aspect-ratio: 4 / 3.3;
+        border-radius: var(--radius-media);
+        overflow: hidden;
+        background: var(--sage);
+      }
+
+      .hero-card img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        transition: transform 0.9s var(--ease-out);
+      }
+
+      .hero-card:hover img {
+        transform: scale(1.05);
+      }
+
+      .hero-card figcaption {
+        position: absolute;
+        inset: auto 0 0 0;
+        padding: 3rem 1.15rem 1rem;
         background: linear-gradient(
-          135deg,
-          rgba(84, 209, 43, 0.1) 0%,
-          rgba(84, 209, 43, 0.05) 100%
+          to top,
+          rgba(20, 26, 14, 0.78),
+          rgba(20, 26, 14, 0)
         );
-        color: var(--primary);
-        padding: 0.5rem 1.25rem;
-        border-radius: 999px;
+        color: #fff;
+        font-family: var(--display);
+        font-stretch: 110%;
         font-size: 0.85rem;
         font-weight: 600;
-        letter-spacing: 0.5px;
-        margin-bottom: 1rem;
+        letter-spacing: 0.08em;
         text-transform: uppercase;
       }
 
-      .section-title {
-        font-size: clamp(2rem, 4vw, 3rem);
-        font-weight: 800;
-        color: var(--text-dark);
-        margin-bottom: 1rem;
-        line-height: 1.2;
+      @media (prefers-reduced-motion: no-preference) {
+        .hero-badge-ring {
+          animation: badgeSpin 26s linear infinite;
+        }
+
+        .hero-media > img {
+          animation: photoReveal 1.2s var(--ease-out) both;
+        }
+
+        @keyframes badgeSpin {
+          to {
+            transform: rotate(360deg);
+          }
+        }
+
+        @keyframes photoReveal {
+          from {
+            clip-path: inset(0 0 100% 0 round var(--radius-media));
+          }
+          to {
+            clip-path: inset(0 round var(--radius-media));
+          }
+        }
       }
 
-      .section-description {
-        font-size: 1.15rem;
-        color: var(--text-light);
-        max-width: 700px;
+      @media (max-width: 1024px) {
+        .nav-container > .nav-links,
+        .nav-container > .nav-actions {
+          display: none;
+        }
+
+        .mobile-menu-btn {
+          display: grid;
+        }
+      }
+
+      @media (max-width: 860px) {
+        .hero-main,
+        .hero-sub {
+          grid-template-columns: 1fr;
+          padding: 1.25rem;
+        }
+
+        .hero-main {
+          min-height: 0;
+        }
+
+        .hero-copy {
+          padding: 1.25rem 0.5rem 0.5rem;
+        }
+
+        .hero-media {
+          min-height: 0;
+          aspect-ratio: 4 / 3;
+        }
+
+        .hero-badge {
+          left: auto;
+          right: 1rem;
+          bottom: 1rem;
+          transform: none;
+          width: 96px;
+        }
+
+        .hero-sub-copy {
+          padding: 1rem 0.5rem 0.25rem;
+        }
+      }
+
+      @media (max-width: 560px) {
+        .logo {
+          padding: 0 1.1rem;
+          font-size: 1.05rem;
+        }
+
+        .hero-stat dd {
+          font-size: 1.3rem;
+        }
+
+        .hero-cards {
+          grid-template-columns: 1fr;
+        }
+
+        .hero-card {
+          aspect-ratio: 16 / 9;
+        }
+      }
+
+      /* ============================================ */
+      /* SECTIONS */
+      /* ============================================ */
+      .section {
+        max-width: 1320px;
         margin: 0 auto;
-        line-height: 1.7;
+        padding: var(--section-gap) var(--gutter) 0;
+        scroll-margin-top: 60px;
       }
 
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(12, 1fr);
-        gap: 1.5rem;
-        margin-bottom: 3rem;
+      .section-head {
+        margin-bottom: clamp(2rem, 4vw, 3.25rem);
       }
 
-      .feature-card {
-        background: white;
-        padding: 2rem;
-        border-radius: 12px;
-        border-left: 4px solid var(--primary);
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        position: relative;
-      }
-
-      .feature-card:nth-child(1) {
-        grid-column: span 6;
-      }
-
-      .feature-card:nth-child(2) {
-        grid-column: span 6;
-      }
-
-      .feature-card:nth-child(3) {
-        grid-column: span 4;
-        border-left-color: #43b81a;
-      }
-
-      .feature-card:nth-child(4) {
-        grid-column: span 4;
-        border-left-color: #66ea42;
-      }
-
-      .feature-card:nth-child(5) {
-        grid-column: span 4;
-        border-left-color: #54d12b;
-      }
-
-      .feature-card:nth-child(6) {
-        grid-column: span 12;
-        display: flex;
-        align-items: center;
-        gap: 2rem;
-        padding: 2.5rem;
-        background: linear-gradient(135deg, #f9fcf8 0%, #eaf3e7 100%);
-      }
-
-      .feature-card:hover {
-        transform: translateX(4px);
-        box-shadow: 0 8px 24px rgba(84, 209, 43, 0.15);
-        border-left-width: 6px;
-      }
-
-      .feature-icon {
-        width: 52px;
-        height: 52px;
-        background: var(--primary);
-        border-radius: 8px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        margin-bottom: 1.25rem;
-        flex-shrink: 0;
-      }
-
-      .feature-icon svg {
-        width: 28px;
-        height: 28px;
-        color: white;
-      }
-
-      .feature-card:nth-child(6) .feature-icon {
-        margin-bottom: 0;
-        width: 64px;
-        height: 64px;
-        border-radius: 12px;
-      }
-
-      .feature-card:nth-child(6) .feature-icon svg {
-        width: 36px;
-        height: 36px;
-      }
-
-      .feature-title {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 0.65rem;
-      }
-
-      .feature-description {
-        color: var(--text-light);
-        font-size: 0.95rem;
-        line-height: 1.6;
-      }
-
-      .feature-card:nth-child(6) .feature-content {
-        flex: 1;
+      .section a:focus-visible,
+      .cta-section a:focus-visible {
+        outline: 2px solid var(--ink);
+        outline-offset: 4px;
+        border-radius: var(--radius-pill);
       }
 
       /* ============================================ */
       /* HOW IT WORKS SECTION */
       /* ============================================ */
-      .how-it-works {
-        background: linear-gradient(
-          135deg,
-          rgba(84, 209, 43, 0.05) 0%,
-          rgba(84, 209, 43, 0.02) 100%
-        );
+      .steps-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
+        gap: clamp(1.5rem, 3vw, 3rem);
+        padding: clamp(1rem, 1.6vw, 1.5rem);
       }
 
-      .steps-container {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 3rem;
+      .steps-photo {
         position: relative;
+        min-height: 340px;
+        border-radius: var(--radius-media);
+        overflow: hidden;
+        background: var(--sage);
+      }
+
+      .steps-photo img {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .steps {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        list-style: none;
+        padding: clamp(0.5rem, 2vw, 2rem);
+        padding-left: 0;
       }
 
       .step {
-        text-align: center;
-        position: relative;
+        display: grid;
+        grid-template-columns: 2.75rem 1fr;
+        column-gap: 1rem;
+        row-gap: 0.3rem;
+        padding: 1.35rem 0;
+      }
+
+      .step + .step {
+        border-top: 1px solid var(--cream-line);
       }
 
       .step-number {
-        width: 70px;
-        height: 70px;
-        background: linear-gradient(
-          135deg,
-          var(--primary) 0%,
-          var(--primary-light) 100%
-        );
-        color: white;
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 2rem;
-        font-weight: 800;
-        margin: 0 auto 1.5rem;
-        box-shadow: var(--shadow-md);
+        grid-row: span 2;
+        padding-top: 0.15rem;
+        font-family: var(--display);
+        font-size: 0.85rem;
+        font-weight: 600;
+        font-variant-numeric: tabular-nums;
+        color: var(--leaf);
       }
 
-      .step-title {
-        font-size: 1.3rem;
-        font-weight: 700;
-        color: var(--text-dark);
-        margin-bottom: 0.75rem;
+      .step-title,
+      .feature-title,
+      .footer-column h3 {
+        font-family: var(--display);
+        font-stretch: 110%;
+        font-size: 0.95rem;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
       }
 
-      .step-description {
-        color: var(--text-light);
-        font-size: 1rem;
-        line-height: 1.7;
+      .step-description,
+      .feature-description {
+        font-size: 0.98rem;
+        color: var(--ink-soft);
+      }
+
+      /* ============================================ */
+      /* FEATURES SECTION */
+      /* ============================================ */
+      .feature {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1.6fr);
+        gap: 0.5rem 2rem;
+        align-items: baseline;
+        padding: 1.5rem 0;
+        border-top: 1px solid var(--cream-line);
+      }
+
+      .feature:last-child {
+        border-bottom: 1px solid var(--cream-line);
+      }
+
+      .feature-description {
+        max-width: 60ch;
+      }
+
+      .feature-highlight {
+        display: grid;
+        grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+        gap: clamp(1.5rem, 4vw, 4rem);
+        align-items: end;
+        margin-top: clamp(2rem, 4vw, 3.25rem);
+        padding: clamp(1.75rem, 4vw, 3.5rem);
+      }
+
+      .feature-highlight-title {
+        font-family: var(--display);
+        font-stretch: 112%;
+        font-size: clamp(1.5rem, 3vw, 2.5rem);
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: -0.015em;
+        text-transform: uppercase;
+        text-wrap: balance;
+      }
+
+      .feature-highlight p {
+        color: var(--ink-soft);
+        margin-bottom: 1.5rem;
+      }
+
+      /* ============================================ */
+      /* PHOTO SPLIT + RIBBON */
+      /* ============================================ */
+      .split {
+        position: relative;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        height: clamp(280px, 40vw, 560px);
+        margin-top: var(--section-gap);
+        overflow: hidden;
+        background: var(--olive);
+      }
+
+      .split img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .split-ribbon {
+        position: absolute;
+        inset: 0;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+
+      .split-ribbon text {
+        font-family: var(--display);
+        font-size: 22px;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        fill: var(--ink);
       }
 
       /* ============================================ */
@@ -554,73 +732,33 @@
       /* ============================================ */
       .impact-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        padding: clamp(1.75rem, 3.5vw, 3rem) clamp(0.5rem, 1.5vw, 1.5rem);
       }
 
       .impact-card {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 20px;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border);
-        text-align: center;
-        transition: all 0.3s ease;
+        padding: 0.5rem clamp(1rem, 2vw, 1.75rem);
       }
 
-      .impact-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-md);
+      .impact-card + .impact-card {
+        border-left: 1px solid rgba(240, 237, 220, 0.16);
       }
 
       .impact-value {
-        font-size: 3.5rem;
-        font-weight: 900;
-        background: linear-gradient(
-          135deg,
-          var(--primary) 0%,
-          var(--primary-light) 100%
-        );
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
-        background-clip: text;
+        font-family: var(--display);
+        font-stretch: 112%;
+        font-size: clamp(1.9rem, 3.6vw, 3rem);
+        font-weight: 600;
+        line-height: 1.1;
+        letter-spacing: -0.02em;
+        font-variant-numeric: tabular-nums;
+        color: var(--lime);
         margin-bottom: 0.5rem;
       }
 
       .impact-label {
-        font-size: 1.1rem;
-        color: var(--text-light);
-        font-weight: 600;
-      }
-
-      /* ============================================ */
-      /* PARTNERS SECTION */
-      /* ============================================ */
-      .partners-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 2rem;
-      }
-
-      .partner-card {
-        aspect-ratio: 1;
-        background: white;
-        border-radius: 16px;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border);
-        overflow: hidden;
-        transition: all 0.3s ease;
-      }
-
-      .partner-card:hover {
-        transform: scale(1.05);
-        box-shadow: var(--shadow-md);
-      }
-
-      .partner-img {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
+        font-size: 0.95rem;
+        color: var(--cream-dim);
       }
 
       /* ============================================ */
@@ -628,158 +766,151 @@
       /* ============================================ */
       .testimonials-container {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-        gap: 2rem;
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: clamp(1.5rem, 3vw, 3rem);
       }
 
       .testimonial-card {
-        background: white;
-        padding: 2.5rem;
-        border-radius: 20px;
-        box-shadow: var(--shadow-sm);
-        border: 1px solid var(--border);
-        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        padding-top: 1.5rem;
+        border-top: 1px solid var(--cream-line);
       }
 
-      .testimonial-card:hover {
-        transform: translateY(-4px);
-        box-shadow: var(--shadow-md);
+      .testimonial-rating {
+        color: var(--leaf);
+        font-size: 0.9rem;
+        letter-spacing: 0.2em;
+        margin-bottom: 1rem;
+      }
+
+      .testimonial-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        text-wrap: pretty;
+        margin-bottom: 1.75rem;
       }
 
       .testimonial-header {
         display: flex;
         align-items: center;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
+        gap: 0.85rem;
+        margin-top: auto;
       }
 
       .testimonial-avatar {
-        width: 60px;
-        height: 60px;
+        width: 44px;
+        height: 44px;
         border-radius: 50%;
         object-fit: cover;
       }
 
       .testimonial-author {
-        font-weight: 700;
-        color: var(--text-dark);
-        font-size: 1.1rem;
+        font-weight: 600;
+        line-height: 1.3;
       }
 
       .testimonial-role {
-        color: var(--text-light);
-        font-size: 0.9rem;
-      }
-
-      .testimonial-text {
-        color: var(--text-light);
-        line-height: 1.7;
-        font-size: 1rem;
-      }
-
-      .testimonial-rating {
-        color: var(--primary);
-        font-size: 1.25rem;
-        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: var(--ink-soft);
       }
 
       /* ============================================ */
       /* CTA SECTION */
       /* ============================================ */
+      /* The olive frame from the hero returns to close the page */
       .cta-section {
-        background: linear-gradient(
-          135deg,
-          var(--primary) 0%,
-          var(--primary-dark) 100%
-        );
-        color: white;
-        text-align: center;
-        padding: 5rem 2rem;
+        margin-top: var(--section-gap);
+        padding: var(--frame) var(--frame) 0;
+        background: var(--olive);
       }
 
-      .cta-section .section-title,
-      .cta-section .section-description {
-        color: white;
+      .cta-panel {
+        display: grid;
+        grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+        gap: clamp(1.5rem, 4vw, 4rem);
+        align-items: end;
+        padding: clamp(2.5rem, 7vw, 6rem) clamp(1.5rem, 3.5vw, 3.5rem);
       }
 
-      .cta-section .btn-primary {
-        background: white;
-        color: var(--primary);
-      }
-
-      .cta-section .btn-primary:hover {
-        background: var(--bg-light);
-        transform: translateY(-4px) scale(1.05);
+      .cta-panel .section-description {
+        margin: 0 0 1.5rem;
       }
 
       /* ============================================ */
       /* FOOTER */
       /* ============================================ */
       footer {
-        background: var(--secondary);
-        color: white;
-        padding: 3rem 2rem 1.5rem;
+        background: var(--olive);
+        color: var(--cream);
+        padding: clamp(2.5rem, 5vw, 4rem) var(--gutter) 1.5rem;
       }
 
       .footer-container {
-        max-width: 1200px;
+        max-width: 1320px;
         margin: 0 auto;
       }
 
       .footer-grid {
         display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-        gap: 3rem;
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 2.5rem;
         margin-bottom: 3rem;
       }
 
-      .footer-column h4 {
-        font-size: 1.1rem;
-        font-weight: 700;
+      .footer-column h3 {
+        font-size: 0.78rem;
+        letter-spacing: 0.1em;
+        color: var(--lime);
         margin-bottom: 1.25rem;
       }
 
       .footer-column a {
         display: block;
-        color: rgba(255, 255, 255, 0.7);
+        width: fit-content;
+        color: var(--cream-dim);
         text-decoration: none;
-        margin-bottom: 0.75rem;
-        transition: color 0.2s ease;
+        margin-bottom: 0.7rem;
         font-size: 0.95rem;
+        transition: color 0.2s ease;
       }
 
       .footer-column a:hover {
-        color: var(--primary);
+        color: var(--cream);
+      }
+
+      footer a:focus-visible {
+        outline: 2px solid var(--lime);
+        outline-offset: 4px;
+        border-radius: 4px;
       }
 
       .footer-social {
         display: flex;
-        gap: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem;
         margin-top: 1.25rem;
       }
 
       .footer-social a {
-        width: 40px;
-        height: 40px;
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.3s ease;
+        margin: 0;
+        padding: 0.3rem 0.8rem;
+        border: 1px solid rgba(240, 237, 220, 0.28);
+        border-radius: var(--radius-pill);
+        font-size: 0.8rem;
+        transition: background-color 0.25s ease, color 0.25s ease;
       }
 
       .footer-social a:hover {
-        background: var(--primary);
-        transform: translateY(-3px);
+        background: var(--cream);
+        color: var(--ink);
       }
 
       .footer-bottom {
-        text-align: center;
-        padding-top: 2rem;
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-        color: rgba(255, 255, 255, 0.6);
-        font-size: 0.9rem;
+        padding-top: 1.5rem;
+        border-top: 1px solid rgba(240, 237, 220, 0.16);
+        color: var(--cream-dim);
+        font-size: 0.85rem;
       }
 
       /* ============================================ */
@@ -787,21 +918,27 @@
       /* ============================================ */
       .scroll-top {
         position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        width: 50px;
-        height: 50px;
-        background: var(--primary);
-        color: white;
-        border: none;
+        bottom: 1.5rem;
+        right: 1.5rem;
+        display: grid;
+        place-items: center;
+        width: 48px;
+        height: 48px;
+        background: var(--olive);
+        color: var(--cream);
+        border: 1.5px solid var(--cream);
         border-radius: 50%;
-        font-size: 1.5rem;
         cursor: pointer;
         opacity: 0;
         visibility: hidden;
-        transition: all 0.3s ease;
-        box-shadow: var(--shadow-md);
+        transition: opacity 0.3s ease, visibility 0.3s ease,
+          transform 0.4s var(--ease-out);
         z-index: 50;
+      }
+
+      .scroll-top svg {
+        width: 16px;
+        height: 16px;
       }
 
       .scroll-top.visible {
@@ -810,148 +947,50 @@
       }
 
       .scroll-top:hover {
-        background: var(--primary-dark);
         transform: translateY(-4px);
+      }
+
+      .scroll-top:focus-visible {
+        outline: 2px solid var(--lime);
+        outline-offset: 3px;
       }
 
       /* ============================================ */
       /* RESPONSIVE DESIGN */
       /* ============================================ */
-      @media (max-width: 1024px) {
-        .nav-links {
-          display: none;
-        }
-
-        .nav-actions {
-          display: none;
-        }
-
-        .mobile-menu-btn {
-          display: block;
-        }
-
-        .hero-stats {
-          flex-direction: column;
-          gap: 1.5rem;
-          padding: 1.5rem;
-          bottom: 1.5rem;
-        }
-
-        .hero-actions {
-          margin-bottom: 8rem; /* Less space on tablet */
-        }
-
-        /* Features grid on tablet */
-        .feature-card:nth-child(1),
-        .feature-card:nth-child(2) {
-          grid-column: span 6;
-        }
-
-        .feature-card:nth-child(3),
-        .feature-card:nth-child(4),
-        .feature-card:nth-child(5) {
-          grid-column: span 4;
-        }
-
-        .feature-card:nth-child(6) {
-          grid-column: span 12;
-        }
-      }
-
-      @media (max-width: 768px) {
-        .hero {
-          min-height: 70vh;
-          padding: 3rem 1.5rem;
-        }
-
-        .hero-actions {
-          margin-bottom: 3rem; /* Less space on mobile */
-        }
-
-        .hero-stats {
-          position: relative;
-          bottom: auto;
-          margin-top: 0;
-          transform: none;
-          left: auto;
-        }
-
-        .section {
-          padding: 3.5rem 1.5rem;
-        }
-
-        .features-grid {
+      @media (max-width: 860px) {
+        .steps-panel,
+        .feature-highlight,
+        .cta-panel {
           grid-template-columns: 1fr;
-          gap: 1.25rem;
         }
 
-        .feature-card:nth-child(1),
-        .feature-card:nth-child(2),
-        .feature-card:nth-child(3),
-        .feature-card:nth-child(4),
-        .feature-card:nth-child(5),
-        .feature-card:nth-child(6) {
-          grid-column: span 1 !important;
+        .steps-photo {
+          min-height: 0;
+          aspect-ratio: 4 / 3;
         }
 
-        .feature-card:nth-child(6) {
-          flex-direction: column;
-          text-align: center;
+        .steps {
+          padding: 0 0.5rem 0.5rem;
         }
 
-        .steps-container,
-        .impact-grid,
-        .partners-grid,
+        .impact-grid {
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          row-gap: 1.75rem;
+        }
+
+        .impact-card:nth-child(odd) {
+          border-left: none;
+        }
+
         .testimonials-container {
           grid-template-columns: 1fr;
-          gap: 1.5rem;
-        }
-
-        .feature-card,
-        .impact-card,
-        .testimonial-card {
-          padding: 1.75rem;
         }
       }
 
-      @media (max-width: 480px) {
-        .nav-container {
-          padding: 0.75rem 1rem;
-        }
-
-        .hero-title {
-          font-size: 2rem;
-        }
-
-        .hero-subtitle {
-          font-size: 1rem;
-        }
-
-        .hero-actions {
-          flex-direction: column;
-          width: 100%;
-          margin-bottom: 2rem; /* Minimal space on small mobile */
-        }
-
-        .hero-actions .btn {
-          width: 100%;
-        }
-
-        .hero-stats {
-          width: 100%;
-          padding: 1rem;
-        }
-
-        .hero-stat {
-          flex: 1;
-        }
-
-        .hero-stat-value {
-          font-size: 1.5rem;
-        }
-
-        .section-title {
-          font-size: 1.75rem;
+      @media (max-width: 560px) {
+        .feature {
+          grid-template-columns: 1fr;
         }
       }
     </style>
@@ -961,21 +1000,21 @@
     <header id="header">
       <div class="nav-container">
         <a href="/" class="logo">
-          <div class="logo-icon">
-            <svg
-              viewBox="0 0 48 48"
-              fill="currentColor"
-              xmlns="http://www.w3.org/2000/svg"
-            >
-              <path
-                d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z"
-              />
-            </svg>
-          </div>
+          <svg
+            class="logo-icon"
+            viewBox="0 0 48 48"
+            fill="currentColor"
+            xmlns="http://www.w3.org/2000/svg"
+            aria-hidden="true"
+          >
+            <path
+              d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z"
+            />
+          </svg>
           <span>FoodShare Kenya</span>
         </a>
 
-        <nav class="nav-links">
+        <nav class="nav-links" aria-label="Primary">
           <a href="#how-it-works">How It Works</a>
           <a href="#features">Features</a>
           <a href="#impact">Impact</a>
@@ -983,250 +1022,389 @@
         </nav>
 
         <div class="nav-actions">
-          <a href="/Login.html" class="btn btn-secondary">Login</a>
-          <a href="/Signup.html" class="btn btn-primary">Get Started</a>
+          <a href="/Login.html" class="nav-login">Login</a>
+          <a href="/Signup.html" class="pill pill--cream">
+            Get Started
+            <span class="pill-arrow">
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </span>
+          </a>
         </div>
 
-        <button class="mobile-menu-btn" id="mobileMenuBtn">☰</button>
+        <button
+          class="mobile-menu-btn"
+          id="mobileMenuBtn"
+          aria-label="Toggle menu"
+        >
+          ☰
+        </button>
       </div>
 
       <!-- Mobile Menu -->
       <div class="mobile-menu" id="mobileMenu">
-        <nav class="nav-links">
+        <nav class="nav-links" aria-label="Mobile">
           <a href="#how-it-works">How It Works</a>
           <a href="#features">Features</a>
           <a href="#impact">Impact</a>
           <a href="#testimonials">Testimonials</a>
         </nav>
         <div class="nav-actions">
-          <a href="/Login.html" class="btn btn-secondary">Login</a>
-          <a href="/Signup.html" class="btn btn-primary">Get Started</a>
+          <a href="/Login.html" class="nav-login">Login</a>
+          <a href="/Signup.html" class="pill pill--cream">
+            Get Started
+            <span class="pill-arrow">
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </span>
+          </a>
         </div>
       </div>
     </header>
 
     <!-- Hero Section -->
     <section class="hero">
-      <div class="hero-bg"></div>
-      <div class="hero-content">
-        <h1 class="hero-title">Fighting Hunger, One Meal at a Time</h1>
-        <p class="hero-subtitle">
-          Connect surplus food with verified charities across Nairobi. Together,
-          we can reduce waste and feed communities in need.
-        </p>
-        <div class="hero-actions">
-          <a href="/Signup.html" class="btn btn-primary">
-            <span>Start Donating</span>
-            <span>→</span>
-          </a>
-          <a href="#how-it-works" class="btn btn-secondary">Learn More</a>
+      <div class="panel hero-main">
+        <div class="hero-copy">
+          <h1 class="hero-title">Fighting Hunger, One Meal at a Time</h1>
+          <p class="hero-subtitle">
+            Connect surplus food with verified charities across Nairobi.
+            Together, we can reduce waste and feed communities in need.
+          </p>
+          <div class="hero-cta">
+            <a href="/Signup.html" class="pill pill--solid">
+              Start Donating
+              <span class="pill-arrow">
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </span>
+            </a>
+            <a href="#how-it-works" class="hero-link">Learn More</a>
+          </div>
+
+          <dl class="hero-stats">
+            <div class="hero-stat">
+              <dt>Tons Rescued</dt>
+              <dd>150+</dd>
+            </div>
+            <div class="hero-stat">
+              <dt>Meals Served</dt>
+              <dd>50K+</dd>
+            </div>
+            <div class="hero-stat">
+              <dt>Charities</dt>
+              <dd>30+</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero-media">
+          <img
+            src="https://images.unsplash.com/photo-1610348725531-843dff563e2c?auto=format&fit=crop&w=1400&q=80"
+            alt="Fresh vegetables and fruit laid out on a wooden table"
+            fetchpriority="high"
+          />
+          <div class="hero-badge" aria-hidden="true">
+            <svg class="hero-badge-ring" viewBox="0 0 120 120">
+              <defs>
+                <path
+                  id="badgeRing"
+                  d="M60 60m-43 0a43 43 0 1 1 86 0a43 43 0 1 1-86 0"
+                />
+              </defs>
+              <text>
+                <textPath href="#badgeRing" textLength="262">
+                  LESS WASTE • MORE MEALS • NAIROBI •
+                </textPath>
+              </text>
+            </svg>
+            <svg
+              class="hero-badge-icon"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.5 19 2c1 2 2 4.2 2 8 0 5.5-4.8 10-10 10Z" />
+              <path d="M2 21c0-3 1.9-5.4 5.1-6C9.5 14.5 12 13 13 12" />
+            </svg>
+          </div>
         </div>
       </div>
 
-      <div class="hero-stats">
-        <div class="hero-stat">
-          <span class="hero-stat-value">150+</span>
-          <span class="hero-stat-label">Tons Rescued</span>
+      <div class="panel hero-sub">
+        <div class="hero-sub-copy">
+          <h2 class="hero-sub-title">Good food.<br />No waste.</h2>
+          <p class="hero-sub-text">
+            Restaurants, grocers and event hosts list their surplus. Verified
+            charities collect it.
+          </p>
+          <a href="/Signup.html" class="pill pill--line">
+            Join as a charity
+            <span class="pill-arrow">
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </span>
+          </a>
         </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value">50K+</span>
-          <span class="hero-stat-label">Meals Served</span>
-        </div>
-        <div class="hero-stat">
-          <span class="hero-stat-value">30+</span>
-          <span class="hero-stat-label">Charities</span>
+
+        <div class="hero-cards">
+          <figure class="hero-card">
+            <img
+              src="https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&w=800&q=75"
+              alt="Shelves of fresh vegetables"
+              loading="lazy"
+            />
+            <figcaption>Fresh produce</figcaption>
+          </figure>
+          <figure class="hero-card">
+            <img
+              src="https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=75"
+              alt="Loaves of seeded bread"
+              loading="lazy"
+            />
+            <figcaption>Baked goods</figcaption>
+          </figure>
+          <figure class="hero-card">
+            <img
+              src="https://images.unsplash.com/photo-1547592180-85f173990554?auto=format&fit=crop&w=800&q=75"
+              alt="A plated meal of fish, grains and vegetables"
+              loading="lazy"
+            />
+            <figcaption>Cooked meals</figcaption>
+          </figure>
         </div>
       </div>
     </section>
 
     <!-- How It Works Section -->
-    <section class="section how-it-works" id="how-it-works">
-      <div class="section-header">
+    <section class="section" id="how-it-works">
+      <div class="section-head">
         <span class="section-tag">How It Works</span>
-        <h2 class="section-title">Simple. Transparent. Impactful.</h2>
+        <h2 class="section-title">
+          <span>Simple. Transparent.</span>
+          <span class="indent">Impactful.</span>
+        </h2>
         <p class="section-description">
           Our platform makes food donation easy and efficient for everyone
           involved
         </p>
       </div>
 
-      <div class="steps-container">
-        <div class="step">
-          <div class="step-number">1</div>
-          <h3 class="step-title">Register</h3>
-          <p class="step-description">
-            Sign up as a donor or verified charity in minutes
-          </p>
+      <div class="panel steps-panel">
+        <div class="steps-photo">
+          <img
+            src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1200&q=75"
+            alt="Volunteers unloading boxes of donated food"
+            loading="lazy"
+          />
         </div>
-        <div class="step">
-          <div class="step-number">2</div>
-          <h3 class="step-title">Connect</h3>
-          <p class="step-description">
-            Browse available donations or post food needs
-          </p>
-        </div>
-        <div class="step">
-          <div class="step-number">3</div>
-          <h3 class="step-title">Coordinate</h3>
-          <p class="step-description">
-            Schedule pickups and track your donations
-          </p>
-        </div>
-        <div class="step">
-          <div class="step-number">4</div>
-          <h3 class="step-title">Impact</h3>
-          <p class="step-description">
-            See your real-time impact on fighting hunger
-          </p>
-        </div>
+        <ol class="steps">
+          <li class="step">
+            <span class="step-number" aria-hidden="true">01</span>
+            <h3 class="step-title">Register</h3>
+            <p class="step-description">
+              Sign up as a donor or verified charity in minutes
+            </p>
+          </li>
+          <li class="step">
+            <span class="step-number" aria-hidden="true">02</span>
+            <h3 class="step-title">Connect</h3>
+            <p class="step-description">
+              Browse available donations or post food needs
+            </p>
+          </li>
+          <li class="step">
+            <span class="step-number" aria-hidden="true">03</span>
+            <h3 class="step-title">Coordinate</h3>
+            <p class="step-description">
+              Schedule pickups and track your donations
+            </p>
+          </li>
+          <li class="step">
+            <span class="step-number" aria-hidden="true">04</span>
+            <h3 class="step-title">Impact</h3>
+            <p class="step-description">
+              See your real-time impact on fighting hunger
+            </p>
+          </li>
+        </ol>
       </div>
     </section>
 
     <!-- Features Section -->
     <section class="section" id="features">
-      <div class="section-header">
+      <div class="section-head">
         <span class="section-tag">What Makes Us Different</span>
-        <h2 class="section-title">Built for Real People, Not Red Tape</h2>
+        <h2 class="section-title">
+          <span>Built for Real People,</span>
+          <span class="indent">Not Red Tape</span>
+        </h2>
         <p class="section-description">
           We've stripped away the complexity. Just you, the food, and the people
           who need it.
         </p>
       </div>
 
-      <div class="features-grid">
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M4 12h16M4 6h16M4 18h16" />
-            </svg>
-          </div>
+      <div class="features-list">
+        <div class="feature">
           <h3 class="feature-title">Simple Listing</h3>
           <p class="feature-description">
             Post what you have in under 2 minutes. No complicated forms, just
             the essentials.
           </p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M9 11l3 3L22 4" />
-              <path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11" />
-            </svg>
-          </div>
-          <h3 class="feature-title">Trust & Safety</h3>
+        <div class="feature">
+          <h3 class="feature-title">Trust &amp; Safety</h3>
           <p class="feature-description">
             Every charity goes through document verification before they can
             receive donations.
           </p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-          </div>
+        <div class="feature">
           <h3 class="feature-title">Quick Response</h3>
           <p class="feature-description">
             Charities respond fast when there's food available
           </p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <rect x="2" y="7" width="20" height="15" rx="2" />
-              <path d="M16 21V5a2 2 0 00-2-2h-4a2 2 0 00-2 2v16" />
-            </svg>
-          </div>
+        <div class="feature">
           <h3 class="feature-title">Your Dashboard</h3>
           <p class="feature-description">
             See everything in one place — active offers, history, stats
           </p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-              <circle cx="9" cy="7" r="4" />
-              <path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" />
-            </svg>
-          </div>
+        <div class="feature">
           <h3 class="feature-title">Direct Chat</h3>
           <p class="feature-description">
             Message charities directly to coordinate pickup times and locations
           </p>
         </div>
-        <div class="feature-card">
-          <div class="feature-icon">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="2"
-              stroke-linecap="round"
-              stroke-linejoin="round"
-            >
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-            </svg>
-          </div>
-          <div class="feature-content">
-            <h3 class="feature-title">200+ Successful Donations This Month</h3>
-            <p class="feature-description">
-              Our platform has helped redirect over 150 tons of food from going
-              to waste. Join the movement — whether you're a restaurant with
-              surplus, a grocery store, or just have extra from an event.
-            </p>
-          </div>
+      </div>
+
+      <div class="panel feature-highlight">
+        <h3 class="feature-highlight-title">
+          200+ Successful Donations This Month
+        </h3>
+        <div>
+          <p>
+            Our platform has helped redirect over 150 tons of food from going to
+            waste. Join the movement — whether you're a restaurant with surplus,
+            a grocery store, or just have extra from an event.
+          </p>
+          <a href="/Signup.html" class="pill pill--solid">
+            Start Donating
+            <span class="pill-arrow">
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </span>
+          </a>
         </div>
       </div>
     </section>
 
+    <!-- Photo split -->
+    <div class="split">
+      <img
+        src="https://images.unsplash.com/photo-1464226184884-fa280b87c399?auto=format&fit=crop&w=1200&q=75"
+        alt="Baskets of cucumbers, carrots and chillies at a market"
+        loading="lazy"
+      />
+      <img
+        src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1200&q=75"
+        alt="A market stall stacked with fruit and vegetables"
+        loading="lazy"
+      />
+      <svg
+        class="split-ribbon"
+        viewBox="0 0 1440 520"
+        preserveAspectRatio="xMidYMid slice"
+        aria-hidden="true"
+      >
+        <defs>
+          <path
+            id="ribbonPath"
+            d="M-80 400C240 300 420 470 720 380S1180 250 1520 330"
+          />
+        </defs>
+        <use
+          href="#ribbonPath"
+          fill="none"
+          stroke="#f0eddc"
+          stroke-width="48"
+        />
+        <text dy="8">
+          <!-- Phrase repeated 3x so the script below can loop it seamlessly -->
+          <textPath href="#ribbonPath" id="ribbonText">
+            SURPLUS SHARED • VERIFIED CHARITIES • NOTHING WASTED • MEALS ON
+            TABLES • SURPLUS SHARED • VERIFIED CHARITIES • NOTHING WASTED •
+            MEALS ON TABLES • SURPLUS SHARED • VERIFIED CHARITIES • NOTHING
+            WASTED • MEALS ON TABLES •
+          </textPath>
+        </text>
+      </svg>
+    </div>
+
     <!-- Impact Section -->
     <section class="section" id="impact">
-      <div class="section-header">
+      <div class="section-head">
         <span class="section-tag">Our Impact</span>
-        <h2 class="section-title">Making Real Change Together</h2>
+        <h2 class="section-title">
+          <span>Making Real Change</span>
+          <span class="indent">Together</span>
+        </h2>
         <p class="section-description">
           See the difference we're making in communities across Nairobi
         </p>
       </div>
 
-      <div class="impact-grid">
+      <div class="panel panel--olive impact-grid">
         <div class="impact-card">
           <div class="impact-value">150+</div>
           <div class="impact-label">Tons of Food Rescued</div>
@@ -1248,88 +1426,112 @@
 
     <!-- Testimonials Section -->
     <section class="section" id="testimonials">
-      <div class="section-header">
+      <div class="section-head">
         <span class="section-tag">Testimonials</span>
-        <h2 class="section-title">What Our Community Says</h2>
+        <h2 class="section-title">
+          <span>What Our</span>
+          <span class="indent">Community Says</span>
+        </h2>
         <p class="section-description">
           Hear from the donors and charities making a difference
         </p>
       </div>
 
       <div class="testimonials-container">
-        <div class="testimonial-card">
-          <div class="testimonial-rating">★★★★★</div>
-          <div class="testimonial-header">
+        <figure class="testimonial-card">
+          <div class="testimonial-rating" role="img" aria-label="5 out of 5">
+            ★★★★★
+          </div>
+          <blockquote class="testimonial-text">
+            "FoodShare Kenya has transformed how we handle surplus food. Instead
+            of waste, we're now feeding families. It's incredibly rewarding."
+          </blockquote>
+          <figcaption class="testimonial-header">
             <img
-              src="https://ui-avatars.com/api/?name=Sarah+M&background=54d12b&color=fff&size=128"
-              alt="Sarah M"
+              src="https://ui-avatars.com/api/?name=Sarah+M&background=232a1a&color=f0eddc&size=128"
+              alt=""
               class="testimonial-avatar"
             />
             <div>
               <div class="testimonial-author">Sarah M.</div>
               <div class="testimonial-role">Restaurant Owner</div>
             </div>
+          </figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <div class="testimonial-rating" role="img" aria-label="5 out of 5">
+            ★★★★★
           </div>
-          <p class="testimonial-text">
-            "FoodShare Kenya has transformed how we handle surplus food. Instead
-            of waste, we're now feeding families. It's incredibly rewarding."
-          </p>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-rating">★★★★★</div>
-          <div class="testimonial-header">
+          <blockquote class="testimonial-text">
+            "The platform is a game-changer. We can now access consistent food
+            supplies and better serve our community. Truly grateful for this
+            service."
+          </blockquote>
+          <figcaption class="testimonial-header">
             <img
-              src="https://ui-avatars.com/api/?name=David+K&background=54d12b&color=fff&size=128"
-              alt="David K"
+              src="https://ui-avatars.com/api/?name=David+K&background=232a1a&color=f0eddc&size=128"
+              alt=""
               class="testimonial-avatar"
             />
             <div>
               <div class="testimonial-author">David K.</div>
               <div class="testimonial-role">Charity Director</div>
             </div>
+          </figcaption>
+        </figure>
+        <figure class="testimonial-card">
+          <div class="testimonial-rating" role="img" aria-label="5 out of 5">
+            ★★★★★
           </div>
-          <p class="testimonial-text">
-            "The platform is a game-changer. We can now access consistent food
-            supplies and better serve our community. Truly grateful for this
-            service."
-          </p>
-        </div>
-        <div class="testimonial-card">
-          <div class="testimonial-rating">★★★★★</div>
-          <div class="testimonial-header">
+          <blockquote class="testimonial-text">
+            "Simple, efficient, and meaningful. We've donated over 2 tons of
+            food through FoodShare. The analytics help us track our social
+            impact."
+          </blockquote>
+          <figcaption class="testimonial-header">
             <img
-              src="https://ui-avatars.com/api/?name=Grace+W&background=54d12b&color=fff&size=128"
-              alt="Grace W"
+              src="https://ui-avatars.com/api/?name=Grace+W&background=232a1a&color=f0eddc&size=128"
+              alt=""
               class="testimonial-avatar"
             />
             <div>
               <div class="testimonial-author">Grace W.</div>
               <div class="testimonial-role">Hotel Manager</div>
             </div>
-          </div>
-          <p class="testimonial-text">
-            "Simple, efficient, and meaningful. We've donated over 2 tons of
-            food through FoodShare. The analytics help us track our social
-            impact."
-          </p>
-        </div>
+          </figcaption>
+        </figure>
       </div>
     </section>
 
     <!-- CTA Section -->
     <section class="cta-section">
-      <div class="section-header">
-        <h2 class="section-title">Ready to Make a Difference?</h2>
-        <p class="section-description">
-          Join hundreds of donors and charities working together to fight hunger
-          and reduce waste
-        </p>
-      </div>
-      <div class="hero-actions">
-        <a href="/Signup.html" class="btn btn-primary">
-          <span>Get Started Now</span>
-          <span>→</span>
-        </a>
+      <div class="panel cta-panel">
+        <h2 class="section-title">
+          <span>Ready to Make</span>
+          <span class="indent">a Difference?</span>
+        </h2>
+        <div>
+          <p class="section-description">
+            Join hundreds of donors and charities working together to fight
+            hunger and reduce waste
+          </p>
+          <a href="/Signup.html" class="pill pill--solid">
+            Get Started Now
+            <span class="pill-arrow">
+              <svg
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M3 8h10M9 4l4 4-4 4" />
+              </svg>
+            </span>
+          </a>
+        </div>
       </div>
     </section>
 
@@ -1338,34 +1540,34 @@
       <div class="footer-container">
         <div class="footer-grid">
           <div class="footer-column">
-            <h4>About</h4>
+            <h3>About</h3>
             <a href="#about">Our Mission</a>
             <a href="#team">Team</a>
             <a href="#partners">Partners</a>
             <a href="#contact">Contact Us</a>
           </div>
           <div class="footer-column">
-            <h4>Resources</h4>
+            <h3>Resources</h3>
             <a href="#how-it-works">How It Works</a>
             <a href="#faq">FAQ</a>
             <a href="#blog">Blog</a>
             <a href="#press">Press Kit</a>
           </div>
           <div class="footer-column">
-            <h4>Legal</h4>
+            <h3>Legal</h3>
             <a href="#privacy">Privacy Policy</a>
             <a href="#terms">Terms of Service</a>
             <a href="#cookies">Cookie Policy</a>
           </div>
           <div class="footer-column">
-            <h4>Connect</h4>
+            <h3>Connect</h3>
             <a href="mailto:info@foodsharekenya.org">info@foodsharekenya.org</a>
             <a href="tel:+254700000000">+254 700 000 000</a>
             <div class="footer-social">
-              <a href="#twitter" aria-label="Twitter">𝕏</a>
-              <a href="#facebook" aria-label="Facebook">f</a>
-              <a href="#instagram" aria-label="Instagram">📷</a>
-              <a href="#linkedin" aria-label="LinkedIn">in</a>
+              <a href="#twitter">X</a>
+              <a href="#facebook">Facebook</a>
+              <a href="#instagram">Instagram</a>
+              <a href="#linkedin">LinkedIn</a>
             </div>
           </div>
         </div>
@@ -1378,7 +1580,17 @@
 
     <!-- Scroll to Top Button -->
     <button class="scroll-top" id="scrollTop" aria-label="Scroll to top">
-      ↑
+      <svg
+        viewBox="0 0 16 16"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="1.8"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <path d="M8 13V3M4 7l4-4 4 4" />
+      </svg>
     </button>
 
     <!-- Include API Client -->
@@ -1449,27 +1661,46 @@
         });
       });
 
+      // Slide the ribbon text along its curve while the photos are on screen
+      const ribbonText = document.getElementById("ribbonText");
+      if (!window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        const RIBBON_SPEED = 40; // SVG units per second
+        // The markup repeats the phrase 3x; one phrase is the loop length
+        const ribbonCopy = ribbonText.textContent.trim().replace(/\s+/g, " ") + " ";
+        ribbonText.textContent = ribbonCopy;
+        let ribbonPeriod = 0;
+        let ribbonFrame = 0;
+        const slideRibbon = (now) => {
+          ribbonPeriod =
+            ribbonPeriod ||
+            ribbonText.getSubStringLength(0, ribbonCopy.length / 3);
+          const offset = ((now / 1000) * RIBBON_SPEED) % ribbonPeriod;
+          ribbonText.setAttribute("startOffset", -offset);
+          ribbonFrame = requestAnimationFrame(slideRibbon);
+        };
+        new IntersectionObserver(([entry]) => {
+          cancelAnimationFrame(ribbonFrame);
+          if (entry.isIntersecting) ribbonFrame = requestAnimationFrame(slideRibbon);
+        }).observe(ribbonText.closest(".split"));
+      }
+
       // Animate impact numbers on scroll
       const observeOptions = {
         threshold: 0.5,
         rootMargin: "0px",
       };
 
-      const animateValue = (element, start, end, duration) => {
-        const range = end - start;
-        const increment = end > start ? 1 : -1;
-        const stepTime = Math.abs(Math.floor(duration / range));
-        let current = start;
-        const timer = setInterval(() => {
-          current += increment;
+      const animateValue = (element, end, duration) => {
+        const startTime = performance.now();
+        const tick = (now) => {
+          const progress = Math.min((now - startTime) / duration, 1);
+          const eased = 1 - Math.pow(1 - progress, 3);
           element.textContent =
-            current >= 1000 ? (current / 1000).toFixed(0) + "K" : current;
-          if (current === end) {
-            clearInterval(timer);
-            element.textContent =
-              end >= 1000 ? (end / 1000).toFixed(0) + "K+" : end + "+";
-          }
-        }, stepTime);
+            Math.round(end * eased).toLocaleString() +
+            (progress === 1 ? "+" : "");
+          if (progress < 1) requestAnimationFrame(tick);
+        };
+        requestAnimationFrame(tick);
       };
 
       const impactObserver = new IntersectionObserver((entries) => {
@@ -1479,7 +1710,7 @@
             const valueElement = entry.target.querySelector(".impact-value");
             const text = valueElement.textContent;
             const value = parseInt(text.replace(/\D/g, ""));
-            animateValue(valueElement, 0, value, 2000);
+            animateValue(valueElement, value, 1600);
           }
         });
       }, observeOptions);
@@ -1488,27 +1719,6 @@
         impactObserver.observe(card);
       });
 
-      // Add fade-in animation for elements on scroll
-      const fadeObserver = new IntersectionObserver(
-        (entries) => {
-          entries.forEach((entry) => {
-            if (entry.isIntersecting) {
-              entry.target.style.opacity = "1";
-              entry.target.style.transform = "translateY(0)";
-            }
-          });
-        },
-        { threshold: 0.1 }
-      );
-
-      document
-        .querySelectorAll(".feature-card, .step, .testimonial-card")
-        .forEach((el) => {
-          el.style.opacity = "0";
-          el.style.transform = "translateY(20px)";
-          el.style.transition = "opacity 0.6s ease, transform 0.6s ease";
-          fadeObserver.observe(el);
-        });
     </script>
   </body>
 </html>

@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const crypto = require('crypto');
-const { sendEmail } = require('../Utils/mailer');
+const { sendEmail, emailLayout } = require('../Utils/mailer');
 require('dotenv').config();
 
 // In-memory store for OTPs (for demo; use DB/Redis in production)
@@ -20,7 +20,12 @@ router.post('/send-otp', async (req, res) => {
     await sendEmail({
       to: email,
       subject: 'Your FoodShare Email Verification OTP',
-      html: `<p>Your OTP for FoodShare email verification is: <b>${otp}</b></p><p>This code is valid for 10 minutes.</p>`,
+      html: emailLayout({
+        heading: 'Verify your email',
+        body: `<p style="margin:0 0 12px;">Your OTP for FoodShare email verification is:</p>
+               <p style="margin:0 0 12px;font-size:30px;font-weight:bold;letter-spacing:8px;">${otp}</p>
+               <p style="margin:0;">This code is valid for 10 minutes.</p>`
+      }),
       provider: process.env.EMAIL_PROVIDER_OTP || 'provider2'
     });
     

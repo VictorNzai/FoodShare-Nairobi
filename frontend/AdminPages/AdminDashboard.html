@@ -4,931 +4,355 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Admin Dashboard - FoodShare</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
     <style>
-      * {
-        margin: 0;
-        padding: 0;
-        font-family: "Manrope", "Noto Sans", Arial, sans-serif;
-        box-sizing: border-box;
-      }
-      body {
-        background: #f9fcf8;
-        color: #111b0e;
-      }
-      header {
-        background: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        border-bottom: 1px solid #eaf3e7;
+      /* Page-specific layout only; components come from the shared styles */
+      .chart-box {
         position: relative;
-        z-index: 2;
-      }
-      .logo {
-        font-weight: bold;
-        font-size: 20px;
-        color: #54d12b;
-      }
-      .admin-flex {
-        display: flex;
-        min-height: 100vh;
-      }
-      /* Sidebar */
-      .sidebar {
-        width: 250px;
-        padding: 32px 24px;
-        border-right: 1px solid #eaf3e7;
-        background: #fff;
-        display: none;
-        position: fixed;
-        top: 70px;
-        left: 0;
-        height: calc(100vh - 70px);
-        z-index: 1;
-      }
-      @media (min-width: 1024px) {
-        .sidebar {
-          display: block;
-        }
-      }
-      .sidebar .logo {
-        font-size: 22px;
-        font-weight: 800;
-        margin-bottom: 32px;
-        color: #54d12b;
-      }
-      .sidebar nav {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-      .sidebar nav a {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-        padding: 12px 20px;
-        border-radius: 999px;
-        background: none;
-        color: #222;
-        font-size: 15px;
-        font-weight: 500;
-        text-decoration: none;
-        transition: background 0.2s, color 0.2s;
-      }
-      .sidebar nav a.active,
-      .sidebar nav a:hover {
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-      }
-      /* Main Content */
-      .main-content {
-        flex: 1;
-        padding: 32px 24px;
-        max-width: 1200px;
-        margin: 0 auto;
-        margin-left: 320px;
-        margin-top: 70px;
-      }
-      .main-content h2 {
-        font-size: 32px;
-        font-weight: 800;
-        margin-bottom: 24px;
-        letter-spacing: -1px;
-        text-align: left;
-      }
-      .filter-bar {
-        margin-bottom: 20px;
-        text-align: right;
-      }
-      .filter-bar label {
-        font-weight: bold;
-      }
-      .filter-bar select {
-        padding: 6px 12px;
-        border-radius: 8px;
-        border: 1px solid #d5e7d0;
-        font-size: 15px;
-        margin-left: 8px;
-      }
-      .table-section {
-        margin-bottom: 32px;
-      }
-      .table-wrap {
-        overflow-x: auto;
-        border-radius: 16px;
-        border: 1px solid #d5e7d0;
-        background: #fff;
-        margin-bottom: 24px;
-      }
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        min-width: 900px;
-      }
-      th,
-      td {
-        padding: 16px;
-        text-align: left;
-        border-bottom: 1px solid #eaf3e7;
-      }
-      th {
-        background: #f5f5f5;
-        font-size: 15px;
-        font-weight: 700;
-        color: #222;
-      }
-      td {
-        font-size: 14px;
-        color: #222;
-      }
-      .status {
-        display: inline-block;
-        padding: 4px 16px;
-        border-radius: 999px;
-        background: #eaf3e7;
-        color: #54d12b;
-        font-weight: 700;
-        font-size: 13px;
-        text-transform: capitalize;
-      }
-      .action-btn {
-        padding: 8px 22px;
-        border: none;
-        border-radius: 999px;
-        font-weight: 700;
-        font-size: 15px;
-        cursor: pointer;
-        margin-right: 8px;
-        transition: background 0.2s, color 0.2s, box-shadow 0.2s;
-        box-shadow: 0 2px 8px 0 rgba(84, 209, 43, 0.08);
-      }
-      .approve {
-        background: linear-gradient(90deg, #53d22c 60%, #66ea42 100%);
-        color: #fff;
-      }
-      .approve:hover {
-        background: linear-gradient(90deg, #43b81a 60%, #54d12b 100%);
-        color: #fff;
-        box-shadow: 0 4px 16px 0 rgba(84, 209, 43, 0.16);
-      }
-      .reject {
-        background: #e74c3c;
-        color: #fff;
-      }
-      .reject:hover {
-        background: #c0392b;
-        color: #fff;
-      }
-      .file-link {
-        color: #54d12b;
-        text-decoration: underline;
-        cursor: pointer;
-        font-weight: 500;
-      }
-      .no-requests {
-        text-align: center;
-        color: #888;
-        font-size: 16px;
-        margin-top: 24px;
-      }
-      footer {
-        text-align: center;
-        margin-top: 40px;
-        color: #888;
-        font-size: 13px;
-      }
-      /* Hamburger Menu Button */
-      .hamburger-btn {
-        display: none;
-        background: none;
-        border: none;
-        cursor: pointer;
-        padding: 8px;
-        z-index: 1001;
+        height: 260px;
       }
 
-      .hamburger-btn span {
-        display: block;
-        width: 25px;
-        height: 3px;
-        background: #54d12b;
-        margin: 5px 0;
-        transition: 0.3s;
-        border-radius: 3px;
+      .chart-box--pie {
+        display: grid;
+        place-items: center;
       }
 
-      /* Mobile Sidebar Overlay */
-      .sidebar-overlay {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        width: 100%;
+      .chart-empty {
+        display: grid;
+        place-items: center;
         height: 100%;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
+        color: var(--ink-soft);
+        font-size: 0.92rem;
+        text-align: center;
       }
 
-      .sidebar-overlay.active {
-        display: block;
+      .report-form {
+        max-width: 520px;
       }
 
-      @media (max-width: 900px) {
-        .main-content {
-          padding: 16px 4vw;
-          margin-left: 0;
-          margin-top: 70px;
-        }
-
-        .hamburger-btn {
-          display: block;
-        }
-
-        .sidebar {
-          display: block;
-          transform: translateX(-100%);
-          transition: transform 0.3s ease-in-out;
-          box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar.active {
-          transform: translateX(0);
-        }
+      .report-form .pill {
+        margin-top: 0.4rem;
       }
 
-      /* Enhanced responsive styles for tablets and mobile */
-      @media (max-width: 768px) {
-        header {
-          padding: 15px 20px;
-          flex-wrap: wrap;
-        }
-
-        .logo {
-          font-size: 18px;
-        }
-
-        #admin-sticky-navbar {
-          flex-wrap: wrap;
-          gap: 10px !important;
-          justify-content: flex-end;
-          width: 100%;
-          margin-top: 10px;
-        }
-
-        .action-btn {
-          padding: 6px 16px;
-          font-size: 13px;
-          margin-right: 4px;
-        }
-
-        .main-content {
-          padding: 16px;
-          margin-left: 0;
-        }
-
-        .main-content h2 {
-          font-size: 24px;
-          margin-bottom: 16px;
-        }
-
-        .table-wrap {
-          margin-bottom: 16px;
-        }
-
-        table {
-          font-size: 13px;
-          min-width: 600px;
-        }
-
-        th,
-        td {
-          padding: 12px 8px;
-        }
-
-        th {
-          font-size: 13px;
-        }
-
-        td {
-          font-size: 12px;
-        }
-
-        .action-btn {
-          padding: 6px 14px;
-          font-size: 12px;
-        }
-
-        .filter-bar {
-          text-align: left;
-          margin-bottom: 16px;
-        }
-
-        .filter-bar select {
-          display: block;
-          margin-left: 0;
-          margin-top: 8px;
-          width: 100%;
-          max-width: 250px;
-        }
+      #reportResult {
+        max-width: 520px;
       }
 
-      @media (max-width: 480px) {
-        header {
-          padding: 10px 15px;
-        }
+      .charity-cell {
+        min-width: 13rem;
+      }
 
-        .logo {
-          font-size: 16px;
-          width: 100%;
-          text-align: center;
-          margin-bottom: 10px;
-        }
+      /* Approve / Reject may stack so the table fits without scrolling */
+      #verificationsTable .btn-row {
+        flex-wrap: wrap;
+      }
 
-        #admin-sticky-navbar {
-          width: 100%;
-          justify-content: center;
-          gap: 8px !important;
-        }
-
-        .action-btn {
-          padding: 6px 12px;
-          font-size: 11px;
-          margin-right: 0;
-        }
-
-        .main-content {
-          padding: 12px;
-          margin-top: 80px;
-        }
-
-        .main-content h2 {
-          font-size: 20px;
-          margin-bottom: 12px;
-          letter-spacing: -0.5px;
-        }
-
-        table {
-          font-size: 11px;
-          min-width: 500px;
-        }
-
-        th,
-        td {
-          padding: 8px 6px;
-        }
-
-        th {
-          font-size: 11px;
-        }
-
-        td {
-          font-size: 10px;
-        }
-
-        .action-btn {
-          padding: 4px 10px;
-          font-size: 10px;
-        }
-
-        .status {
-          padding: 2px 10px;
-          font-size: 10px;
-        }
-
-        .filter-bar {
-          margin-bottom: 12px;
-        }
-
-        .filter-bar label {
-          display: block;
-          margin-bottom: 6px;
-          font-size: 13px;
-        }
-
-        .filter-bar select {
-          width: 100%;
-          max-width: 100%;
-          font-size: 13px;
-        }
-
-        footer {
-          margin-top: 20px;
-          font-size: 11px;
-        }
+      #userSearch {
+        flex: 1 1 240px;
+        max-width: 360px;
       }
     </style>
   </head>
   <body>
-    <!-- Mobile Sidebar Overlay -->
-    <div class="sidebar-overlay" id="sidebarOverlay"></div>
-
-    <header
-      style="
-        position: sticky;
-        top: 0;
-        background: #fff;
-        z-index: 100;
-        box-shadow: 0 2px 8px 0 rgba(84, 209, 43, 0.04);
-      "
-    >
-      <div style="display: flex; align-items: center; gap: 15px">
+    <div class="app">
+      <!-- Mobile top bar -->
+      <div class="app-topbar">
         <button
-          class="hamburger-btn"
+          class="app-menu-btn"
           id="hamburgerBtn"
-          aria-label="Toggle menu"
+          aria-label="Open menu"
+          aria-expanded="false"
+          aria-controls="sidebar"
         >
-          <span></span>
-          <span></span>
-          <span></span>
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            aria-hidden="true"
+          >
+            <path d="M4 7h16M4 12h16M4 17h16" />
+          </svg>
         </button>
-        <div class="logo">🍴 FoodShare</div>
+        <span class="app-logo">FoodShare Kenya</span>
       </div>
-      <nav
-        id="admin-sticky-navbar"
-        style="display: flex; gap: 18px; align-items: center"
-      >
-        <button
-          class="action-btn"
-          style="background: #ebf2e9; color: #121a0f"
-          onclick="downloadReports()"
-        >
-          Download Reports
-        </button>
-        <!-- <button
-          class="action-btn"
-          style="background: #ebf2e9; color: #121a0f"
-          onclick="printDashboard()"
-        >
-          Print Dashboard
-        </button> -->
-        <!-- <button
-          class="action-btn"
-          style="background: #ebf2e9; color: #121a0f"
-          onclick="openHelpCenter()"
-        >
-          Help Center
-        </button> -->
-        <button class="action-btn reject" onclick="adminLogout()">
-          Logout
-        </button>
-      </nav>
-    </header>
-    <script>
-      // --- Sticky Navbar Quick Actions ---
-      function downloadReports() {
-        // Simulate click to Reports section and auto-generate/download last report
-        showSection("reports-section");
-        setTimeout(() => {
-          const form = document.getElementById("reportForm");
-          if (form) form.requestSubmit();
-        }, 300);
-      }
-      function printDashboard() {
-        // Print only the dashboard section
-        const dashboard = document.getElementById("dashboard-section");
-        if (!dashboard) return window.print();
-        const printContents = dashboard.innerHTML;
-        const originalContents = document.body.innerHTML;
-        document.body.innerHTML = printContents;
-        window.print();
-        document.body.innerHTML = originalContents;
-        location.reload();
-      }
-      function openHelpCenter() {
-        window.open("https://foodshare.help/admin", "_blank");
-      }
-      function adminLogout() {
-        localStorage.removeItem("adminName");
-        window.location.href = "../Login.html";
-      }
+      <div class="app-overlay" id="sidebarOverlay"></div>
 
-      // --- Mobile Menu Toggle ---
-      document.addEventListener("DOMContentLoaded", function () {
-        const hamburgerBtn = document.getElementById("hamburgerBtn");
-        const sidebar = document.querySelector(".sidebar");
-        const overlay = document.getElementById("sidebarOverlay");
-
-        function toggleMenu() {
-          sidebar.classList.toggle("active");
-          overlay.classList.toggle("active");
-          document.body.style.overflow = sidebar.classList.contains("active")
-            ? "hidden"
-            : "";
-        }
-
-        if (hamburgerBtn) {
-          hamburgerBtn.addEventListener("click", toggleMenu);
-        }
-
-        if (overlay) {
-          overlay.addEventListener("click", toggleMenu);
-        }
-
-        // Close menu when clicking a sidebar link
-        const sidebarLinks = sidebar.querySelectorAll("nav a");
-        sidebarLinks.forEach((link) => {
-          link.addEventListener("click", function () {
-            if (window.innerWidth <= 900) {
-              toggleMenu();
-            }
-          });
-        });
-      });
-    </script>
-    <div class="admin-flex">
       <!-- Sidebar -->
-      <aside class="sidebar">
-        <div class="logo">Admin Panel</div>
-        <nav>
-          <a
-            href="#"
+      <aside class="app-sidebar" id="sidebar">
+        <a href="/" class="app-logo">
+          <svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">
+            <path
+              d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z"
+            />
+          </svg>
+          <span>FoodShare Kenya</span>
+        </a>
+        <div class="app-role">Admin Panel</div>
+
+        <nav class="app-nav" aria-label="Admin">
+          <button
+            type="button"
             id="sidebar-dashboard"
             class="active"
             onclick="showSection('dashboard-section')"
-            >Dashboard</a
           >
-          <a
-            href="#"
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <rect x="3" y="3" width="7" height="9" rx="1.5" />
+              <rect x="14" y="3" width="7" height="5" rx="1.5" />
+              <rect x="14" y="12" width="7" height="9" rx="1.5" />
+              <rect x="3" y="16" width="7" height="5" rx="1.5" />
+            </svg>
+            Dashboard
+          </button>
+          <button
+            type="button"
             id="sidebar-verifications"
             onclick="showSection('charity-verification-section')"
-            >Charity Verifications</a
           >
-          <a
-            href="#"
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M12 3l8 3v6c0 4.5-3.2 8-8 9-4.8-1-8-4.5-8-9V6l8-3z" />
+              <path d="M9 12l2 2 4-4" />
+            </svg>
+            Charity Verifications
+          </button>
+          <button
+            type="button"
             id="sidebar-users"
             onclick="showSection('user-management-section')"
-            >User Management</a
           >
-          <a
-            href="#"
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <circle cx="9" cy="8" r="3.5" />
+              <path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5" />
+              <path d="M16 4.6a3.5 3.5 0 010 6.8M18.5 14.8c1.600.9 2.700 2.600 3 5.200" />
+            </svg>
+            User Management
+          </button>
+          <button
+            type="button"
             id="sidebar-reports"
             onclick="showSection('reports-section')"
-            >Reports</a
           >
-          <!-- <a href="#">Settings</a> -->
-          <a href="../Login.html">Logout</a>
-        </nav>
-      </aside>
-      <!-- Main Content -->
-      <div
-        style="
-          flex: 1;
-          display: flex;
-          flex-direction: column;
-          min-height: 100vh;
-        "
-      >
-        <main class="main-content">
-          <!-- Dashboard Overview Section -->
-          <div id="dashboard-section">
-            <div
-              id="admin-welcome-message"
-              style="
-                font-size: 1.3rem;
-                font-weight: 700;
-                color: #54d12b;
-                margin-bottom: 10px;
-              "
-            ></div>
-            <h2>Admin Dashboard</h2>
-            <div
-              id="admin-dashboard-stats"
-              style="
-                display: flex;
-                flex-wrap: wrap;
-                gap: 24px;
-                margin-bottom: 32px;
-              "
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
             >
-              <!-- Dashboard Stats -->
-              <div
-                style="
-                  flex: 1 1 220px;
-                  min-width: 220px;
-                  background: #fff;
-                  border-radius: 18px;
-                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                  padding: 28px 20px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: flex-start;
-                "
+              <path d="M6 3h9l4 4v14H6z" />
+              <path d="M14 3v5h5M9 17v-3M12 17v-6M15 17v-2" />
+            </svg>
+            Reports
+          </button>
+        </nav>
+
+        <div class="app-sidebar-foot">
+          <div class="app-user" id="admin-name"></div>
+          <nav class="app-nav" aria-label="Account">
+            <button type="button" onclick="adminLogout()">
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
               >
-                <div
-                  style="
-                    color: #54d12b;
-                    font-size: 1.1rem;
-                    font-weight: 700;
-                    margin-bottom: 8px;
-                  "
+                <path d="M10 4H5v16h5M14 8l4 4-4 4M18 12H9" />
+              </svg>
+              Logout
+            </button>
+          </nav>
+        </div>
+      </aside>
+
+      <!-- Main Content -->
+      <main class="app-main">
+        <!-- Dashboard Overview Section -->
+        <div id="dashboard-section">
+          <div class="page-head">
+            <div>
+              <h1 class="page-title">Admin Dashboard</h1>
+              <p class="page-lede" id="admin-welcome-message"></p>
+            </div>
+            <div class="btn-row">
+              <button type="button" class="btn" onclick="downloadReports()">
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
                 >
-                  Total Food Rescued
-                </div>
-                <div
-                  id="stat-food"
-                  style="font-size: 2.1rem; font-weight: 900; color: #121a0f"
-                >
-                  --
-                </div>
+                  <path d="M12 4v11M7 11l5 5 5-5M5 20h14" />
+                </svg>
+                Download Reports
+              </button>
+            </div>
+          </div>
+
+          <div class="stack">
+            <!-- Dashboard Stats -->
+            <div class="stat-grid" id="admin-dashboard-stats">
+              <div class="stat">
+                <span class="stat-label">Total Food Rescued</span>
+                <span class="stat-value" id="stat-food">--</span>
               </div>
-              <div
-                style="
-                  flex: 1 1 220px;
-                  min-width: 220px;
-                  background: #fff;
-                  border-radius: 18px;
-                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                  padding: 28px 20px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: flex-start;
-                "
+              <button
+                type="button"
+                class="stat"
+                title="View all donors"
+                onclick="openUsers('donor')"
               >
-                <div
-                  style="
-                    color: #54d12b;
-                    font-size: 1.1rem;
-                    font-weight: 700;
-                    margin-bottom: 8px;
-                  "
-                >
-                  Active Donors
-                </div>
-                <div
-                  id="stat-donors"
-                  style="
-                    font-size: 2.1rem;
-                    font-weight: 900;
-                    color: #121a0f;
-                    cursor: pointer;
-                  "
-                  title="Click to view all donors"
-                  onclick="showDonorCount()"
-                >
-                  --
-                </div>
-              </div>
-              <div
-                style="
-                  flex: 1 1 220px;
-                  min-width: 220px;
-                  background: #fff;
-                  border-radius: 18px;
-                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                  padding: 28px 20px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: flex-start;
-                "
+                <span class="stat-label">Active Donors</span>
+                <span class="stat-value" id="stat-donors">--</span>
+              </button>
+              <button
+                type="button"
+                class="stat"
+                title="View all charities"
+                onclick="openUsers('charity')"
               >
-                <div
-                  style="
-                    color: #54d12b;
-                    font-size: 1.1rem;
-                    font-weight: 700;
-                    margin-bottom: 8px;
-                  "
-                >
-                  Active Charities
-                </div>
-                <div
-                  id="stat-charities"
-                  style="
-                    font-size: 2.1rem;
-                    font-weight: 900;
-                    color: #121a0f;
-                    cursor: pointer;
-                  "
-                  title="Click to view all charities"
-                  onclick="showCharityCount()"
-                >
-                  --
-                </div>
-              </div>
-              <div
-                style="
-                  flex: 1 1 220px;
-                  min-width: 220px;
-                  background: #fff;
-                  border-radius: 18px;
-                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                  padding: 28px 20px;
-                  display: flex;
-                  flex-direction: column;
-                  align-items: flex-start;
-                "
+                <span class="stat-label">Active Charities</span>
+                <span class="stat-value" id="stat-charities">--</span>
+              </button>
+              <button
+                type="button"
+                class="stat"
+                title="View pending approvals"
+                onclick="openPendingVerifications()"
               >
-                <div
-                  style="
-                    color: #54d12b;
-                    font-size: 1.1rem;
-                    font-weight: 700;
-                    margin-bottom: 8px;
-                  "
-                >
-                  Pending Approvals
-                </div>
-                <div
-                  id="stat-pending"
-                  style="
-                    font-size: 2.1rem;
-                    font-weight: 900;
-                    color: #121a0f;
-                    cursor: pointer;
-                  "
-                  title="Click to view pending approvals"
-                  onclick="showSection('charity-verification-section')"
-                >
-                  --
-                </div>
-              </div>
+                <span class="stat-label">Pending Approvals</span>
+                <span class="stat-value" id="stat-pending">--</span>
+              </button>
             </div>
 
             <!-- Quick Actions -->
-            <div style="margin-bottom: 32px">
-              <div
-                style="
-                  font-weight: 700;
-                  color: #54d12b;
-                  margin-bottom: 10px;
-                  font-size: 1.1rem;
-                "
-              >
-                Quick Actions
+            <div class="panel card">
+              <div class="card-head">
+                <h2 class="card-title">Quick Actions</h2>
               </div>
-              <div style="display: flex; gap: 18px; flex-wrap: wrap">
+              <div class="btn-row">
                 <button
-                  class="action-btn approve"
+                  type="button"
+                  class="btn btn--solid"
                   onclick="showSection('charity-verification-section')"
                 >
                   Verify Institutions
                 </button>
                 <button
-                  class="action-btn approve"
+                  type="button"
+                  class="btn btn--solid"
                   onclick="showSection('user-management-section')"
                 >
                   Manage Users
                 </button>
                 <button
-                  class="action-btn"
-                  style="background: #ebf2e9; color: #121a0f"
+                  type="button"
+                  class="btn"
                   onclick="showSection('reports-section')"
                 >
                   Generate Reports
                 </button>
-                <!-- <button
-                  class="action-btn"
-                  style="background: #ebf2e9; color: #121a0f"
-                  onclick="alert('Send announcement coming soon!')"
-                >
-                  Send Announcement
-                </button> -->
               </div>
             </div>
 
             <!-- Donation Trends and Pie Chart Side by Side -->
-            <div
-              style="
-                display: flex;
-                flex-wrap: wrap;
-                gap: 24px;
-                margin-bottom: 24px;
-              "
-            >
-              <div
-                style="
-                  flex: 2 1 400px;
-                  min-width: 320px;
-                  background: #fff;
-                  border-radius: 18px;
-                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                  padding: 24px 20px;
-                "
-              >
-                <div
-                  style="font-weight: 700; color: #54d12b; margin-bottom: 12px"
-                >
-                  Donation Trends
+            <div class="split">
+              <div class="panel card">
+                <div class="card-head">
+                  <h2 class="card-title">Donation Trends</h2>
                 </div>
-                <canvas
-                  id="donationTrendsChart"
-                  height="120"
-                  style="width: 100%; max-width: 100%"
-                ></canvas>
+                <div class="chart-box" id="trendsBox">
+                  <canvas id="donationTrendsChart"></canvas>
+                </div>
               </div>
-              <div
-                style="
-                  flex: 1 1 320px;
-                  min-width: 320px;
-                  background: #fff;
-                  border-radius: 18px;
-                  box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                  padding: 24px 20px;
-                "
-              >
-                <div
-                  style="font-weight: 700; color: #54d12b; margin-bottom: 12px"
-                >
-                  Donations by Category
+              <div class="panel card">
+                <div class="card-head">
+                  <h2 class="card-title">Donations by Category</h2>
                 </div>
-                <canvas
-                  id="adminDonationCategoryPie"
-                  width="220"
-                  height="220"
-                  style="
-                    max-width: 220px;
-                    max-height: 220px;
-                    margin: auto;
-                    display: block;
-                  "
-                ></canvas>
+                <div class="chart-box chart-box--pie" id="pieBox">
+                  <canvas
+                    id="adminDonationCategoryPie"
+                    width="240"
+                    height="240"
+                  ></canvas>
+                </div>
               </div>
             </div>
 
-            <!-- Recent Feedback Full Width Below Trends and Pie Chart -->
-            <div
-              style="
-                background: #fff;
-                border-radius: 18px;
-                box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                padding: 24px 20px;
-                margin-bottom: 24px;
-              "
-            >
-              <div
-                style="
-                  display: flex;
-                  justify-content: space-between;
-                  align-items: center;
-                  margin-bottom: 12px;
-                "
-              >
-                <span style="font-weight: 700; color: #54d12b"
-                  >Recent Feedback</span
-                >
-                <label style="font-weight: 500; color: #222; font-size: 15px">
-                  Filter by Rating:
-                  <select
-                    id="feedbackRatingFilter"
-                    style="
-                      padding: 4px 10px;
-                      border-radius: 8px;
-                      border: 1px solid #d5e7d0;
-                      font-size: 15px;
-                      margin-left: 6px;
-                    "
-                  >
-                    <option value="all">All</option>
-                    <option value="5">5</option>
-                    <option value="4">4</option>
-                    <option value="3">3</option>
-                    <option value="2">2</option>
-                    <option value="1">1</option>
-                    <option value="none">No Rating</option>
-                  </select>
-                </label>
-                <label
-                  style="
-                    font-weight: 500;
-                    color: #222;
-                    font-size: 15px;
-                    margin-left: 18px;
-                  "
-                >
-                  Filter by Category:
-                  <select
-                    id="feedbackCategoryFilter"
-                    style="
-                      padding: 4px 10px;
-                      border-radius: 8px;
-                      border: 1px solid #d5e7d0;
-                      font-size: 15px;
-                      margin-left: 6px;
-                    "
-                  >
-                    <option value="all">All</option>
-                  </select>
-                </label>
+            <!-- Recent Feedback -->
+            <div class="panel card">
+              <div class="card-head">
+                <h2 class="card-title">Recent Feedback</h2>
+                <div class="toolbar">
+                  <label>
+                    Rating
+                    <select id="feedbackRatingFilter" class="input input--sm">
+                      <option value="all">All</option>
+                      <option value="5">5</option>
+                      <option value="4">4</option>
+                      <option value="3">3</option>
+                      <option value="2">2</option>
+                      <option value="1">1</option>
+                      <option value="none">No Rating</option>
+                    </select>
+                  </label>
+                  <label>
+                    Category
+                    <select id="feedbackCategoryFilter" class="input input--sm">
+                      <option value="all">All</option>
+                    </select>
+                  </label>
+                </div>
               </div>
-              <div style="overflow-x: auto">
-                <table
-                  id="recentFeedbackTable"
-                  style="
-                    width: 100%;
-                    border-collapse: collapse;
-                    min-width: 600px;
-                  "
-                >
+              <div class="table-wrap">
+                <table class="table" id="recentFeedbackTable">
                   <thead>
-                    <tr style="background: #f5f5f5; color: #222">
-                      <th style="padding: 10px 8px">Date</th>
-                      <th style="padding: 10px 8px">User</th>
-                      <th style="padding: 10px 8px">Category</th>
-                      <th style="padding: 10px 8px">Name</th>
-                      <th style="padding: 10px 8px">Rating</th>
-                      <th style="padding: 10px 8px">Comment</th>
+                    <tr>
+                      <th>Date</th>
+                      <th>User</th>
+                      <th>Category</th>
+                      <th>Name</th>
+                      <th>Rating</th>
+                      <th>Comment</th>
                     </tr>
                   </thead>
                   <tbody id="recentFeedbackBody">
@@ -936,823 +360,861 @@
                   </tbody>
                 </table>
               </div>
+              <div class="pagination" id="feedbackPagination" hidden></div>
             </div>
           </div>
-          <!-- Reports Section -->
-          <div id="reports-section" style="display: none">
-            <h2>Generate Reports</h2>
-            <form
-              id="reportForm"
-              style="
-                background: #fff;
-                border-radius: 16px;
-                box-shadow: 0 2px 12px 0 rgba(84, 209, 43, 0.08);
-                padding: 32px 24px;
-                max-width: 480px;
-                margin-bottom: 32px;
-              "
-            >
-              <div style="margin-bottom: 18px">
-                <label for="reportType" style="font-weight: 600; color: #54d12b"
-                  >Report Type:</label
-                >
-                <select
-                  id="reportType"
-                  name="reportType"
-                  style="
-                    margin-left: 12px;
-                    padding: 7px 12px;
-                    border-radius: 8px;
-                    border: 1px solid #d5e7d0;
-                    font-size: 15px;
-                  "
-                >
+        </div>
+
+        <!-- Reports Section -->
+        <div id="reports-section" style="display: none">
+          <div class="page-head">
+            <div>
+              <h1 class="page-title">Generate Reports</h1>
+              <p class="page-lede">
+                Choose a report and a date range. It downloads as a CSV file.
+              </p>
+            </div>
+          </div>
+          <div class="stack">
+            <form id="reportForm" class="panel card report-form">
+              <div class="field">
+                <label for="reportType">Report Type</label>
+                <select id="reportType" name="reportType" class="input">
                   <option value="donations">Donation Trends</option>
                   <option value="category">Donations by Category</option>
                   <option value="users">User Activity</option>
                   <option value="food">Food Rescued</option>
                   <option value="feedback">Feedback Summary</option>
                   <option value="approvals">
-                    Pending & Completed Approvals
+                    Pending &amp; Completed Approvals
                   </option>
-                  <option value="top">Top Donors & Charities</option>
+                  <option value="top">Top Donors &amp; Charities</option>
                 </select>
               </div>
-              <div style="margin-bottom: 18px">
-                <label for="startDate" style="font-weight: 600; color: #54d12b"
-                  >Start Date:</label
-                >
-                <input
-                  type="date"
-                  id="startDate"
-                  name="startDate"
-                  style="
-                    margin-left: 12px;
-                    padding: 7px 12px;
-                    border-radius: 8px;
-                    border: 1px solid #d5e7d0;
-                    font-size: 15px;
-                  "
-                  required
-                />
+              <div class="field-row">
+                <div class="field">
+                  <label for="startDate">Start Date</label>
+                  <input
+                    type="date"
+                    id="startDate"
+                    name="startDate"
+                    class="input"
+                    required
+                  />
+                </div>
+                <div class="field">
+                  <label for="endDate">End Date</label>
+                  <input
+                    type="date"
+                    id="endDate"
+                    name="endDate"
+                    class="input"
+                    required
+                  />
+                </div>
               </div>
-              <div style="margin-bottom: 24px">
-                <label for="endDate" style="font-weight: 600; color: #54d12b"
-                  >End Date:</label
-                >
-                <input
-                  type="date"
-                  id="endDate"
-                  name="endDate"
-                  style="
-                    margin-left: 12px;
-                    padding: 7px 12px;
-                    border-radius: 8px;
-                    border: 1px solid #d5e7d0;
-                    font-size: 15px;
-                  "
-                  required
-                />
-              </div>
-              <button type="submit" class="action-btn approve">
+              <button type="submit" class="pill pill--solid">
                 Generate Report
+                <span class="pill-arrow">
+                  <svg
+                    viewBox="0 0 16 16"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <path d="M3 8h10M9 4l4 4-4 4" />
+                  </svg>
+                </span>
               </button>
             </form>
-            <div id="reportResult" style="margin-top: 18px"></div>
+            <div id="reportResult" class="alert" role="status"></div>
           </div>
-          <!-- Charity Verification Section -->
-          <div id="charity-verification-section" style="display: none">
-            <h2>Charity Verification Requests</h2>
-            <div class="filter-bar">
-              <label for="statusFilter">Filter by Status:</label>
-              <select id="statusFilter" onchange="fetchVerifications()">
-                <option value="all">All</option>
-                <option value="pending">Pending</option>
-                <option value="approved">Approved</option>
-                <option value="rejected">Rejected</option>
-              </select>
-            </div>
-            <div class="table-section">
-              <div class="table-wrap">
-                <table id="verificationsTable">
-                  <thead>
-                    <tr>
-                      <th>ID</th>
-                      <th>Charity Name</th>
-                      <th>Address</th>
-                      <th>Contact</th>
-                      <th>Description</th>
-                      <th>Tax Compliance Certificate</th>
-                      <th>Certificate of Incorporation</th>
-                      <th>Status</th>
-                      <th>Submitted At</th>
-                      <th>Action</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <!-- Rows will be inserted here -->
-                  </tbody>
-                </table>
-              </div>
-              <div id="noRequests" class="no-requests" style="display: none">
-                No verifications found.
-              </div>
+        </div>
+
+        <!-- Charity Verification Section -->
+        <div id="charity-verification-section" style="display: none">
+          <div class="page-head">
+            <div>
+              <h1 class="page-title">Charity Verification Requests</h1>
+              <p class="page-lede">
+                Check each charity's documents, then approve or reject.
+              </p>
             </div>
           </div>
-          <!-- User Management Section -->
-          <div id="user-management-section" style="display: none">
-            <h2>User Management</h2>
-            <div style="margin-bottom: 18px">
-              <button
-                class="action-btn"
-                id="tab-donor"
-                onclick="switchUserTab('donor')"
-              >
-                Donors
-              </button>
-              <button
-                class="action-btn"
-                id="tab-charity"
-                onclick="switchUserTab('charity')"
-              >
-                Charities
-              </button>
-              <button
-                class="action-btn"
-                id="tab-admin"
-                onclick="switchUserTab('admin')"
-              >
-                Admins
-              </button>
+          <div class="panel card">
+            <div class="card-head">
+              <div class="toolbar">
+                <label>
+                  Status
+                  <select
+                    id="statusFilter"
+                    class="input input--sm"
+                    onchange="fetchVerifications()"
+                  >
+                    <option value="all">All</option>
+                    <option value="pending">Pending</option>
+                    <option value="approved">Approved</option>
+                    <option value="rejected">Rejected</option>
+                  </select>
+                </label>
+              </div>
             </div>
-            <div class="filter-bar">
-              <input
-                type="text"
-                id="userSearch"
-                placeholder="Search by name or email..."
-                style="
-                  padding: 7px 12px;
-                  border-radius: 8px;
-                  border: 1px solid #d5e7d0;
-                  font-size: 15px;
-                "
-                oninput="fetchUsers()"
-              />
-              <label for="userStatusFilter">Status:</label>
-              <select id="userStatusFilter" onchange="fetchUsers()">
-                <option value="all">All</option>
-                <option value="active">Active</option>
-                <option value="banned">Banned</option>
-              </select>
+            <div class="table-wrap">
+              <table class="table" id="verificationsTable">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Charity</th>
+                    <th>Description</th>
+                    <th>Documents</th>
+                    <th>Status</th>
+                    <th>Submitted</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <!-- Rows will be inserted here -->
+                </tbody>
+              </table>
             </div>
-            <div class="table-section">
-              <div class="table-wrap">
-                <table id="usersTable">
-                  <thead>
-                    <tr id="usersTableHead">
-                      <!-- Dynamic -->
-                    </tr>
-                  </thead>
-                  <tbody id="usersTableBody">
+          </div>
+        </div>
+
+        <!-- User Management Section -->
+        <div id="user-management-section" style="display: none">
+          <div class="page-head">
+            <div>
+              <h1 class="page-title">User Management</h1>
+              <p class="page-lede">
+                Ban, promote or remove donors, charities and admins.
+              </p>
+            </div>
+          </div>
+          <div class="panel card">
+            <div class="card-head">
+              <div class="segmented" role="group" aria-label="User type">
+                <button
+                  type="button"
+                  id="tab-donor"
+                  onclick="switchUserTab('donor')"
+                >
+                  Donors
+                </button>
+                <button
+                  type="button"
+                  id="tab-charity"
+                  onclick="switchUserTab('charity')"
+                >
+                  Charities
+                </button>
+                <button
+                  type="button"
+                  id="tab-admin"
+                  onclick="switchUserTab('admin')"
+                >
+                  Admins
+                </button>
+              </div>
+              <div class="toolbar">
+                <input
+                  type="search"
+                  id="userSearch"
+                  class="input input--sm"
+                  placeholder="Search by name or email..."
+                  aria-label="Search users by name or email"
+                />
+                <label>
+                  Status
+                  <select
+                    id="userStatusFilter"
+                    class="input input--sm"
+                    onchange="fetchUsers()"
+                  >
+                    <option value="all">All</option>
+                    <option value="active">Active</option>
+                    <option value="banned">Banned</option>
+                  </select>
+                </label>
+              </div>
+            </div>
+            <div class="table-wrap">
+              <table class="table" id="usersTable">
+                <thead>
+                  <tr id="usersTableHead">
                     <!-- Dynamic -->
-                  </tbody>
-                </table>
-              </div>
-              <div id="noUsers" class="no-requests" style="display: none">
-                No users found.
-              </div>
+                  </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
             </div>
           </div>
-        </main>
-      </div>
+        </div>
+
+        <footer class="app-foot">
+          <p>&copy; 2025 FoodShare. All rights reserved.</p>
+        </footer>
+      </main>
     </div>
-    <footer>
-      <p>&copy; 2025 FoodShare. All rights reserved.</p>
-    </footer>
+
+    <!-- User details -->
+    <dialog class="dialog" id="userDialog" aria-labelledby="userDialogTitle">
+      <h2 class="dialog-title" id="userDialogTitle">User Details</h2>
+      <dl class="detail-list" id="userDialogBody"></dl>
+      <form method="dialog" class="dialog-actions">
+        <button class="btn btn--solid">Close</button>
+      </form>
+    </dialog>
+
+    <script src="/js/ui.js"></script>
     <script>
       // ============================================
       // BASE URL CONFIGURATION (Auto-detect local vs production)
       // ============================================
-      const API_BASE_URL =
-        window.location.hostname === "localhost" ||
-        window.location.hostname === "127.0.0.1"
-          ? "http://localhost:3000" // Local development
-          : "https://foodshare-nairobi-1.onrender.com"; // Production
+      const API_BASE_URL = "https://foodshare-nairobi-1.onrender.com";
 
-      console.log("🌐 Using API Base URL:", API_BASE_URL);
+      const esc = escapeHtml;
+
       // ============================================
-
-      // --- Admin Welcome Name ---
+      // SHELL: welcome name, logout, navigation, mobile menu
+      // ============================================
       (function setAdminWelcome() {
-        let adminName = localStorage.getItem("adminName");
-        if (adminName && adminName.trim() !== "") {
-          var welcomeDiv = document.getElementById("admin-welcome-message");
-          if (welcomeDiv) welcomeDiv.textContent = `Welcome, ${adminName}`;
-        }
+        const adminName = (localStorage.getItem("adminName") || "").trim();
+        if (!adminName) return;
+        document.getElementById(
+          "admin-welcome-message"
+        ).textContent = `Welcome, ${adminName}`;
+        document.getElementById("admin-name").textContent = adminName;
       })();
-      // Show total donors in system
-      async function showDonorCount() {
-        try {
-          const res = await fetch(`${API_BASE_URL}/api/admin/users?type=donor`);
-          const data = await res.json();
-          if (data.success) {
-            alert(`Total Donors: ${data.users.length}`);
-          } else {
-            alert("Could not fetch donor count.");
-          }
-        } catch (e) {
-          alert("Error fetching donor count.");
-        }
+
+      function adminLogout() {
+        localStorage.removeItem("adminName");
+        window.location.href = "/Login.html";
       }
 
-      // Show total charities in system
-      async function showCharityCount() {
-        try {
-          const res = await fetch(
-            `${API_BASE_URL}/api/admin/users?type=charity`
-          );
-          const data = await res.json();
-          if (data.success) {
-            alert(`Total Charities: ${data.users.length}`);
-          } else {
-            alert("Could not fetch charity count.");
-          }
-        } catch (e) {
-          alert("Error fetching charity count.");
-        }
-      }
-      // Sidebar navigation
+      const SECTIONS = {
+        "dashboard-section": "sidebar-dashboard",
+        "charity-verification-section": "sidebar-verifications",
+        "user-management-section": "sidebar-users",
+        "reports-section": "sidebar-reports",
+      };
+
       function showSection(sectionId) {
-        // Hide all main sections
-        document.getElementById("dashboard-section").style.display =
-          sectionId === "dashboard-section" ? "" : "none";
-        document.getElementById("charity-verification-section").style.display =
-          sectionId === "charity-verification-section" ? "" : "none";
-        document.getElementById("user-management-section").style.display =
-          sectionId === "user-management-section" ? "" : "none";
-        document.getElementById("reports-section").style.display =
-          sectionId === "reports-section" ? "" : "none";
-        // Sidebar active state
-        document
-          .getElementById("sidebar-dashboard")
-          .classList.toggle("active", sectionId === "dashboard-section");
-        document
-          .getElementById("sidebar-verifications")
-          .classList.toggle(
-            "active",
-            sectionId === "charity-verification-section"
-          );
-        document
-          .getElementById("sidebar-users")
-          .classList.toggle("active", sectionId === "user-management-section");
-        document
-          .getElementById("sidebar-reports")
-          .classList.toggle("active", sectionId === "reports-section");
-      }
-      // Reports form handler (CSV download)
-      document.addEventListener("DOMContentLoaded", function () {
-        var reportForm = document.getElementById("reportForm");
-        if (reportForm) {
-          reportForm.addEventListener("submit", function (e) {
-            e.preventDefault();
-            var type = document.getElementById("reportType").value;
-            var start = document.getElementById("startDate").value;
-            var end = document.getElementById("endDate").value;
-            var result = document.getElementById("reportResult");
-            result.innerHTML = `<div style='color:#54d12b;font-weight:600;'>Generating <b>${type}</b> report from <b>${start}</b> to <b>${end}</b>...`;
-            // Build the download URL
-            var url = `/api/admin/reports?type=${encodeURIComponent(
-              type
-            )}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(
-              end
-            )}`;
-            // Fetch the CSV and trigger download
-            fetch(url)
-              .then((response) => {
-                if (!response.ok) throw new Error("Failed to generate report.");
-                return response.blob();
-              })
-              .then((blob) => {
-                // Try to get filename from Content-Disposition
-                var filename = `report_${type}_${start}_to_${end}.csv`;
-                try {
-                  var disposition = event.target.getResponseHeader
-                    ? event.target.getResponseHeader("Content-Disposition")
-                    : null;
-                  if (disposition && disposition.indexOf("filename=") !== -1) {
-                    filename = disposition
-                      .split("filename=")[1]
-                      .replace(/['"]/g, "");
-                  }
-                } catch {}
-                var link = document.createElement("a");
-                link.href = window.URL.createObjectURL(blob);
-                link.download = filename;
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-                result.innerHTML = `<div style='color:#54d12b;font-weight:600;'>Report generated and downloaded: <b>${filename}</b></div>`;
-              })
-              .catch((err) => {
-                result.innerHTML = `<div style='color:#e74c3c;font-weight:600;'>${err.message}</div>`;
-              });
-          });
+        for (const [section, link] of Object.entries(SECTIONS)) {
+          const isCurrent = section === sectionId;
+          document.getElementById(section).style.display = isCurrent
+            ? ""
+            : "none";
+          document.getElementById(link).classList.toggle("active", isCurrent);
         }
+        setMenuOpen(false);
+        window.scrollTo(0, 0);
+      }
+
+      function openUsers(type) {
+        showSection("user-management-section");
+        switchUserTab(type);
+      }
+
+      function openPendingVerifications() {
+        showSection("charity-verification-section");
+        document.getElementById("statusFilter").value = "pending";
+        fetchVerifications();
+      }
+
+      // Go to Reports and submit the form (the browser asks for dates if empty)
+      function downloadReports() {
+        showSection("reports-section");
+        document.getElementById("reportForm").requestSubmit();
+      }
+
+      function setMenuOpen(open) {
+        document.getElementById("sidebar").classList.toggle("is-open", open);
+        document
+          .getElementById("sidebarOverlay")
+          .classList.toggle("is-open", open);
+        document
+          .getElementById("hamburgerBtn")
+          .setAttribute("aria-expanded", open);
+        document.body.style.overflow = open ? "hidden" : "";
+      }
+
+      document.getElementById("hamburgerBtn").addEventListener("click", () => {
+        setMenuOpen(
+          !document.getElementById("sidebar").classList.contains("is-open")
+        );
+      });
+      document
+        .getElementById("sidebarOverlay")
+        .addEventListener("click", () => setMenuOpen(false));
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape") setMenuOpen(false);
       });
 
-      // User Management Tab logic
+      // ============================================
+      // SHARED HELPERS
+      // ============================================
+      function formatDate(value) {
+        return value ? new Date(value).toLocaleString() : "-";
+      }
+
+      // Confirm, call the API, report the result, then refresh the table
+      async function adminAction({ url, method = "POST", ask, done, reload }) {
+        if (!(await confirmDialog(ask.message, ask))) return;
+        try {
+          const res = await fetch(url, { method });
+          const data = await res.json();
+          if (data.success) {
+            showToast(done, "success");
+            reload();
+          } else {
+            showToast(data.message || "Action failed", "error");
+          }
+        } catch (err) {
+          console.error("Admin action failed:", err);
+          showToast("Could not reach the server. Please try again.", "error");
+        }
+      }
+
+      // ============================================
+      // REPORTS (CSV download)
+      // ============================================
+      document
+        .getElementById("reportForm")
+        .addEventListener("submit", async function (e) {
+          e.preventDefault();
+          const typeSelect = document.getElementById("reportType");
+          const type = typeSelect.value;
+          const label = typeSelect.selectedOptions[0].textContent
+            .trim()
+            .replace(/\s+/g, " ");
+          const start = document.getElementById("startDate").value;
+          const end = document.getElementById("endDate").value;
+          const result = document.getElementById("reportResult");
+          const submitBtn = this.querySelector('[type="submit"]');
+          const fail = (message) => {
+            result.className = "alert alert--error";
+            result.textContent = message;
+          };
+
+          result.className = "alert";
+          result.textContent = `Generating ${label} from ${start} to ${end}...`;
+          setBusy(submitBtn, true);
+
+          const url = `${API_BASE_URL}/api/admin/reports?type=${encodeURIComponent(
+            type
+          )}&start=${encodeURIComponent(start)}&end=${encodeURIComponent(end)}`;
+          try {
+            const response = await fetch(url);
+            if (!response.ok) {
+              const body = await response.json().catch(() => ({}));
+              fail(body.message || "The server could not generate this report.");
+              return;
+            }
+            const csv = await response.text();
+
+            // A header line and nothing else means there is nothing to download
+            if (csv.trim().split("\n").length < 2) {
+              result.className = "alert";
+              result.textContent = `No ${label} records between ${start} and ${end}. Nothing was downloaded; try a wider date range.`;
+              return;
+            }
+
+            // Use the server's filename when the browser lets us read it
+            const disposition = response.headers.get("Content-Disposition") || "";
+            const filename =
+              disposition.match(/filename="?([^";]+)/)?.[1] ||
+              `report_${type}_${start}_to_${end}.csv`;
+
+            // The BOM makes Excel read the file as UTF-8
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(
+              new Blob(["﻿", csv], { type: "text/csv;charset=utf-8" })
+            );
+            link.download = filename;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            URL.revokeObjectURL(link.href);
+
+            result.className = "alert alert--success";
+            result.textContent = `Downloaded ${filename}`;
+          } catch (err) {
+            console.error("Report download failed:", err);
+            fail("Could not reach the server. Please try again.");
+          } finally {
+            setBusy(submitBtn, false);
+          }
+        });
+
+      // Keep the range valid: the end date cannot be before the start date
+      document.getElementById("startDate").addEventListener("change", (e) => {
+        document.getElementById("endDate").min = e.target.value;
+      });
+      document.getElementById("endDate").addEventListener("change", (e) => {
+        document.getElementById("startDate").max = e.target.value;
+      });
+
+      // ============================================
+      // USER MANAGEMENT
+      // ============================================
       let currentUserType = "donor";
+
       function switchUserTab(type) {
         currentUserType = type;
-        document
-          .getElementById("tab-donor")
-          .classList.toggle("approve", type === "donor");
-        document
-          .getElementById("tab-charity")
-          .classList.toggle("approve", type === "charity");
-        document
-          .getElementById("tab-admin")
-          .classList.toggle("approve", type === "admin");
+        for (const t of ["donor", "charity", "admin"]) {
+          const tab = document.getElementById(`tab-${t}`);
+          tab.classList.toggle("active", t === type);
+          tab.setAttribute("aria-pressed", t === type);
+        }
         fetchUsers();
       }
 
       async function fetchUsers() {
         const search = document.getElementById("userSearch").value;
         const status = document.getElementById("userStatusFilter").value;
-        let url = `${API_BASE_URL}/api/admin/users?type=${currentUserType}`;
+        const type = currentUserType;
+        let url = `${API_BASE_URL}/api/admin/users?type=${type}`;
         if (search) url += `&search=${encodeURIComponent(search)}`;
         if (status && status !== "all") url += `&status=${status}`;
+
+        const head = document.getElementById("usersTableHead");
+        const body = document.getElementById("usersTableBody");
+        head.innerHTML = `<th>ID</th><th>${
+          type === "charity" ? "Org Name" : "Name"
+        }</th><th>Email</th><th>Status</th><th>Action</th>`;
+
         try {
           const res = await fetch(url);
           const data = await res.json();
-          const head = document.getElementById("usersTableHead");
-          const body = document.getElementById("usersTableBody");
-          body.innerHTML = "";
-          // Table headers
-          if (currentUserType === "charity") {
-            head.innerHTML =
-              "<th>ID</th><th>Org Name</th><th>Email</th><th>Status</th><th>Action</th>";
-          } else {
-            head.innerHTML =
-              "<th>ID</th><th>Name</th><th>Email</th><th>Status</th><th>Action</th>";
+          // Ignore a slow response if the tab changed while it was loading
+          if (type !== currentUserType) return;
+          if (!data.success) throw new Error(data.message || "Request failed");
+          if (data.users.length === 0) {
+            body.innerHTML = noteRow(5, "No users found.");
+            return;
           }
-          if (data.success && data.users.length > 0) {
-            document.getElementById("noUsers").style.display = "none";
-            data.users.forEach((u) => {
-              let name = u.name;
-              let actionBtns = "";
-              // Ban/Unban
-              if (u.status === "active") {
-                actionBtns += `<button class=\"action-btn reject\" onclick=\"banUser('${currentUserType}', ${u.id})\">Ban</button>`;
-              } else {
-                actionBtns += `<button class=\"action-btn approve\" onclick=\"unbanUser('${currentUserType}', ${u.id})\">Unban</button>`;
-              }
-              // Promote (for donor/charity)
-              if (
-                currentUserType === "donor" ||
-                currentUserType === "charity"
-              ) {
-                actionBtns += `<button class=\"action-btn approve\" onclick=\"promoteUser('${currentUserType}', ${u.id})\">Promote</button>`;
-              }
-              // Demote (for admin, but not self)
-              if (currentUserType === "admin") {
-                actionBtns += `<button class=\"action-btn reject\" onclick=\"demoteUser(${u.id})\">Demote</button>`;
-              }
-              actionBtns += `<button class=\"action-btn reject\" onclick=\"deleteUser('${currentUserType}', ${u.id})\">Delete</button>`;
-              actionBtns += `<button class=\"action-btn\" onclick=\"viewUserDetails('${currentUserType}', ${u.id})\">View</button>`;
-              body.innerHTML += `<tr><td>${u.id}</td><td>${name}</td><td>${u.email}</td><td class=\"status\">${u.status}</td><td>${actionBtns}</td></tr>`;
-            });
-          } else {
-            document.getElementById("noUsers").style.display = "block";
-          }
-          // Promote user to admin
-          async function promoteUser(type, id) {
-            if (!confirm("Promote this user to admin?")) return;
-            const url = `${API_BASE_URL}/api/admin/users/${type}/${id}/promote`;
-            const res = await fetch(url, { method: "POST" });
-            const data = await res.json();
-            if (data.success) fetchUsers();
-            else alert(data.message || "Action failed");
-          }
-
-          // Demote admin
-          async function demoteUser(id) {
-            if (!confirm("Demote/remove this admin?")) return;
-            const url = `${API_BASE_URL}/api/admin/users/admin/${id}/demote`;
-            const res = await fetch(url, { method: "POST" });
-            const data = await res.json();
-            if (data.success) fetchUsers();
-            else alert(data.message || "Action failed");
-          }
+          body.innerHTML = data.users
+            .map((u) => {
+              const id = Number(u.id);
+              const actions = [
+                u.status === "active"
+                  ? `<button class="btn btn--danger" onclick="banUser('${type}', ${id})">Ban</button>`
+                  : `<button class="btn" onclick="unbanUser('${type}', ${id})">Unban</button>`,
+                type === "admin"
+                  ? `<button class="btn btn--danger" onclick="demoteUser(${id})">Demote</button>`
+                  : `<button class="btn" onclick="promoteUser('${type}', ${id})">Promote</button>`,
+                `<button class="btn btn--danger" onclick="deleteUser('${type}', ${id})">Delete</button>`,
+                `<button class="btn btn--quiet" onclick="viewUserDetails('${type}', ${id})">View</button>`,
+              ];
+              return `<tr>
+                <td class="num">${id}</td>
+                <td>${esc(u.name)}</td>
+                <td>${esc(u.email)}</td>
+                <td>${statusBadge(u.status)}</td>
+                <td><div class="btn-row">${actions.join("")}</div></td>
+              </tr>`;
+            })
+            .join("");
         } catch (err) {
-          document.getElementById("noUsers").style.display = "block";
           console.error("Fetch error:", err);
+          body.innerHTML = noteRow(
+            5,
+            "Could not load users. Check your connection and try again."
+          );
         }
       }
 
-      // Ban user
-      async function banUser(type, id) {
-        if (!confirm("Ban this user?")) return;
-        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}/ban`;
-        const res = await fetch(url, { method: "POST" });
-        const data = await res.json();
-        if (data.success) fetchUsers();
-        else alert(data.message || "Action failed");
+      // Search as you type, without a request per keystroke
+      let userSearchTimer;
+      document.getElementById("userSearch").addEventListener("input", () => {
+        clearTimeout(userSearchTimer);
+        userSearchTimer = setTimeout(fetchUsers, 250);
+      });
+
+      function banUser(type, id) {
+        adminAction({
+          url: `${API_BASE_URL}/api/admin/users/${type}/${id}/ban`,
+          ask: {
+            title: "Ban this user?",
+            message: "They will not be able to use their account.",
+            confirmLabel: "Ban",
+            danger: true,
+          },
+          done: "User banned.",
+          reload: fetchUsers,
+        });
       }
-      // Unban user
-      async function unbanUser(type, id) {
-        if (!confirm("Unban this user?")) return;
-        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}/unban`;
-        const res = await fetch(url, { method: "POST" });
-        const data = await res.json();
-        if (data.success) fetchUsers();
-        else alert(data.message || "Action failed");
+
+      function unbanUser(type, id) {
+        adminAction({
+          url: `${API_BASE_URL}/api/admin/users/${type}/${id}/unban`,
+          ask: {
+            title: "Unban this user?",
+            message: "They will be able to use their account again.",
+            confirmLabel: "Unban",
+          },
+          done: "User unbanned.",
+          reload: fetchUsers,
+        });
       }
-      // Delete user
-      async function deleteUser(type, id) {
-        if (!confirm("Permanently delete this user? This cannot be undone."))
-          return;
-        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}`;
-        const res = await fetch(url, { method: "DELETE" });
-        const data = await res.json();
-        if (data.success) fetchUsers();
-        else alert(data.message || "Action failed");
+
+      function promoteUser(type, id) {
+        adminAction({
+          url: `${API_BASE_URL}/api/admin/users/${type}/${id}/promote`,
+          ask: {
+            title: "Promote this user to admin?",
+            message: "They will get full access to this admin panel.",
+            confirmLabel: "Promote",
+          },
+          done: "User promoted to admin.",
+          reload: fetchUsers,
+        });
       }
-      // View user details
+
+      function demoteUser(id) {
+        adminAction({
+          url: `${API_BASE_URL}/api/admin/users/admin/${id}/demote`,
+          ask: {
+            title: "Demote/remove this admin?",
+            message: "They will lose access to this admin panel.",
+            confirmLabel: "Demote",
+            danger: true,
+          },
+          done: "Admin demoted.",
+          reload: fetchUsers,
+        });
+      }
+
+      function deleteUser(type, id) {
+        adminAction({
+          url: `${API_BASE_URL}/api/admin/users/${type}/${id}`,
+          method: "DELETE",
+          ask: {
+            title: "Permanently delete this user?",
+            message: "This cannot be undone.",
+            confirmLabel: "Delete",
+            danger: true,
+          },
+          done: "User deleted.",
+          reload: fetchUsers,
+        });
+      }
+
       async function viewUserDetails(type, id) {
-        const url = `${API_BASE_URL}/api/admin/users/${type}/${id}`;
-        const res = await fetch(url);
-        const data = await res.json();
-        if (data.success) {
-          const user = data.user;
-          let details = "";
-          for (const key in user) {
-            details += `<b>${key}:</b> ${user[key]}<br>`;
-          }
-          alert(details);
-        } else {
-          alert("User not found.");
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/admin/users/${type}/${id}`);
+          const data = await res.json();
+          if (!data.success) return showToast("User not found.", "error");
+          document.getElementById("userDialogBody").innerHTML = Object.entries(
+            data.user
+          )
+            .map(
+              ([key, value]) =>
+                `<dt>${esc(key)}</dt><dd>${
+                  key === "status" ? statusBadge(value) : esc(value ?? "-")
+                }</dd>`
+            )
+            .join("");
+          document.getElementById("userDialog").showModal();
+        } catch (err) {
+          console.error("Fetch error:", err);
+          showToast("Could not load this user. Please try again.", "error");
         }
       }
 
-      // Charity Verification logic
+      // ============================================
+      // CHARITY VERIFICATION
+      // ============================================
       async function fetchVerifications() {
         const status = document.getElementById("statusFilter").value;
         let url = `${API_BASE_URL}/api/admin/charity-verifications`;
-        if (status && status !== "all") {
-          url += `?status=${status}`;
-        }
+        if (status && status !== "all") url += `?status=${status}`;
+        const body = document.querySelector("#verificationsTable tbody");
+        const fileUrl = (file) =>
+          `${API_BASE_URL}/uploads/charity-verifications/${encodeURIComponent(
+            file
+          )}`;
+
         try {
           const res = await fetch(url); // credentials removed until backend deployed
           const data = await res.json();
-          const table = document
-            .getElementById("verificationsTable")
-            .getElementsByTagName("tbody")[0];
-          table.innerHTML = "";
-          let pendingCount = 0;
-          if (data.success && data.verifications.length > 0) {
-            document.getElementById("noRequests").style.display = "none";
-            data.verifications.forEach((v) => {
-              if (v.status === "pending") pendingCount++;
-              const row = document.createElement("tr");
-              row.innerHTML = `
-                <td>${v.id}</td>
-                <td>${v.charity_name}</td>
-                <td>${v.address}</td>
-                <td>${v.contact}</td>
-                <td>${v.description}</td>
-                <td><a class="file-link" href="/uploads/charity-verifications/${
-                  v.id_file
-                }" target="_blank">View</a></td>
-                <td><a class="file-link" href="/uploads/charity-verifications/${
-                  v.cert_file
-                }" target="_blank">View</a></td>
-                <td class="status">${v.status}</td>
-                <td>${new Date(v.submitted_at).toLocaleString()}</td>
-                <td>
-                  ${
-                    v.status === "pending"
-                      ? `<button class="action-btn approve" onclick="handleAction(${v.id}, 'approve')">Approve</button>
-                  <button class="action-btn reject" onclick="handleAction(${v.id}, 'reject')">Reject</button>`
-                      : ""
-                  }
-                </td>
-              `;
-              table.appendChild(row);
-            });
+          if (!data.success) throw new Error(data.message || "Request failed");
+          if (data.verifications.length === 0) {
+            body.innerHTML = noteRow(7, "No verifications found.");
           } else {
-            document.getElementById("noRequests").style.display = "block";
+            body.innerHTML = data.verifications
+              .map((v) => {
+                const id = Number(v.id);
+                return `<tr>
+                  <td class="num">${id}</td>
+                  <td class="charity-cell">${esc(
+                    v.charity_name
+                  )}<span class="cell-sub">${esc(v.address)}</span>
+                    <span class="cell-sub">${esc(v.contact)}</span></td>
+                  <td><span class="cell-clamp" title="${esc(
+                    v.description
+                  )}">${esc(v.description)}</span></td>
+                  <td>
+                    <a class="link" href="${fileUrl(
+                      v.id_file
+                    )}" target="_blank" rel="noopener">Tax compliance</a>
+                    <span class="cell-sub"><a class="link" href="${fileUrl(
+                      v.cert_file
+                    )}" target="_blank" rel="noopener">Incorporation</a></span>
+                  </td>
+                  <td>${statusBadge(v.status)}</td>
+                  <td class="num" title="${esc(
+                    formatDate(v.submitted_at)
+                  )}">${
+                  v.submitted_at
+                    ? new Date(v.submitted_at).toLocaleDateString()
+                    : "-"
+                }</td>
+                  <td>${
+                    v.status === "pending"
+                      ? `<div class="btn-row">
+                          <button class="btn btn--solid" onclick="handleAction(${id}, 'approve')">Approve</button>
+                          <button class="btn btn--danger" onclick="handleAction(${id}, 'reject')">Reject</button>
+                        </div>`
+                      : ""
+                  }</td>
+                </tr>`;
+              })
+              .join("");
           }
-          // Update pending approvals stat on dashboard
-          const statPending = document.getElementById("stat-pending");
-          if (statPending) statPending.textContent = pendingCount;
+          // The dashboard figure counts pending requests, so only update it
+          // from a list that includes them all
+          if (status === "all" || status === "pending") {
+            document.getElementById("stat-pending").textContent =
+              data.verifications.filter((v) => v.status === "pending").length;
+          }
         } catch (err) {
-          document.getElementById("noRequests").style.display = "block";
           console.error("Fetch error:", err);
+          body.innerHTML = noteRow(
+            7,
+            "Could not load verifications. Check your connection and try again."
+          );
         }
       }
 
-      async function handleAction(id, action) {
-        const confirmMsg =
-          action === "approve"
-            ? "Approve this verification?"
-            : "Reject this verification?";
-        if (!confirm(confirmMsg)) return;
-        const url = `${API_BASE_URL}/api/admin/charity-verifications/${id}/${action}`;
-        const res = await fetch(url, {
-          method: "POST",
-          // credentials removed until backend deployed
+      function handleAction(id, action) {
+        const approve = action === "approve";
+        adminAction({
+          url: `${API_BASE_URL}/api/admin/charity-verifications/${id}/${action}`,
+          ask: {
+            title: approve
+              ? "Approve this verification?"
+              : "Reject this verification?",
+            message: approve
+              ? "The charity will be marked as verified and can receive donations."
+              : "The charity will be told their verification was rejected.",
+            confirmLabel: approve ? "Approve" : "Reject",
+            danger: !approve,
+          },
+          done: approve ? "Verification approved." : "Verification rejected.",
+          reload: fetchVerifications,
         });
+      }
+
+      // ============================================
+      // DASHBOARD: stats, feedback, charts
+      // ============================================
+      let donationTrends = null;
+      const userNames = {}; // donor id -> name
+      const charityNames = {}; // charity id -> org name
+
+      async function fetchUsersOfType(type) {
+        const res = await fetch(`${API_BASE_URL}/api/admin/users?type=${type}`);
         const data = await res.json();
-        if (data.success) {
-          fetchVerifications();
-        } else {
-          alert(data.message || "Action failed");
-        }
+        return data.success ? data.users : null;
       }
 
-      // Initial tab state and fetches
-      // Fetch dashboard stats and feedback (placeholder logic)
       async function fetchDashboardStats() {
-        // Replace with real API endpoints as needed
+        const set = (id, value) =>
+          (document.getElementById(id).textContent = value ?? "--");
+
         try {
-          // Example endpoints
-          const statsRes = await fetch(
-            `${API_BASE_URL}/api/admin/dashboard-stats`
-          );
-          const stats = await statsRes.json();
-          document.getElementById("stat-food").textContent =
-            stats.totalFoodRescued || "--";
-          // Fetch and set live donor and charity counts
-          try {
-            const donorRes = await fetch(
-              `${API_BASE_URL}/api/admin/users?type=donor`
-            );
-            const donorData = await donorRes.json();
-            document.getElementById("stat-donors").textContent =
-              donorData.success ? donorData.users.length : "--";
-          } catch (e) {
-            document.getElementById("stat-donors").textContent = "--";
-          }
-          try {
-            const charityRes = await fetch(
-              `${API_BASE_URL}/api/admin/users?type=charity`
-            );
-            const charityData = await charityRes.json();
-            document.getElementById("stat-charities").textContent =
-              charityData.success ? charityData.users.length : "--";
-          } catch (e) {
-            document.getElementById("stat-charities").textContent = "--";
-          }
-          // Only set stat-pending if it is not already set by fetchVerifications
-          const statPending = document.getElementById("stat-pending");
-          if (
-            statPending &&
-            (statPending.textContent === "--" ||
-              statPending.textContent === "0")
-          ) {
-            statPending.textContent = stats.pendingApprovals || "--";
-          }
-
-          // Fetch all feedback from backend and display in a table with filter, name, category, and pagination
-          const feedbackBody = document.getElementById("recentFeedbackBody");
-          const ratingFilter = document.getElementById("feedbackRatingFilter");
-          const categoryFilter = document.getElementById(
-            "feedbackCategoryFilter"
-          );
-          feedbackBody.innerHTML =
-            '<tr><td colspan="6" style="text-align:center; color:#888;">Loading feedback...</td></tr>';
-          let allFeedback = [];
-          let userNames = {}; // id -> name
-          let charityNames = {}; // id -> org name
-          let currentPage = 1;
-          const pageSize = 8;
-          let totalPages = 1;
-
-          // Helper to fetch all donor and charity names for mapping
-          async function fetchUserAndCharityNames() {
-            try {
-              const [donorRes, charityRes] = await Promise.all([
-                fetch("/api/admin/users?type=donor"),
-                fetch("/api/admin/users?type=charity"),
-              ]);
-              const donorData = await donorRes.json();
-              const charityData = await charityRes.json();
-              if (donorData.success) {
-                donorData.users.forEach((u) => {
-                  userNames[u.id] =
-                    u.name || u.full_name || u.email || `Donor #${u.id}`;
-                });
-              }
-              if (charityData.success) {
-                charityData.users.forEach((c) => {
-                  charityNames[c.id] =
-                    c.org_name || c.name || c.email || `Charity #${c.id}`;
-                });
-              }
-            } catch {}
-          }
-
-          function getNameForFeedback(f) {
-            if (f.donor_id && userNames[f.donor_id])
-              return userNames[f.donor_id];
-            if (f.charity_id && charityNames[f.charity_id])
-              return charityNames[f.charity_id];
-            return "-";
-          }
-
-          function renderFeedbackTable() {
-            let selectedRating = ratingFilter.value;
-            let selectedCategory = categoryFilter.value;
-            let filtered = allFeedback.filter((f) => {
-              let ratingMatch =
-                selectedRating === "all" ||
-                (selectedRating === "none"
-                  ? f.rating === null ||
-                    f.rating === undefined ||
-                    f.rating === ""
-                  : String(f.rating) === selectedRating);
-              let categoryMatch =
-                selectedCategory === "all" ||
-                (f.category && f.category === selectedCategory);
-              return ratingMatch && categoryMatch;
-            });
-            // Pagination
-            totalPages = Math.ceil(filtered.length / pageSize) || 1;
-            if (currentPage > totalPages) currentPage = totalPages;
-            let startIdx = (currentPage - 1) * pageSize;
-            let endIdx = startIdx + pageSize;
-            let pageFeedback = filtered.slice(startIdx, endIdx);
-            feedbackBody.innerHTML = "";
-            if (pageFeedback.length > 0) {
-              pageFeedback.forEach((f) => {
-                let userLabel = "";
-                if (f.donor_id) {
-                  userLabel = `Donor #${f.donor_id}`;
-                } else if (f.charity_id) {
-                  userLabel = `Charity #${f.charity_id}`;
-                } else {
-                  userLabel = "Unknown";
-                }
-                // Format date
-                let dateStr = f.created_at
-                  ? new Date(f.created_at).toLocaleString()
-                  : "-";
-                // Category and rating
-                let category = f.category || "-";
-                let rating =
-                  f.rating !== null && f.rating !== undefined && f.rating !== ""
-                    ? f.rating
-                    : "-";
-                // Comment
-                let comment = f.comment || "";
-                // Name
-                let name = getNameForFeedback(f);
-                const tr = document.createElement("tr");
-                tr.innerHTML = `
-                  <td style='padding:8px 6px; color:#222;'>${dateStr}</td>
-                  <td style='padding:8px 6px; color:#222;'>${userLabel}</td>
-                  <td style='padding:8px 6px; color:#222;'>${category}</td>
-                  <td style='padding:8px 6px; color:#222;'>${name}</td>
-                  <td style='padding:8px 6px; color:#222;'>${rating}</td>
-                  <td style='padding:8px 6px; color:#222;'>${comment}</td>
-                `;
-                feedbackBody.appendChild(tr);
-              });
-            } else {
-              feedbackBody.innerHTML =
-                '<tr><td colspan="6" style="text-align:center; color:#888;">No feedback found for this filter.</td></tr>';
-            }
-            renderPagination(filtered.length);
-          }
-
-          function renderPagination(totalItems) {
-            let paginationDiv = document.getElementById("feedbackPagination");
-            if (!paginationDiv) {
-              paginationDiv = document.createElement("div");
-              paginationDiv.id = "feedbackPagination";
-              paginationDiv.style =
-                "display:flex;justify-content:center;align-items:center;margin-top:10px;gap:8px;";
-              feedbackBody.parentElement.appendChild(paginationDiv);
-            }
-            paginationDiv.innerHTML = "";
-            if (totalPages <= 1) {
-              paginationDiv.style.display = "none";
-              return;
-            }
-            paginationDiv.style.display = "flex";
-            // Prev button
-            let prevBtn = document.createElement("button");
-            prevBtn.textContent = "Prev";
-            prevBtn.className = "action-btn";
-            prevBtn.disabled = currentPage === 1;
-            prevBtn.onclick = () => {
-              if (currentPage > 1) {
-                currentPage--;
-                renderFeedbackTable();
-              }
-            };
-            paginationDiv.appendChild(prevBtn);
-            // Page numbers
-            for (let i = 1; i <= totalPages; i++) {
-              let pageBtn = document.createElement("button");
-              pageBtn.textContent = i;
-              pageBtn.className =
-                "action-btn" + (i === currentPage ? " approve" : "");
-              pageBtn.disabled = i === currentPage;
-              pageBtn.onclick = () => {
-                currentPage = i;
-                renderFeedbackTable();
-              };
-              paginationDiv.appendChild(pageBtn);
-            }
-            // Next button
-            let nextBtn = document.createElement("button");
-            nextBtn.textContent = "Next";
-            nextBtn.className = "action-btn";
-            nextBtn.disabled = currentPage === totalPages;
-            nextBtn.onclick = () => {
-              if (currentPage < totalPages) {
-                currentPage++;
-                renderFeedbackTable();
-              }
-            };
-            paginationDiv.appendChild(nextBtn);
-          }
-
-          function populateCategoryFilter() {
-            // Get unique categories from allFeedback
-            let cats = new Set();
-            allFeedback.forEach((f) => {
-              if (f.category) cats.add(f.category);
-            });
-            // Remove all except 'All'
-            while (categoryFilter.options.length > 1) categoryFilter.remove(1);
-            Array.from(cats)
-              .sort()
-              .forEach((cat) => {
-                let opt = document.createElement("option");
-                opt.value = cat;
-                opt.textContent = cat;
-                categoryFilter.appendChild(opt);
-              });
-          }
-
-          try {
-            // Fetch feedback, then user/charity names, then render
-            const feedbackRes = await fetch(`${API_BASE_URL}/api/feedback`);
-            const feedbackData = await feedbackRes.json();
-            allFeedback = feedbackData.feedback || [];
-            await fetchUserAndCharityNames();
-            populateCategoryFilter();
-            renderFeedbackTable();
-            ratingFilter.onchange = () => {
-              currentPage = 1;
-              renderFeedbackTable();
-            };
-            categoryFilter.onchange = () => {
-              currentPage = 1;
-              renderFeedbackTable();
-            };
-          } catch (e) {
-            feedbackBody.innerHTML =
-              '<tr><td colspan="6" style="text-align:center; color:#e74c3c;">Failed to load feedback.</td></tr>';
-          }
-
-          // Chart
-          if (window.renderDonationTrendsChart && stats.donationTrends) {
-            window.renderDonationTrendsChart(stats.donationTrends);
-          }
+          const res = await fetch(`${API_BASE_URL}/api/admin/dashboard-stats`);
+          const stats = await res.json();
+          set("stat-food", stats.totalFoodRescued);
+          // fetchVerifications() gives a live count; this is the fallback
+          const pending = document.getElementById("stat-pending");
+          if (pending.textContent === "--") set("stat-pending", stats.pendingApprovals);
+          donationTrends = stats.donationTrends;
+          renderDonationTrendsChart();
         } catch (e) {
-          // fallback
-          document.getElementById("stat-food").textContent = "--";
-          document.getElementById("stat-donors").textContent = "--";
-          document.getElementById("stat-charities").textContent = "--";
-          document.getElementById("stat-pending").textContent = "--";
-          const feedbackList = document.getElementById("recentFeedback");
-          if (feedbackList)
-            feedbackList.innerHTML = "<li>Failed to load feedback.</li>";
+          set("stat-food", null);
+          showChartMessage("trendsBox", "Could not load donation trends.");
+        }
+
+        // Donor and charity lists give both the counts and the names
+        // shown beside feedback
+        const [donors, charities] = await Promise.all([
+          fetchUsersOfType("donor").catch(() => null),
+          fetchUsersOfType("charity").catch(() => null),
+        ]);
+        set("stat-donors", donors && donors.length);
+        set("stat-charities", charities && charities.length);
+        (donors || []).forEach((u) => {
+          userNames[u.id] = u.name || u.full_name || u.email || `Donor #${u.id}`;
+        });
+        (charities || []).forEach((c) => {
+          charityNames[c.id] =
+            c.org_name || c.name || c.email || `Charity #${c.id}`;
+        });
+        renderFeedbackTable();
+      }
+
+      // --- Feedback table with filters and pagination ---
+      const FEEDBACK_PAGE_SIZE = 8;
+      let allFeedback = null; // null until loaded
+      let feedbackPage = 1;
+      const feedbackBody = document.getElementById("recentFeedbackBody");
+      const ratingFilter = document.getElementById("feedbackRatingFilter");
+      const categoryFilter = document.getElementById("feedbackCategoryFilter");
+
+      async function loadFeedback() {
+        feedbackBody.innerHTML = noteRow(6, "Loading feedback...");
+        try {
+          const res = await fetch(`${API_BASE_URL}/api/feedback`);
+          const data = await res.json();
+          allFeedback = data.feedback || [];
+          // Offer the categories that actually appear
+          [...new Set(allFeedback.map((f) => f.category).filter(Boolean))]
+            .sort()
+            .forEach((cat) => categoryFilter.add(new Option(cat, cat)));
+          renderFeedbackTable();
+        } catch (e) {
+          feedbackBody.innerHTML = noteRow(6, "Failed to load feedback.");
         }
       }
 
-      // Chart.js for donation trends
-      function renderDonationTrendsChart(data) {
-        if (!window.Chart) return;
-        const ctx = document
-          .getElementById("donationTrendsChart")
-          .getContext("2d");
+      function hasRating(f) {
+        return f.rating !== null && f.rating !== undefined && f.rating !== "";
+      }
+
+      function renderFeedbackTable() {
+        if (!allFeedback) return;
+        const rating = ratingFilter.value;
+        const category = categoryFilter.value;
+        const filtered = allFeedback.filter(
+          (f) =>
+            (rating === "all" ||
+              (rating === "none" ? !hasRating(f) : String(f.rating) === rating)) &&
+            (category === "all" || f.category === category)
+        );
+
+        const totalPages = Math.ceil(filtered.length / FEEDBACK_PAGE_SIZE) || 1;
+        feedbackPage = Math.min(feedbackPage, totalPages);
+        const start = (feedbackPage - 1) * FEEDBACK_PAGE_SIZE;
+        const rows = filtered.slice(start, start + FEEDBACK_PAGE_SIZE);
+
+        feedbackBody.innerHTML = rows.length
+          ? rows
+              .map((f) => {
+                const userLabel = f.donor_id
+                  ? `Donor #${f.donor_id}`
+                  : f.charity_id
+                  ? `Charity #${f.charity_id}`
+                  : "Unknown";
+                const name =
+                  (f.donor_id && userNames[f.donor_id]) ||
+                  (f.charity_id && charityNames[f.charity_id]) ||
+                  "-";
+                return `<tr>
+                  <td class="num">${formatDate(f.created_at)}</td>
+                  <td>${esc(userLabel)}</td>
+                  <td>${esc(f.category || "-")}</td>
+                  <td>${esc(name)}</td>
+                  <td class="num">${hasRating(f) ? esc(f.rating) : "-"}</td>
+                  <td>${esc(f.comment || "")}</td>
+                </tr>`;
+              })
+              .join("")
+          : noteRow(6, "No feedback found for this filter.");
+
+        renderFeedbackPagination(totalPages);
+      }
+
+      function renderFeedbackPagination(totalPages) {
+        const nav = document.getElementById("feedbackPagination");
+        nav.hidden = totalPages <= 1;
+        nav.innerHTML = "";
+        if (totalPages <= 1) return;
+
+        const addButton = (label, page, { current = false, disabled = false } = {}) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "btn btn--quiet";
+          btn.textContent = label;
+          btn.disabled = disabled;
+          if (current) btn.setAttribute("aria-current", "page");
+          btn.onclick = () => {
+            feedbackPage = page;
+            renderFeedbackTable();
+          };
+          nav.appendChild(btn);
+        };
+
+        addButton("Prev", feedbackPage - 1, { disabled: feedbackPage === 1 });
+        for (let i = 1; i <= totalPages; i++) {
+          addButton(i, i, { current: i === feedbackPage });
+        }
+        addButton("Next", feedbackPage + 1, {
+          disabled: feedbackPage === totalPages,
+        });
+      }
+
+      ratingFilter.onchange = categoryFilter.onchange = () => {
+        feedbackPage = 1;
+        renderFeedbackTable();
+      };
+
+      // --- Charts (Chart.js is loaded at the bottom of this script) ---
+      const CHART_COLORS = [
+        "#3d8a1e",
+        "#b9e45a",
+        "#232a1a",
+        "#f29a82",
+        "#e0b84c",
+        "#7a9a52",
+        "#4b5540",
+        "#d6dab0",
+        "#a3341f",
+        "#cfcbb4",
+      ];
+
+      function showChartMessage(boxId, text) {
+        document.getElementById(
+          boxId
+        ).innerHTML = `<p class="chart-empty">${esc(text)}</p>`;
+      }
+
+      function renderDonationTrendsChart() {
+        const canvas = document.getElementById("donationTrendsChart");
+        // Wait until both the data and Chart.js have arrived
+        if (!window.Chart || !donationTrends || !canvas) return;
+        if (!donationTrends.labels || donationTrends.labels.length === 0) {
+          return showChartMessage("trendsBox", "No donations recorded yet.");
+        }
         if (window.donationTrendsChartInstance)
           window.donationTrendsChartInstance.destroy();
-        window.donationTrendsChartInstance = new Chart(ctx, {
+        window.donationTrendsChartInstance = new Chart(canvas.getContext("2d"), {
           type: "line",
           data: {
-            labels: data.labels,
+            labels: donationTrends.labels,
             datasets: [
               {
                 label: "Donations",
-                data: data.values,
-                borderColor: "#54d12b",
-                backgroundColor: "rgba(84,209,43,0.08)",
+                data: donationTrends.values,
+                borderColor: "#3d8a1e",
+                backgroundColor: "rgba(61, 138, 30, 0.12)",
+                pointBackgroundColor: "#3d8a1e",
                 fill: true,
                 tension: 0.3,
               },
@@ -1760,111 +1222,85 @@
           },
           options: {
             responsive: true,
+            maintainAspectRatio: false,
             plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true } },
+            scales: {
+              x: {
+                grid: { display: false },
+                ticks: { maxRotation: 0, autoSkipPadding: 14 },
+              },
+              y: {
+                beginAtZero: true,
+                ticks: { precision: 0 },
+                grid: { color: "#cfcbb4" },
+              },
+            },
           },
         });
       }
-      window.renderDonationTrendsChart = renderDonationTrendsChart;
 
-      // Pie Chart: Donations by Category (Admin)
-
+      // Pie Chart: Donations by Category (all donations)
       async function renderAdminDonationCategoryPie() {
-        if (!window.Chart) return;
         try {
-          // Use the new admin endpoint for all donations
           const res = await fetch(
             `${API_BASE_URL}/api/admin/donations/category-count`
           );
           const result = await res.json();
-          console.log("Pie chart data:", result.data);
-          const data = result.data;
+          const data = result.data || [];
+          if (data.length === 0) {
+            return showChartMessage("pieBox", "No donations recorded yet.");
+          }
           const ctx = document
             .getElementById("adminDonationCategoryPie")
             .getContext("2d");
-          const labels = data.map((row) => row.category);
-          const counts = data.map((row) => row.count);
-          const colors = [
-            "#54d12b",
-            "#43b81a",
-            "#a3e635",
-            "#facc15",
-            "#f87171",
-            "#38bdf8",
-            "#f472b6",
-            "#818cf8",
-            "#fbbf24",
-            "#34d399",
-          ];
           if (window.adminDonationPieChart)
             window.adminDonationPieChart.destroy();
           window.adminDonationPieChart = new Chart(ctx, {
             type: "pie",
             data: {
-              labels,
+              labels: data.map((row) => row.category),
               datasets: [
                 {
-                  data: counts,
-                  backgroundColor: colors.slice(0, labels.length),
+                  data: data.map((row) => row.count),
+                  backgroundColor: CHART_COLORS,
+                  borderColor: "#f0eddc",
+                  borderWidth: 2,
                 },
               ],
             },
             options: {
               responsive: false,
               plugins: {
-                legend: { position: "bottom" },
+                legend: { position: "bottom", labels: { boxWidth: 12 } },
               },
             },
           });
         } catch (e) {
-          document
-            .getElementById("adminDonationCategoryPie")
-            .replaceWith("Failed to load chart");
+          showChartMessage("pieBox", "Failed to load chart.");
         }
       }
 
-      // Ensure the pie chart only renders after Chart.js is loaded
-      (function ensurePieChartAfterChartJs() {
-        function tryRenderPie() {
-          if (window.Chart) {
-            renderAdminDonationCategoryPie();
-          } else {
-            setTimeout(tryRenderPie, 50);
-          }
-        }
-        // If Chart.js is already loaded, render immediately
-        if (window.Chart) {
-          renderAdminDonationCategoryPie();
-        } else {
-          // Otherwise, hook into the Chart.js script's onload
-          var scripts = document.getElementsByTagName("script");
-          for (var i = 0; i < scripts.length; i++) {
-            if (scripts[i].src && scripts[i].src.includes("chart.js")) {
-              scripts[i].addEventListener(
-                "load",
-                renderAdminDonationCategoryPie
-              );
-              return;
-            }
-          }
-          // If not found, fallback to polling
-          tryRenderPie();
-        }
-      })();
+      // ============================================
+      // START
+      // ============================================
+      showSection("dashboard-section");
+      fetchDashboardStats();
+      loadFeedback();
+      switchUserTab("donor");
+      fetchVerifications();
 
-      document.addEventListener("DOMContentLoaded", () => {
-        showSection("dashboard-section");
-        fetchDashboardStats();
-        switchUserTab("donor");
-        fetchVerifications();
-      });
-      // Load Chart.js
       (function loadChartJs() {
-        if (window.Chart) return;
-        var script = document.createElement("script");
+        const script = document.createElement("script");
         script.src = "https://cdn.jsdelivr.net/npm/chart.js";
         script.onload = function () {
-          fetchDashboardStats();
+          Chart.defaults.font.family = "Inter, sans-serif";
+          Chart.defaults.color = "#4b5540";
+          renderDonationTrendsChart();
+          renderAdminDonationCategoryPie();
+        };
+        script.onerror = function () {
+          showChartMessage("trendsBox", "Failed to load chart.");
+          showChartMessage("pieBox", "Failed to load chart.");
         };
         document.head.appendChild(script);
       })();

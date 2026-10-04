@@ -4,7 +4,7 @@ const db = require('../db'); // Use the connection pool
 require('dotenv').config();
 const bcrypt = require('bcrypt');
 const crypto = require('crypto');
-const nodemailer = require('nodemailer');
+const { sendEmail, emailLayout } = require('../Utils/mailer');
 
 // Base URL for password reset links
 const baseUrl = process.env.BASE_URL || 'https://foodshare-nairobi-1.onrender.com';
@@ -24,26 +24,18 @@ router.post('/forgot-password', async (req, res) => {
       return res.status(400).json({ message: 'User not found or error occurred.' });
     }
 
-    const transporter = nodemailer.createTransport({
-      service: 'gmail',
-      auth: {
-        user: process.env.EMAIL_USER || 'vicbiznetworks@gmail.com',
-        pass: process.env.EMAIL_PASSWORD || 'khwi oxlj pycg lsev'
-      }
-    });
-
     const resetLink = `${baseUrl}/reset-password.html?token=${token}&role=${role}`;
-    const mailOptions = {
-      from: process.env.EMAIL_USER || 'vicbiznetworks@gmail.com',
+    await sendEmail({
       to: email,
       subject: 'Password Reset - FoodShare',
-      html: `<p>You requested a password reset. 
-              <a href="${resetLink}">Click here to reset</a>. Link expires in 1 hour.<br>
-              If the link doesn't work, copy and paste this token into the reset form:<br>
-              <code>${token}</code></p>`
-    };
-
-    await transporter.sendMail(mailOptions);
+      html: emailLayout({
+        heading: 'Reset your password',
+        body: `<p style="margin:0 0 12px;">You requested a password reset. The link below expires in 1 hour.</p>
+               <p style="margin:0;color:#4b5540;font-size:13px;">If the button doesn't work, copy and paste this address into your browser:<br>
+               <span style="word-break:break-all;">${resetLink}</span></p>`,
+        button: { label: 'Reset password', url: resetLink }
+      })
+    });
     res.json({ message: 'Password reset link sent to email.' });
   } catch (error) {
     console.error('Forgot password error:', error);

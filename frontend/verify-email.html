@@ -4,54 +4,94 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Verify Email - FoodShare</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Manrope", Arial, sans-serif;
-      }
-    </style>
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/auth.css" />
   </head>
-  <body class="bg-[#f9fcf8] min-h-screen flex items-center justify-center">
-    <div
-      class="bg-white rounded-2xl shadow-xl p-8 max-w-md w-full flex flex-col items-center"
-    >
-      <span class="text-4xl mb-4">📧</span>
-      <h1 class="text-2xl font-bold text-[#54d12b] mb-2">Verify Your Email</h1>
-      <p class="text-gray-600 mb-6 text-center">
-        Enter the 6-digit code sent to your email address to verify your
-        account.
-      </p>
-      <form id="otpForm" class="w-full flex flex-col gap-4">
-        <input
-          type="text"
-          id="otp"
-          name="otp"
-          maxlength="6"
-          pattern="[0-9]{6}"
-          required
-          placeholder="Enter OTP"
-          class="w-full border rounded px-4 py-2 text-center text-lg tracking-widest"
+  <body>
+    <main class="auth">
+      <section class="panel auth-panel">
+        <div class="auth-top">
+          <a href="/" class="auth-logo">
+            <svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">
+              <path
+                d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z"
+              />
+            </svg>
+            <span>FoodShare Kenya</span>
+          </a>
+          <span><a href="/Login.html" class="link">Back to login</a></span>
+        </div>
+
+        <div class="auth-body">
+          <h1 class="section-title auth-title">
+            <span>Verify Your</span>
+            <span class="indent">Email</span>
+          </h1>
+          <p class="auth-lede">Enter the 6-digit code sent to your email address to verify your account.</p>
+
+          <form id="otpForm">
+            <div class="field">
+              <label for="otp">Verification Code</label>
+              <input
+                type="text"
+                id="otp"
+                name="otp"
+                class="input input--code"
+                maxlength="6"
+                pattern="[0-9]{6}"
+                inputmode="numeric"
+                autocomplete="one-time-code"
+                required
+                placeholder="Enter OTP"
+              />
+            </div>
+
+            <button type="submit" class="pill pill--solid pill--block">
+              Verify
+              <span class="pill-arrow">
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </span>
+            </button>
+          </form>
+          <div id="otpMessage" class="alert" role="status"></div>
+        </div>
+      </section>
+
+      <figure class="auth-media">
+        <img
+          src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1400&q=75"
+          alt="A market stall stacked with fruit and vegetables"
         />
-        <button
-          type="submit"
-          class="w-full bg-[#54d12b] hover:bg-[#43a81a] text-white font-bold py-2 rounded-full"
-        >
-          Verify
-        </button>
-        <div id="otpMessage" class="text-center text-sm mt-2"></div>
-      </form>
-      <a href="Login.html" class="mt-4 text-[#54d12b] hover:underline text-sm"
-        >Back to Login</a
-      >
-    </div>
+        <figcaption>Fighting hunger, one meal at a time.</figcaption>
+      </figure>
+    </main>
+
+    <script src="/js/ui.js"></script>
     <script>
-      // If redirected from verification link, mark as verified and redirect
-      const params = new URLSearchParams(window.location.search);
-      if (params.get("verified") === "1" && params.get("email")) {
+      const ACCOUNT_PAGE = "/Food%20Donor%20Pages/DonorAccount.html";
+      const msg = document.getElementById("otpMessage");
+
+      function showMessage(text, ok) {
+        msg.textContent = text;
+        msg.className = "alert " + (ok ? "alert--success" : "alert--error");
+      }
+
+      function markVerified() {
         let donor = localStorage.getItem("donor");
         if (donor) {
           try {
@@ -64,26 +104,31 @@
         }
         donor.verified = true;
         localStorage.setItem("donor", JSON.stringify(donor));
-        document.getElementById("otpForm").style.display = "none";
-        document.getElementById("otpMessage").textContent =
-          "Email verified! Redirecting...";
-        document.getElementById("otpMessage").className =
-          "text-green-600 text-center mt-2";
+        showMessage("Email verified! Redirecting...", true);
         setTimeout(() => {
-          window.location.href = "DonorAccount.html";
+          window.location.href = ACCOUNT_PAGE;
         }, 1200);
+      }
+
+      // If redirected from verification link, mark as verified and redirect
+      const params = new URLSearchParams(window.location.search);
+      if (params.get("verified") === "1" && params.get("email")) {
+        document.getElementById("otpForm").style.display = "none";
+        markVerified();
       } else {
         document.getElementById("otpForm").onsubmit = function (e) {
           e.preventDefault();
           const otp = document.getElementById("otp").value.trim();
-          const msg = document.getElementById("otpMessage");
           const email = params.get("email");
+          const submitBtn = this.querySelector('[type="submit"]');
           if (!email) {
-            msg.textContent =
-              "Missing email. Please start verification from your profile page.";
-            msg.className = "text-red-600 text-center mt-2";
+            showMessage(
+              "Missing email. Please start verification from your profile page.",
+              false
+            );
             return;
           }
+          setBusy(submitBtn, true);
           fetch(
             "https://foodshare-nairobi-1.onrender.com/api/email/verify-otp",
             {
@@ -95,33 +140,19 @@
             .then((res) => res.json())
             .then((data) => {
               if (data.success) {
-                let donor = localStorage.getItem("donor");
-                if (donor) {
-                  try {
-                    donor = JSON.parse(donor);
-                  } catch {
-                    donor = {};
-                  }
-                } else {
-                  donor = {};
-                }
-                donor.verified = true;
-                localStorage.setItem("donor", JSON.stringify(donor));
-                msg.textContent = "Email verified! Redirecting...";
-                msg.className = "text-green-600 text-center mt-2";
-                setTimeout(() => {
-                  window.location.href = "DonorAccount.html";
-                }, 1200);
+                markVerified();
               } else {
-                msg.textContent =
+                setBusy(submitBtn, false);
+                showMessage(
                   data.message ||
-                  "Invalid code. Please enter the 6-digit code sent to your email.";
-                msg.className = "text-red-600 text-center mt-2";
+                    "Invalid code. Please enter the 6-digit code sent to your email.",
+                  false
+                );
               }
             })
             .catch(() => {
-              msg.textContent = "Verification failed. Please try again.";
-              msg.className = "text-red-600 text-center mt-2";
+              setBusy(submitBtn, false);
+              showMessage("Verification failed. Please try again.", false);
             });
         };
       }

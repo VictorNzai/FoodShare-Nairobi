@@ -3,113 +3,94 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Submit Feedback - FoodShare Charity</title>
-    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <title>Feedback - FoodShare</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
     <link
-      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&display=swap"
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
       rel="stylesheet"
     />
-    <style>
-      body {
-        font-family: "Manrope", sans-serif;
-      }
-    </style>
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/app.css" />
   </head>
-  <body class="bg-[#f9fcf8] text-[#111b0e] min-h-screen flex flex-col">
-    <main class="flex-1 flex flex-col items-center justify-center p-6">
-      <div
-        class="bg-white border border-[#eaf3e7] rounded-xl shadow-lg p-8 w-full max-w-md"
-      >
-        <h2 class="text-2xl font-bold text-[#54d12b] mb-4">Submit Feedback</h2>
-        <form id="feedback-form" class="space-y-4">
+  <body>
+    <!-- Sidebar and mobile menu are added by /js/app-shell.js -->
+    <div class="app" data-role="charity" data-page="feedback">
+      <main class="app-main">
+        <div class="page-head">
           <div>
-            <label for="category" class="block text-sm font-medium mb-1"
-              >Category</label
-            >
-            <select
-              id="category"
-              name="category"
-              class="w-full border rounded px-3 py-2"
-            >
-              <option value="General">General</option>
-              <option value="Bug">Bug</option>
-              <option value="Suggestion">Suggestion</option>
-              <option value="Feature Request">Feature Request</option>
-              <option value="User Experience">User Experience</option>
-              <option value="Compliment">Compliment</option>
-              <option value="Complaint">Complaint</option>
-              <option value="Other">Other</option>
-            </select>
+            <h1 class="page-title">Submit Feedback</h1>
+            <p class="page-lede">Tell us what is working and what is not.</p>
           </div>
-          <div>
-            <label for="rating" class="block text-sm font-medium mb-1"
-              >Rating (1-5, optional)</label
-            >
-            <input
-              type="number"
-              id="rating"
-              name="rating"
-              min="1"
-              max="5"
-              class="w-full border rounded px-3 py-2"
-            />
-          </div>
-          <div>
-            <label for="comment" class="block text-sm font-medium mb-1"
-              >Your Feedback</label
-            >
-            <textarea
-              id="comment"
-              name="comment"
-              rows="4"
-              required
-              class="w-full border rounded px-3 py-2"
-              placeholder="Type your feedback here..."
-            ></textarea>
-          </div>
-          <button
-            type="submit"
-            class="bg-[#54d12b] hover:bg-[#43b81a] text-white font-bold px-6 py-2 rounded-full w-full"
-          >
-            Submit
-          </button>
-          <div id="feedback-message" class="mt-2 text-center text-sm"></div>
-        </form>
-        <a
-          href="./CharityDashboard.html"
-          class="block text-center text-[#54d12b] mt-6 underline"
-          >&larr; Back to Dashboard</a
-        >
-      </div>
-    </main>
+        </div>
+
+        <div class="narrow">
+          <form id="feedback-form" class="panel card">
+            <div class="field-row">
+              <div class="field">
+                <label for="category">Category</label>
+                <select id="category" name="category" class="input">
+                  <option value="General">General</option>
+                  <option value="Bug">Bug</option>
+                  <option value="Suggestion">Suggestion</option>
+                  <option value="Feature Request">Feature Request</option>
+                  <option value="User Experience">User Experience</option>
+                  <option value="Compliment">Compliment</option>
+                  <option value="Complaint">Complaint</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="field">
+                <label for="rating">Rating (1-5, optional)</label>
+                <input type="number" id="rating" name="rating" min="1" max="5" class="input" />
+              </div>
+            </div>
+            <div class="field">
+              <label for="comment">Your Feedback</label>
+              <textarea id="comment" name="comment" rows="4" class="input" required placeholder="Type your feedback here..."></textarea>
+            </div>
+            <button type="submit" class="pill pill--solid pill--block">
+              Submit
+              <span class="pill-arrow">
+                <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </span>
+            </button>
+          </form>
+          <div id="feedback-message" class="alert" role="status" style="margin-top: 1rem"></div>
+          <p style="margin-top: 1.5rem">
+            <a class="link" href="./CharityDashboard.html">&larr; Back to Dashboard</a>
+          </p>
+        </div>
+
+        <footer class="app-foot">
+          <p>&copy; 2025 FoodShare. All rights reserved.</p>
+        </footer>
+      </main>
+    </div>
+
+    <script src="/js/ui.js"></script>
+    <script src="/js/app-shell.js"></script>
     <script>
       document.getElementById("feedback-form").onsubmit = async function (e) {
         e.preventDefault();
-        const jwt = localStorage.getItem("jwt");
-        let charity_id = null;
-        try {
-          const jwtObj = JSON.parse(jwt);
-          if (jwtObj && jwtObj.id) charity_id = jwtObj.id;
-        } catch {}
-        if (!charity_id) {
-          document.getElementById("feedback-message").textContent =
-            "You must be logged in to submit feedback.";
-          return;
-        }
+        const msg = document.getElementById("feedback-message");
+        const submitBtn = this.querySelector('[type="submit"]');
         const comment = document.getElementById("comment").value.trim();
         const rating = document.getElementById("rating").value;
         const category = document.getElementById("category").value;
         if (!comment) {
-          document.getElementById("feedback-message").textContent =
-            "Feedback cannot be empty.";
+          msg.textContent = "Feedback cannot be empty.";
+          msg.className = "alert alert--error";
           return;
         }
+        setBusy(submitBtn, true);
         try {
-          const res = await fetch("/api/feedback/charity", {
+          const res = await fetch(`${API_BASE_URL}/api/feedback/charity`, {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({
-              charity_id,
+              charity_id: getCharity().id,
               comment,
               rating: rating ? parseInt(rating) : null,
               category,
@@ -117,20 +98,23 @@
           });
           const data = await res.json();
           if (data.success) {
-            document.getElementById("feedback-message").textContent =
+            // Show thank you message briefly, then redirect
+            msg.textContent =
               "Thank you for your feedback! Redirecting to dashboard...";
-            document.getElementById("feedback-form").reset();
+            msg.className = "alert alert--success";
+            this.reset();
             setTimeout(function () {
               window.location.href = "./CharityDashboard.html";
             }, 1200);
-          } else {
-            document.getElementById("feedback-message").textContent =
-              data.error || "Failed to submit feedback.";
+            return;
           }
+          msg.textContent = data.error || "Failed to submit feedback.";
+          msg.className = "alert alert--error";
         } catch {
-          document.getElementById("feedback-message").textContent =
-            "Failed to submit feedback.";
+          msg.textContent = "Failed to submit feedback.";
+          msg.className = "alert alert--error";
         }
+        setBusy(submitBtn, false);
       };
     </script>
   </body>

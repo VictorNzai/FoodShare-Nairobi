@@ -1,4 +1,4 @@
-const { sendEmail } = require('./mailer');
+const { sendEmail, emailLayout, emailDetails, escapeHtml } = require('./mailer');
 
 /**
  * Send confirmation email to a charity after submitting a food need.
@@ -8,20 +8,24 @@ const { sendEmail } = require('./mailer');
  * @returns {Promise<void>}
  */
 async function sendFoodNeedConfirmationEmail(toEmail, orgName, foodNeed) {
+  const details = [
+    ['Food Item', foodNeed.foodItem],
+    ['Quantity', foodNeed.quantity],
+    ['Pickup Location', foodNeed.pickupLocation],
+    ['Date Submitted', foodNeed.date]
+  ];
+  if (foodNeed.notes) details.push(['Notes', foodNeed.notes]);
+
   await sendEmail({
     to: toEmail,
     subject: 'Your Food Need Has Been Submitted - FoodShare Nairobi',
-    html: `<p>Dear <b>${orgName}</b>,</p>
-           <p>Your food need has been submitted successfully. We will notify you when a donor has fulfilled your request.</p>
-           <h4>Food Need Details:</h4>
-           <ul>
-             <li><b>Food Item:</b> ${foodNeed.foodItem}</li>
-             <li><b>Quantity:</b> ${foodNeed.quantity}</li>
-             <li><b>Pickup Location:</b> ${foodNeed.pickupLocation}</li>
-             <li><b>Date Submitted:</b> ${foodNeed.date}</li>
-             ${foodNeed.notes ? `<li><b>Notes:</b> ${foodNeed.notes}</li>` : ''}
-           </ul>
-           <br><p>Thank you for using FoodShare Nairobi!</p>`,
+    html: emailLayout({
+      heading: 'Your food need has been submitted',
+      body: `<p style="margin:0 0 12px;">Dear <b>${escapeHtml(orgName)}</b>,</p>
+           <p style="margin:0;">Your food need has been submitted successfully. We will notify you when a donor has fulfilled your request.</p>
+           ${emailDetails(details)}
+           <p style="margin:0;">Thank you for using FoodShare Nairobi!</p>`
+    }),
     provider: process.env.EMAIL_PROVIDER_CONFIRMATION || undefined
   });
 }

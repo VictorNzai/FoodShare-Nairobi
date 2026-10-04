@@ -4,408 +4,270 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Sign Up - FoodShare</title>
-    <style>
-      * {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        box-sizing: border-box;
-      }
-
-      body {
-        background-color: #f0f0f0;
-      }
-
-      header {
-        background: white;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        padding: 20px 40px;
-        border-bottom: 1px solid #ddd;
-      }
-
-      .logo {
-        font-weight: bold;
-        font-size: 18px;
-      }
-
-      nav a {
-        margin-left: 30px;
-        text-decoration: none;
-        color: #333;
-        font-size: 14px;
-      }
-
-      .log-in-btn {
-        background-color: #eaf8e3;
-        color: #333;
-        padding: 8px 18px;
-        border: none;
-        border-radius: 20px;
-        font-weight: bold;
-      }
-
-      .container {
-        max-width: 500px;
-        margin: 40px auto;
-        background: white;
-        padding: 40px;
-        border-radius: 8px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
-        text-align: center;
-      }
-
-      h2 {
-        margin-bottom: 20px;
-        color: #333;
-      }
-
-      .toggle-role {
-        display: flex;
-        justify-content: space-between;
-        background-color: #eaf8e3;
-        border-radius: 25px;
-        overflow: hidden;
-        margin-bottom: 30px;
-      }
-
-      .toggle-role button {
-        flex: 1;
-        padding: 12px 0;
-        border: none;
-        background: none;
-        cursor: pointer;
-        font-weight: bold;
-        color: #333;
-      }
-
-      .toggle-role .active {
-        background-color: white;
-        border-radius: 25px;
-      }
-
-      label {
-        display: block;
-        text-align: left;
-        margin: 10px 0 5px;
-        font-size: 14px;
-        color: #333;
-      }
-
-      input {
-        width: 100%;
-        padding: 12px;
-        margin-bottom: 15px;
-        border-radius: 8px;
-        border: 1px solid #ccc;
-        background-color: #eaf8e3;
-        font-size: 14px;
-      }
-
-      .signup-btn {
-        width: 100%;
-        padding: 12px;
-        background-color: #54d12b;
-        color: white;
-        border: none;
-        border-radius: 20px;
-        font-weight: bold;
-        cursor: pointer;
-        margin-top: 10px;
-      }
-
-      .login-link {
-        margin-top: 15px;
-        font-size: 13px;
-      }
-
-      .login-link a {
-        color: #54d12b;
-        text-decoration: none;
-      }
-
-      /* Responsive styles for mobile and tablet */
-      @media (max-width: 768px) {
-        header {
-          padding: 15px 20px;
-        }
-
-        .logo {
-          font-size: 16px;
-        }
-
-        nav {
-          display: flex;
-          gap: 15px;
-        }
-
-        nav a {
-          margin-left: 0;
-          font-size: 12px;
-        }
-
-        .log-in-btn {
-          padding: 6px 12px;
-          font-size: 12px;
-        }
-
-        .container {
-          margin: 30px 20px;
-          padding: 30px 20px;
-          max-width: 100%;
-        }
-
-        h2 {
-          font-size: 1.5rem;
-          margin-bottom: 15px;
-        }
-
-        .toggle-role button {
-          padding: 10px 0;
-          font-size: 13px;
-        }
-
-        input, select {
-          padding: 10px;
-          font-size: 13px;
-        }
-
-        label {
-          font-size: 13px;
-        }
-      }
-
-      @media (max-width: 480px) {
-        header {
-          flex-wrap: wrap;
-          padding: 10px 15px;
-        }
-
-        nav {
-          flex-wrap: wrap;
-          gap: 10px;
-          width: 100%;
-          justify-content: center;
-          margin-top: 10px;
-        }
-
-        nav a {
-          font-size: 11px;
-        }
-
-        .log-in-btn {
-          padding: 5px 10px;
-          font-size: 11px;
-        }
-
-        .container {
-          margin: 20px 10px;
-          padding: 25px 15px;
-        }
-
-        h2 {
-          font-size: 1.25rem;
-          margin-bottom: 12px;
-        }
-
-        .toggle-role {
-          flex-direction: row;
-          gap: 5px;
-        }
-
-        .toggle-role button {
-          padding: 8px 5px;
-          font-size: 11px;
-        }
-
-        input, select {
-          padding: 8px;
-          font-size: 12px;
-          margin-bottom: 10px;
-        }
-
-        label {
-          font-size: 12px;
-          margin: 8px 0 4px;
-        }
-
-        .signup-btn {
-          padding: 10px;
-          font-size: 13px;
-        }
-
-        .login-link {
-          font-size: 12px;
-        }
-      }
-    </style>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=Inter:wght@300;400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles/design-system.css" />
+    <link rel="stylesheet" href="/styles/auth.css" />
   </head>
   <body>
-    <header>
-      <div class="logo">🍴 FoodShare</div>
-      <nav>
-        <a href="#">About</a>
-        <a href="#">How it Works</a>
-        <a href="#">Contact</a>
-        <a href="Login.html" class="log-in-btn">Log In</a>
-      </nav>
-    </header>
-
-    <div class="container">
-      <h2>Create Your Account</h2>
-
-      <div class="toggle-role">
-        <button id="donorBtn" class="active">Donor</button>
-        <button id="charityBtn">Charity</button>
-      </div>
-
-      <!-- Donor Signup Form -->
-      <form id="donorForm">
-        <label for="fullname">Full Name</label>
-        <input
-          type="text"
-          id="fullname"
-          placeholder="Enter your full name"
-          required
-        />
-
-        <label for="email">Email Address</label>
-        <input
-          type="email"
-          id="email"
-          placeholder="Enter your email"
-          required
-        />
-
-        <label for="phone">Phone Number</label>
-        <input
-          type="tel"
-          id="phone"
-          placeholder="Enter your phone number"
-          required
-        />
-
-        <label for="password">Password</label>
-        <input
-          type="password"
-          id="password"
-          placeholder="Create a password"
-          required
-        />
-
-        <label for="confirm">Confirm Password</label>
-        <input
-          type="password"
-          id="confirm"
-          placeholder="Confirm your password"
-          required
-        />
-
-        <button type="submit" class="signup-btn">Sign Up as Donor</button>
-
-        <div class="login-link">
-          Already have an account? <a href="Login.html">Log in</a>
+    <main class="auth">
+      <section class="panel auth-panel">
+        <div class="auth-top">
+          <a href="/" class="auth-logo">
+            <svg viewBox="0 0 48 48" fill="currentColor" aria-hidden="true">
+              <path
+                d="M13.8261 30.5736C16.7203 29.8826 20.2244 29.4783 24 29.4783C27.7756 29.4783 31.2797 29.8826 34.1739 30.5736C36.9144 31.2278 39.9967 32.7669 41.3563 33.8352L24.8486 7.36089C24.4571 6.73303 23.5429 6.73303 23.1514 7.36089L6.64374 33.8352C8.00331 32.7669 11.0856 31.2278 13.8261 30.5736Z"
+              />
+            </svg>
+            <span>FoodShare Kenya</span>
+          </a>
+          <span>Have an account? <a href="/Login.html" class="link">Log in</a></span>
         </div>
-      </form>
 
-      <!-- Charity Signup Form -->
-      <form id="charityForm" style="display: none">
-        <label for="orgname">Organization Name</label>
-        <input
-          type="text"
-          id="orgname"
-          placeholder="Enter organization name"
-          required
-        />
+        <div class="auth-body auth-body--wide">
+          <h1 class="section-title auth-title">
+            <span>Create Your</span>
+            <span class="indent">Account</span>
+          </h1>
+          <p class="auth-lede">Sign up as a donor or a charity in minutes.</p>
 
-        <label for="email2">Email Address</label>
-        <input
-          type="email"
-          id="email2"
-          placeholder="Enter your email"
-          required
-        />
+          <div class="segmented toggle-role" role="group" aria-label="Account type">
+            <button type="button" id="donorBtn" class="active" aria-pressed="true">Donor</button>
+            <button type="button" id="charityBtn" aria-pressed="false">Charity</button>
+          </div>
 
-        <label for="phone2">Phone Number</label>
-        <input
-          type="tel"
-          id="phone2"
-          placeholder="Enter your phone number"
-          required
-        />
+          <!-- Donor Signup Form -->
+          <form id="donorForm">
+            <div class="field">
+              <label for="fullname">Full Name</label>
+              <input
+                type="text"
+                id="fullname"
+                class="input"
+                placeholder="Enter your full name"
+                autocomplete="name"
+                required
+              />
+            </div>
 
-        <label for="reg">Registration Number</label>
-        <input
-          type="text"
-          id="reg"
-          placeholder="Enter registration number"
-          required
-        />
+            <div class="field-row">
+              <div class="field">
+                <label for="email">Email Address</label>
+                <input
+                  type="email"
+                  id="email"
+                  class="input"
+                  placeholder="Enter your email"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="phone">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone"
+                  class="input"
+                  placeholder="Enter your phone number"
+                  autocomplete="tel"
+                  required
+                />
+              </div>
+            </div>
 
-        <label for="institutionType">Institution Type</label>
-        <select
-          id="institutionType"
-          required
-          style="
-            width: 100%;
-            padding: 12px;
-            margin-bottom: 15px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            background-color: #eaf8e3;
-            font-size: 14px;
-          "
-        >
-          <option value="">Select institution type</option>
-          <option value="Children's Home">Children’s Home</option>
-          <option value="Community Kitchen">Community Kitchen</option>
-          <option value="Rehabilitation Center">Rehabilitation Center</option>
-        </select>
+            <div class="field-row">
+              <div class="field">
+                <label for="password">Password</label>
+                <input
+                  type="password"
+                  id="password"
+                  class="input"
+                  placeholder="Create a password"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="confirm">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirm"
+                  class="input"
+                  placeholder="Confirm your password"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+            </div>
 
-        <label for="password2">Password</label>
-        <input
-          type="password"
-          id="password2"
-          placeholder="Create a password"
-          required
-        />
+            <button type="submit" class="pill pill--solid pill--block">
+              Sign Up as Donor
+              <span class="pill-arrow">
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </span>
+            </button>
 
-        <label for="confirm2">Confirm Password</label>
-        <input
-          type="password"
-          id="confirm2"
-          placeholder="Confirm your password"
-          required
-        />
+            <p class="auth-foot">
+              Already have an account?
+              <a href="/Login.html" class="link">Log in</a>
+            </p>
+          </form>
 
-        <button type="submit" class="signup-btn">Sign Up as Charity</button>
+          <!-- Charity Signup Form -->
+          <form id="charityForm" style="display: none">
+            <div class="field">
+              <label for="orgname">Organization Name</label>
+              <input
+                type="text"
+                id="orgname"
+                class="input"
+                placeholder="Enter organization name"
+                autocomplete="organization"
+                required
+              />
+            </div>
 
-        <div class="login-link">
-          Already have an account? <a href="Login.html">Log in</a>
+            <div class="field-row">
+              <div class="field">
+                <label for="email2">Email Address</label>
+                <input
+                  type="email"
+                  id="email2"
+                  class="input"
+                  placeholder="Enter your email"
+                  autocomplete="email"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="phone2">Phone Number</label>
+                <input
+                  type="tel"
+                  id="phone2"
+                  class="input"
+                  placeholder="Enter your phone number"
+                  autocomplete="tel"
+                  required
+                />
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="reg">Registration Number</label>
+                <input
+                  type="text"
+                  id="reg"
+                  class="input"
+                  placeholder="Enter registration number"
+                  autocomplete="off"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="institutionType">Institution Type</label>
+                <select id="institutionType" class="input" required>
+                  <option value="">Select institution type</option>
+                  <option value="Children's Home">Children’s Home</option>
+                  <option value="Community Kitchen">Community Kitchen</option>
+                  <option value="Rehabilitation Center">Rehabilitation Center</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="field-row">
+              <div class="field">
+                <label for="password2">Password</label>
+                <input
+                  type="password"
+                  id="password2"
+                  class="input"
+                  placeholder="Create a password"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+              <div class="field">
+                <label for="confirm2">Confirm Password</label>
+                <input
+                  type="password"
+                  id="confirm2"
+                  class="input"
+                  placeholder="Confirm your password"
+                  autocomplete="new-password"
+                  required
+                />
+              </div>
+            </div>
+
+            <button type="submit" class="pill pill--solid pill--block">
+              Sign Up as Charity
+              <span class="pill-arrow">
+                <svg
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.8"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  <path d="M3 8h10M9 4l4 4-4 4" />
+                </svg>
+              </span>
+            </button>
+
+            <p class="auth-foot">
+              Already have an account?
+              <a href="/Login.html" class="link">Log in</a>
+            </p>
+          </form>
         </div>
-      </form>
-    </div>
+      </section>
 
+      <figure class="auth-media">
+        <img
+          src="https://images.unsplash.com/photo-1488459716781-31db52582fe9?auto=format&fit=crop&w=1400&q=75"
+          alt="A market stall stacked with fruit and vegetables"
+        />
+        <figcaption>Fighting hunger, one meal at a time.</figcaption>
+      </figure>
+    </main>
+
+    <script src="/js/ui.js"></script>
     <script>
       const donorBtn = document.getElementById("donorBtn");
       const charityBtn = document.getElementById("charityBtn");
       const donorForm = document.getElementById("donorForm");
       const charityForm = document.getElementById("charityForm");
 
-      donorBtn.addEventListener("click", () => {
-        donorBtn.classList.add("active");
-        charityBtn.classList.remove("active");
-        donorForm.style.display = "block";
-        charityForm.style.display = "none";
-      });
+      function showForm(isDonor) {
+        donorBtn.classList.toggle("active", isDonor);
+        charityBtn.classList.toggle("active", !isDonor);
+        donorBtn.setAttribute("aria-pressed", isDonor);
+        charityBtn.setAttribute("aria-pressed", !isDonor);
+        donorForm.style.display = isDonor ? "block" : "none";
+        charityForm.style.display = isDonor ? "none" : "block";
+      }
 
-      charityBtn.addEventListener("click", () => {
-        charityBtn.classList.add("active");
-        donorBtn.classList.remove("active");
-        donorForm.style.display = "none";
-        charityForm.style.display = "block";
-      });
+      donorBtn.addEventListener("click", () => showForm(true));
+      charityBtn.addEventListener("click", () => showForm(false));
+
+      // Give the success toast a moment to be read before leaving the page
+      const REDIRECT_DELAY = 1400;
 
       // Donor signup
       document
@@ -417,10 +279,12 @@
           const phone = document.getElementById("phone").value;
           const password = document.getElementById("password").value;
           const confirmPassword = document.getElementById("confirm").value;
+          const submitBtn = this.querySelector('[type="submit"]');
 
           if (password !== confirmPassword)
-            return alert("⚠️ Passwords do not match");
+            return showToast("Passwords do not match", "error");
 
+          setBusy(submitBtn, true);
           try {
             const response = await fetch(
               "https://foodshare-nairobi-1.onrender.com/signup/donor",
@@ -440,16 +304,20 @@
             const result = await response.json();
 
             if (!response.ok) {
-              console.error("❌ Server error:", result.message);
-              return alert("❌ Signup failed: " + result.message);
+              console.error("Server error:", result.message);
+              setBusy(submitBtn, false);
+              return showToast("Signup failed: " + result.message, "error");
             }
 
-            alert("✅ " + result.message);
-            // Redirect to FoodDonor.html after successful signup
-            window.location.href = "Food Donor Pages/FoodDonor.html";
+            showToast(result.message + ". Please log in.", "success");
+            // Signing up does not sign you in, so continue at the login page
+            setTimeout(() => {
+              window.location.href = "/Login.html";
+            }, REDIRECT_DELAY);
           } catch (err) {
-            console.error("❌ Network error:", err);
-            alert("❌ Could not connect to server.");
+            console.error("Network error:", err);
+            setBusy(submitBtn, false);
+            showToast("Could not connect to server.", "error");
           }
         });
 
@@ -466,14 +334,16 @@
             document.getElementById("institutionType").value;
           const password = document.getElementById("password2").value;
           const confirmPassword = document.getElementById("confirm2").value;
+          const submitBtn = this.querySelector('[type="submit"]');
 
           if (password !== confirmPassword)
-            return alert("⚠️ Passwords do not match");
+            return showToast("Passwords do not match", "error");
 
           if (!institutionType) {
-            return alert("⚠️ Please select an institution type.");
+            return showToast("Please select an institution type.", "error");
           }
 
+          setBusy(submitBtn, true);
           try {
             const response = await fetch(
               "https://foodshare-nairobi-1.onrender.com/signup/charity",
@@ -495,25 +365,21 @@
             const result = await response.json();
 
             if (!response.ok) {
-              console.error("❌ Server error:", result.message);
-              return alert("❌ Signup failed: " + result.message);
+              console.error("Server error:", result.message);
+              setBusy(submitBtn, false);
+              return showToast("Signup failed: " + result.message, "error");
             }
 
-            alert("✅ " + result.message);
-            // Store charity info in localStorage for profile/dashboard linkage
-            const charityJwt = {
-              name: orgname,
-              email: email,
-              phone: phone,
-              reg: reg,
-              verified: false,
-            };
-            localStorage.setItem("jwt", JSON.stringify(charityJwt));
-            // Redirect to CharityDashboard.html after successful signup
-            window.location.href = "Charity Pages/CharityDashboard.html";
+            showToast(result.message + ". Please log in.", "success");
+            // Signing up does not sign you in (and the charity's id is only
+            // returned at login), so continue at the login page
+            setTimeout(() => {
+              window.location.href = "/Login.html";
+            }, REDIRECT_DELAY);
           } catch (err) {
-            console.error("❌ Network error:", err);
-            alert("❌ Could not connect to server.");
+            console.error("Network error:", err);
+            setBusy(submitBtn, false);
+            showToast("Could not connect to server.", "error");
           }
         });
     </script>

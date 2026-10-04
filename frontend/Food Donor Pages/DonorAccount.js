@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // Fetch and render profile
-    fetch('/api/donor/profile', { credentials: 'include' })
+    fetch('https://foodshare-nairobi-1.onrender.com/api/donor/profile', { credentials: 'include' })
         .then(res => res.json())
         .then(data => {
             if (data.success) {
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
         e.preventDefault();
         const full_name = document.getElementById('fullName').value;
         const phone = document.getElementById('phone').value;
-        fetch('/api/donor/profile', {
+        fetch('https://foodshare-nairobi-1.onrender.com/api/donor/profile', {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Email verification
     document.getElementById('verify-email-btn').addEventListener('click', function() {
-        fetch('/api/donor/verify-email', { method: 'POST', credentials: 'include' })
+        fetch('https://foodshare-nairobi-1.onrender.com/api/donor/verify-email', { method: 'POST', credentials: 'include' })
             .then(res => res.json())
             .then(data => {
                 alert(data.message || (data.success ? 'Verification email sent!' : 'Failed to send email.'));
@@ -71,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // Delete account
     document.getElementById('delete-account-btn').addEventListener('click', function() {
         if (confirm('Are you sure you want to delete your account? This cannot be undone.')) {
-            fetch('/api/donor/account', { method: 'DELETE', credentials: 'include' })
+            fetch('https://foodshare-nairobi-1.onrender.com/api/donor/account', { method: 'DELETE', credentials: 'include' })
                 .then(res => res.json())
                 .then(data => {
                     alert(data.message || (data.success ? 'Account deleted.' : 'Failed to delete account.'));
