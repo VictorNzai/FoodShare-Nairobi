@@ -77,7 +77,7 @@
           );
           return;
         }
-        tbody.innerHTML = noteRow(7, "Loading offers...");
+        tableLoading(tbody, ["num", "text", "text", "num", "text", "badge", "btn"]);
         try {
           const res = await fetch(`${API_BASE_URL}/api/donor-offers/${charity.id}`);
           if (!res.ok) throw new Error("Failed to fetch offers");
@@ -143,7 +143,7 @@
       async function showOffer(id) {
         const content = document.getElementById("modal-details-content");
         const footer = document.getElementById("modal-details-footer");
-        content.innerHTML = "<dt>Loading details...</dt>";
+        content.innerHTML = skeletonDetails(5);
         footer.innerHTML =
           '<button type="button" class="btn btn--quiet" id="details-close">Close</button>';
         document.getElementById("details-close").onclick = () => modal.close();

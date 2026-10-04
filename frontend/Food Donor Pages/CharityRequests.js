@@ -7,7 +7,20 @@ document.addEventListener("DOMContentLoaded", function () {
 function fetchCharityRequests() {
   const section = document.getElementById("charity-requests-section");
   if (!section) return;
-  section.innerHTML = '<p class="muted">Loading requests...</p>';
+  // The table is there from the start; its rows are placeholders until loaded
+  section.innerHTML = `<div class="table-wrap"><table class="table">
+    <thead><tr>
+      <th>Charity</th>
+      <th>Food Item</th>
+      <th>Quantity</th>
+      <th>Pickup Location</th>
+      <th>Date Needed</th>
+      <th>Notes</th>
+      <th>Action</th>
+    </tr></thead>
+    <tbody></tbody></table></div>`;
+  const tbody = section.querySelector("tbody");
+  tableLoading(tbody, ["text", "text", "num", "text", "num", "text", "btn"], 4);
   fetch(`${API_BASE_URL}/api/charity-requests`)
     .then((res) => res.json())
     .then((data) => {
@@ -16,18 +29,8 @@ function fetchCharityRequests() {
           '<p class="muted">No open requests from charities at this time.</p>';
         return;
       }
-      section.innerHTML = `<div class="table-wrap"><table class="table">
-        <thead><tr>
-          <th>Charity</th>
-          <th>Food Item</th>
-          <th>Quantity</th>
-          <th>Pickup Location</th>
-          <th>Date Needed</th>
-          <th>Notes</th>
-          <th>Action</th>
-        </tr></thead>
-        <tbody>${data.requests
-          .map(
+      tbody.innerHTML = data.requests
+        .map(
             (req) => `<tr>
               <td>${esc(req.org_name)}</td>
               <td>${esc(req.food_item)}</td>
@@ -42,7 +45,7 @@ function fetchCharityRequests() {
               )}">View</a></td>
             </tr>`
           )
-          .join("")}</tbody></table></div>`;
+          .join("");
     })
     .catch(() => {
       section.innerHTML = '<p class="muted">Failed to load requests.</p>';

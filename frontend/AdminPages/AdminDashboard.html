@@ -233,7 +233,7 @@
             <div class="stat-grid" id="admin-dashboard-stats">
               <div class="stat">
                 <span class="stat-label">Total Food Rescued</span>
-                <span class="stat-value" id="stat-food">--</span>
+                <span class="stat-value" id="stat-food"></span>
               </div>
               <button
                 type="button"
@@ -242,7 +242,7 @@
                 onclick="openUsers('donor')"
               >
                 <span class="stat-label">Active Donors</span>
-                <span class="stat-value" id="stat-donors">--</span>
+                <span class="stat-value" id="stat-donors"></span>
               </button>
               <button
                 type="button"
@@ -251,7 +251,7 @@
                 onclick="openUsers('charity')"
               >
                 <span class="stat-label">Active Charities</span>
-                <span class="stat-value" id="stat-charities">--</span>
+                <span class="stat-value" id="stat-charities"></span>
               </button>
               <button
                 type="button"
@@ -260,7 +260,7 @@
                 onclick="openPendingVerifications()"
               >
                 <span class="stat-label">Pending Approvals</span>
-                <span class="stat-value" id="stat-pending">--</span>
+                <span class="stat-value" id="stat-pending"></span>
               </button>
             </div>
 
@@ -300,7 +300,7 @@
                 <div class="card-head">
                   <h2 class="card-title">Donation Trends</h2>
                 </div>
-                <div class="chart-box" id="trendsBox">
+                <div class="chart-box is-loading" id="trendsBox">
                   <canvas id="donationTrendsChart"></canvas>
                 </div>
               </div>
@@ -308,7 +308,7 @@
                 <div class="card-head">
                   <h2 class="card-title">Donations by Category</h2>
                 </div>
-                <div class="chart-box chart-box--pie" id="pieBox">
+                <div class="chart-box chart-box--pie is-loading" id="pieBox">
                   <canvas
                     id="adminDonationCategoryPie"
                     width="240"
@@ -771,6 +771,8 @@
           tab.classList.toggle("active", t === type);
           tab.setAttribute("aria-pressed", t === type);
         }
+        // Another tab's rows are not worth keeping on screen while this loads
+        document.getElementById("usersTableBody").innerHTML = "";
         fetchUsers();
       }
 
@@ -787,6 +789,7 @@
         head.innerHTML = `<th>ID</th><th>${
           type === "charity" ? "Org Name" : "Name"
         }</th><th>Email</th><th>Status</th><th>Action</th>`;
+        tableLoading(body, ["num", "text", "text", "badge", "btn"]);
 
         try {
           const res = await fetch(url);
@@ -906,10 +909,16 @@
       }
 
       async function viewUserDetails(type, id) {
+        const dialog = document.getElementById("userDialog");
+        document.getElementById("userDialogBody").innerHTML = skeletonDetails(6);
+        dialog.showModal();
         try {
           const res = await fetch(`${API_BASE_URL}/api/admin/users/${type}/${id}`);
           const data = await res.json();
-          if (!data.success) return showToast("User not found.", "error");
+          if (!data.success) {
+            dialog.close();
+            return showToast("User not found.", "error");
+          }
           document.getElementById("userDialogBody").innerHTML = Object.entries(
             data.user
           )
@@ -920,9 +929,9 @@
                 }</dd>`
             )
             .join("");
-          document.getElementById("userDialog").showModal();
         } catch (err) {
           console.error("Fetch error:", err);
+          dialog.close();
           showToast("Could not load this user. Please try again.", "error");
         }
       }
@@ -939,6 +948,7 @@
           `${API_BASE_URL}/uploads/charity-verifications/${encodeURIComponent(
             file
           )}`;
+        tableLoading(body, ["num", "two", "two", "two", "badge", "num", "btn"], 4);
 
         try {
           const res = await fetch(url); // credentials removed until backend deployed
@@ -1044,11 +1054,13 @@
           set("stat-food", stats.totalFoodRescued);
           // fetchVerifications() gives a live count; this is the fallback
           const pending = document.getElementById("stat-pending");
-          if (pending.textContent === "--") set("stat-pending", stats.pendingApprovals);
+          if (!pending.textContent) set("stat-pending", stats.pendingApprovals);
           donationTrends = stats.donationTrends;
           renderDonationTrendsChart();
         } catch (e) {
           set("stat-food", null);
+          if (!document.getElementById("stat-pending").textContent)
+            set("stat-pending", null);
           showChartMessage("trendsBox", "Could not load donation trends.");
         }
 
@@ -1079,7 +1091,7 @@
       const categoryFilter = document.getElementById("feedbackCategoryFilter");
 
       async function loadFeedback() {
-        feedbackBody.innerHTML = noteRow(6, "Loading feedback...");
+        tableLoading(feedbackBody, ["num", "text", "text", "text", "num", "text"]);
         try {
           const res = await fetch(`${API_BASE_URL}/api/feedback`);
           const data = await res.json();
@@ -1190,9 +1202,9 @@
       ];
 
       function showChartMessage(boxId, text) {
-        document.getElementById(
-          boxId
-        ).innerHTML = `<p class="chart-empty">${esc(text)}</p>`;
+        const box = document.getElementById(boxId);
+        box.classList.remove("is-loading");
+        box.innerHTML = `<p class="chart-empty">${esc(text)}</p>`;
       }
 
       function renderDonationTrendsChart() {
@@ -1204,6 +1216,7 @@
         }
         if (window.donationTrendsChartInstance)
           window.donationTrendsChartInstance.destroy();
+        document.getElementById("trendsBox").classList.remove("is-loading");
         window.donationTrendsChartInstance = new Chart(canvas.getContext("2d"), {
           type: "line",
           data: {
@@ -1255,6 +1268,7 @@
             .getContext("2d");
           if (window.adminDonationPieChart)
             window.adminDonationPieChart.destroy();
+          document.getElementById("pieBox").classList.remove("is-loading");
           window.adminDonationPieChart = new Chart(ctx, {
             type: "pie",
             data: {

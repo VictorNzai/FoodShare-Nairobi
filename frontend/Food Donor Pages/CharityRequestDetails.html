@@ -73,7 +73,15 @@
           detailsDiv.innerHTML = '<p class="muted">Invalid request ID.</p>';
           return;
         }
-        detailsDiv.innerHTML = '<p class="muted">Loading details...</p>';
+        // Same shape as the details below: charity, food item, two facts, button
+        detailsDiv.innerHTML = `<span class="sr-only">Loading…</span>
+          <div class="card--stack" aria-hidden="true">
+            <p class="muted">${skeleton("38%")}</p>
+            <h2 class="profile-name">${skeleton("55%")}</h2>
+            <p>${skeleton("30%")}</p>
+            <p>${skeleton("62%")}</p>
+            <div class="card-foot" style="justify-content: flex-start">${skeleton("", "pill")}</div>
+          </div>`;
         fetch(
           `${API_BASE_URL}/api/charity-requests/${encodeURIComponent(requestId)}`
         )

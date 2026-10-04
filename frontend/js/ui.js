@@ -317,7 +317,94 @@ if (document.readyState === "loading") {
   enhanceDateInputs();
 }
 
-// One full-width table row for loading, empty and error messages
+// ---- Loading skeletons (styles: LOADING SKELETONS in design-system.css) ----
+const SKELETON_WIDTHS = [72, 54, 86, 63, 78, 48, 68];
+const SR_LOADING = '<span class="sr-only">Loading…</span>';
+
+// One placeholder bar. `width` is any CSS length; `kind` is badge, btn or pill.
+function skeleton(width, kind) {
+  return `<span class="skeleton${kind ? ` skeleton--${kind}` : ""}"${
+    width ? ` style="--w: ${width}"` : ""
+  }></span>`;
+}
+
+// Placeholder table rows. One entry per column says what the cell will hold:
+// "num" (id, date, count), "text", "badge", "btn", or "two" (two lines).
+//   skeletonRows(["num", "text", "text", "badge", "btn"])
+function skeletonRows(cells, rows = 5) {
+  const cell = (kind, i) => {
+    const w = SKELETON_WIDTHS[i % SKELETON_WIDTHS.length];
+    if (kind === "badge" || kind === "btn") return skeleton("", kind);
+    if (kind === "num") return skeleton(`${3 + (i % 3)}ch`);
+    if (kind === "two") return skeleton(`${w}%`) + skeleton(`${w * 0.6}%`);
+    return skeleton(`${w}%`);
+  };
+  // Only the first cell is read out; every bar is hidden from screen readers
+  return Array.from(
+    { length: rows },
+    (_, r) =>
+      `<tr class="skeleton-row"${r ? ' aria-hidden="true"' : ""}>${cells
+        .map(
+          (kind, c) =>
+            `<td>${r || c ? "" : SR_LOADING}<span aria-hidden="true">${cell(
+              kind,
+              r * 3 + c
+            )}</span></td>`
+        )
+        .join("")}</tr>`
+  ).join("");
+}
+
+// Put a table body into its loading state: placeholder rows when it has no
+// data yet, otherwise the current rows stay and dim. The state ends by itself
+// the next time the rows are replaced, so callers just render as usual.
+function tableLoading(tbody, cells, rows) {
+  const hasData =
+    tbody.querySelector("td:not(.table-note)") &&
+    !tbody.querySelector(".skeleton");
+  if (!hasData) tbody.innerHTML = skeletonRows(cells, rows);
+  tbody.setAttribute("aria-busy", "true");
+  new MutationObserver((_, observer) => {
+    tbody.removeAttribute("aria-busy");
+    observer.disconnect();
+  }).observe(tbody, { childList: true });
+}
+
+// Placeholder cards for a .card-grid
+function skeletonCards(count = 6) {
+  return (
+    SR_LOADING +
+    Array.from(
+      { length: count },
+      (_, i) => `<div class="panel card card--stack" aria-hidden="true">
+        <div class="card-heading">${skeleton(
+          `${SKELETON_WIDTHS[i % 7] - 15}%`
+        )}</div>
+        <p class="muted">${skeleton(`${SKELETON_WIDTHS[(i + 2) % 7]}%`)}</p>
+        <p class="muted">${skeleton(`${SKELETON_WIDTHS[(i + 4) % 7]}%`)}</p>
+        <div class="card-foot">${skeleton("7rem", "btn")}</div>
+      </div>`
+    ).join("")
+  );
+}
+
+// Placeholder label/value pairs for a .detail-list
+function skeletonDetails(count = 4) {
+  return (
+    `<dt class="sr-only">Loading…</dt>` +
+    Array.from(
+      { length: count },
+      (_, i) =>
+        `<dt aria-hidden="true">${skeleton(
+          `${4 + (i % 3)}rem`
+        )}</dt><dd aria-hidden="true">${skeleton(
+          `${SKELETON_WIDTHS[i % 7]}%`
+        )}</dd>`
+    ).join("")
+  );
+}
+
+// One full-width table row for empty and error messages
 function noteRow(colspan, text) {
   return `<tr><td class="table-note" colspan="${colspan}">${escapeHtml(
     text

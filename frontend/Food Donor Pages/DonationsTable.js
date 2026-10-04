@@ -8,7 +8,7 @@ let allDonations = [];
 async function loadDonations() {
   const donor = getDonor();
   const tbody = document.getElementById("donationsBody");
-  tbody.innerHTML = noteRow(5, "Loading donations...");
+  tableLoading(tbody, ["num", "text", "two", "badge", "btn"]);
   try {
     // A donor's activity lives in two tables: offers to a charity, and donations
     const [offersRes, donationsRes] = await Promise.all([

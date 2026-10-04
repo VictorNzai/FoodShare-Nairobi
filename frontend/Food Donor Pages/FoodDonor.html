@@ -31,15 +31,15 @@
           <div class="stat-grid">
             <a class="stat" href="./Donations.html" id="card-active-donations" title="View all donations">
               <span class="stat-label">Active Donations</span>
-              <span class="stat-value" id="stat-active-donations">--</span>
+              <span class="stat-value" id="stat-active-donations"></span>
             </a>
             <div class="stat" id="card-food-donated">
               <span class="stat-label">Total Food Donated</span>
-              <span class="stat-value" id="stat-food-donated">--</span>
+              <span class="stat-value" id="stat-food-donated"></span>
             </div>
             <div class="stat" id="card-charities-helped">
               <span class="stat-label">Charities Helped</span>
-              <span class="stat-value" id="stat-charities-helped">--</span>
+              <span class="stat-value" id="stat-charities-helped"></span>
             </div>
           </div>
 
@@ -119,14 +119,18 @@
             `${API_BASE_URL}/api/donor/stats/total-donations?donor_id=${donor.id}`
           );
           set("stat-active-donations", (await res.json()).count);
-        } catch {}
+        } catch {
+          set("stat-active-donations", null);
+        }
         // Food Donated (simple sum)
         try {
           const res = await fetch(
             `${API_BASE_URL}/api/donor/stats/food-sum?donor_id=${donor.id}`
           );
           set("stat-food-donated", (await res.json()).total_quantity ?? 0);
-        } catch {}
+        } catch {
+          set("stat-food-donated", null);
+        }
         // Charities Helped (unique charities with completed donations/offers)
         try {
           const [offersRes, donationsRes] = await Promise.all([
@@ -143,7 +147,9 @@
             .filter((d) => d.status === "Completed")
             .forEach((d) => charitySet.add(d.charity_id || d.charity_orgname));
           set("stat-charities-helped", charitySet.size);
-        } catch {}
+        } catch {
+          set("stat-charities-helped", null);
+        }
       }
       updateDashboardStats();
     </script>

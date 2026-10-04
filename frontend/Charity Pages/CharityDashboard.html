@@ -31,15 +31,15 @@
           <div class="stat-grid">
             <div class="stat">
               <span class="stat-label">Active Requests</span>
-              <span class="stat-value" id="stat-active">--</span>
+              <span class="stat-value" id="stat-active"></span>
             </div>
             <div class="stat">
               <span class="stat-label">Total Donations Received</span>
-              <span class="stat-value" id="total-donations-kg">--</span>
+              <span class="stat-value" id="total-donations-kg"></span>
             </div>
             <div class="stat">
               <span class="stat-label">Total Benefactors</span>
-              <span class="stat-value" id="stat-served">--</span>
+              <span class="stat-value" id="stat-served"></span>
             </div>
           </div>
 
@@ -87,7 +87,7 @@
       // Load this charity's food needs and completed donor offers
       async function renderRecentActivity() {
         const tbody = document.getElementById("recent-activity-body");
-        tbody.innerHTML = noteRow(7, "Loading activity...");
+        tableLoading(tbody, ["num", "text", "text", "num", "text", "text", "badge"]);
         try {
           const res = await fetch(
             `${API_BASE_URL}/api/foodneeds?org=${encodeURIComponent(charity.name)}`
@@ -175,6 +175,9 @@
             : noteRow(7, "No food needs or donations yet.");
         } catch (err) {
           tbody.innerHTML = noteRow(7, "Error loading activity.");
+          for (const id of ["stat-active", "total-donations-kg", "stat-served"]) {
+            document.getElementById(id).textContent = "--";
+          }
         }
       }
       renderRecentActivity();

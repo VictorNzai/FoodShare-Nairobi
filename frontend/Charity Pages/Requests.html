@@ -73,7 +73,7 @@
       // Load this charity's food needs
       async function renderRequests() {
         const tbody = document.getElementById("requests-body");
-        tbody.innerHTML = noteRow(7, "Loading requests...");
+        tableLoading(tbody, ["num", "text", "num", "text", "text", "badge", "btn"]);
         try {
           const res = await fetch(
             `${API_BASE_URL}/api/foodneeds?org=${encodeURIComponent(charity.name)}`

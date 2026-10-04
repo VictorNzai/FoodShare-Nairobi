@@ -1055,8 +1055,7 @@
                   </tr>
                   <tr>
                     <td class="table-note" colspan="4">
-                      Loading, empty and error messages go in a
-                      .table-note cell.
+                      Empty and error messages go in a .table-note cell.
                     </td>
                   </tr>
                 </tbody>
@@ -1070,6 +1069,36 @@
             <code>.table</code> inside <code>.table-wrap</code>. Use
             <code>.num</code> for IDs and dates and <code>.cell-sub</code> for
             a second line. Tables scroll sideways on phones.
+          </p>
+        </div>
+        <div class="ds-row">
+          <div class="panel card">
+            <div class="table-wrap">
+              <table class="table">
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Name</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody id="dsSkeletonRows"></tbody>
+              </table>
+            </div>
+          </div>
+          <p>
+            Loading. Content that is on its way is shown as skeleton bars in
+            the shape of what will arrive, never as a spinner or "Loading..."
+            text. From <code>/js/ui.js</code>:
+            <code>tableLoading(tbody, ["num", "text", "badge", "btn"])</code>
+            for tables (placeholder rows the first time, dimmed rows on a
+            refresh), <code>skeletonCards()</code> for a
+            <code>.card-grid</code>, <code>skeletonDetails()</code> for a
+            <code>.detail-list</code> and <code>skeleton("60%")</code> for a
+            single line. An empty <code>.stat-value</code> shows a bar by
+            itself, and <code>.chart-box.is-loading</code> covers a chart.
+            Buttons keep <code>setBusy()</code>.
           </p>
         </div>
         <div class="ds-row">
@@ -1111,7 +1140,7 @@
 &lt;!-- signed-in pages also load the app shell (sidebar + content panel) --&gt;
 &lt;link rel="stylesheet" href="/styles/app.css" /&gt;
 
-&lt;!-- before your page script: toasts, confirm dialogs, busy buttons --&gt;
+&lt;!-- before your page script: toasts, confirm dialogs, busy buttons, loading skeletons --&gt;
 &lt;script src="/js/ui.js"&gt;&lt;/script&gt;</code></pre>
       </section>
     </main>
@@ -1145,6 +1174,11 @@
         });
         showToast(ok ? "Confirmed." : "Cancelled.", ok ? "success" : "info");
       };
+
+      document.getElementById("dsSkeletonRows").innerHTML = skeletonRows(
+        ["num", "text", "badge", "btn"],
+        3
+      );
 
       // Show each token's live value so this page can't drift from the CSS
       const rootStyle = getComputedStyle(document.documentElement);

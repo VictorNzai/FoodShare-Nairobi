@@ -117,7 +117,7 @@
       // Fetch and render charities as cards
       function fetchCharitiesCards() {
         const container = document.getElementById("charities-cards");
-        container.innerHTML = '<p class="muted">Loading charities...</p>';
+        container.innerHTML = skeletonCards();
         fetch(`${API_BASE_URL}/api/charities`)
           .then((res) => res.json())
           .then((data) => {
